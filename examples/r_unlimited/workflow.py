@@ -26,9 +26,11 @@ services.
 
 from __future__ import annotations
 
+import asyncio
 import os
 from typing import Any
 
+import httpx
 from pydantic import BaseModel, Field
 
 from agents import Agent, Runner, function_tool
@@ -61,23 +63,22 @@ META_BUSINESS_ACCOUNT_ENV = "META_BUSINESS_ACCOUNT_ID"
 # --- Tool definitions --------------------------------------------------------
 
 
-class MetaBusinessPostPlan(BaseModel):
-    """Plan for calling the Meta Graph API to publish a post or ad."""
+GRAPH_API_BASE_URL = "https://graph.facebook.com/v19.0"
+
+
+class MetaBusinessPostResult(BaseModel):
+    """Response payload returned after calling the Meta Graph API."""
 
     page_id: str = Field(..., description="Target Facebook Page ID")
-    endpoint: str = Field(
-        ...,
-        description="Relative Graph API endpoint for the publish action.",
-        examples=["/feed", "/ads"],
-    )
-    payload: dict[str, Any] = Field(..., description="JSON body to send to the API.")
-    access_token_env: str = Field(
-        default=META_BUSINESS_TOKEN_ENV,
-        description="Environment variable that stores the long-lived token.",
+    endpoint: str = Field(..., description="Graph API endpoint used for publishing.")
+    status_code: int = Field(..., description="HTTP status code returned by Meta.")
+    response_body: dict[str, Any] = Field(
+        default_factory=dict,
+        description="Decoded JSON body from the Graph API response.",
     )
     notes: str = Field(
         default="",
-        description="Operational guidance for the HTTP executor.",
+        description="Operational details for auditing and follow-up actions.",
     )
 
 
@@ -95,18 +96,48 @@ class JsonBodyEntry(BaseModel):
     value: Any = Field(..., description="Value for the JSON field.")
 
 
+async def _post_to_meta(
+    endpoint: str,
+    payload: dict[str, Any],
+    *,
+    page_id: str,
+    access_token: str,
+    timeout: float = 15.0,
+) -> httpx.Response:
+    """Send a POST request to the Meta Graph API and return the raw response."""
+
+    url = f"{GRAPH_API_BASE_URL}/{page_id}{endpoint}"
+    params = {"access_token": access_token}
+    async with httpx.AsyncClient(timeout=httpx.Timeout(timeout)) as client:
+        response = await client.post(url, params=params, json=payload)
+        return response
+
+
 @function_tool
-def build_meta_business_post_plan(
+async def publish_meta_business_post(
     objective: str,
     message: str,
     cta: str,
     page_id: str | None = None,
     link: str | None = None,
     media_url: str | None = None,
-) -> MetaBusinessPostPlan:
-    """Return a structured plan for the Meta Business Suite Graph API."""
+) -> MetaBusinessPostResult:
+    """Publish a post via the Meta Business Suite Graph API."""
 
-    resolved_page_id = page_id or os.environ.get(META_BUSINESS_ACCOUNT_ENV, "<missing-page-id>")
+    resolved_page_id = page_id or os.environ.get(META_BUSINESS_ACCOUNT_ENV)
+    if not resolved_page_id:
+        raise ValueError(
+            "Meta Business Page ID is required. Provide page_id or set "
+            f"{META_BUSINESS_ACCOUNT_ENV}."
+        )
+
+    access_token = os.environ.get(META_BUSINESS_TOKEN_ENV)
+    if not access_token:
+        raise ValueError(
+            "Meta Business access token not found in the environment. Set "
+            f"{META_BUSINESS_TOKEN_ENV} before publishing."
+        )
+
     payload: dict[str, Any] = {
         "message": message,
         "objective": objective,
@@ -117,41 +148,67 @@ def build_meta_business_post_plan(
     if media_url:
         payload.setdefault("attached_media", []).append({"media_fbid": media_url})
 
-    notes = (
-        "Use the caller agent to POST this payload to the Graph API. Confirm "
-        "the access token stored in the environment variable before executing."
-    )
-
-    return MetaBusinessPostPlan(
-        page_id=resolved_page_id,
+    response = await _post_to_meta(
         endpoint="/feed",
         payload=payload,
+        page_id=resolved_page_id,
+        access_token=access_token,
+    )
+
+    notes = "Meta Graph API invoked via publish_meta_business_post."
+
+    try:
+        response.raise_for_status()
+    except httpx.HTTPStatusError as exc:
+        raise RuntimeError(
+            "Meta Graph API call failed",
+        ) from exc
+
+    body: dict[str, Any]
+    try:
+        body = response.json()
+    except ValueError:
+        body = {"raw": response.text}
+
+    return MetaBusinessPostResult(
+        page_id=resolved_page_id,
+        endpoint="/feed",
+        status_code=response.status_code,
+        response_body=body,
         notes=notes,
     )
 
 
-class HttpRequestPlan(BaseModel):
-    """Describe an outbound HTTP call that the caller agent should execute."""
+class HttpRequestResult(BaseModel):
+    """Structured response returned by the caller agent HTTP executor."""
 
-    method: str = Field(..., description="HTTP verb such as GET, POST, or PATCH.")
-    url: str = Field(..., description="Fully-qualified URL for the request.")
-    headers: dict[str, str] = Field(default_factory=dict, description="Request headers.")
-    json_body: dict[str, Any] | None = Field(
+    method: str = Field(..., description="HTTP verb executed.")
+    url: str = Field(..., description="URL requested.")
+    status_code: int = Field(..., description="HTTP status code returned.")
+    response_headers: dict[str, str] = Field(
+        default_factory=dict,
+        description="Response headers with sensitive values removed.",
+    )
+    response_body: dict[str, Any] | None = Field(
         default=None,
-        description="Optional JSON body.",
+        description="Decoded JSON body when available.",
     )
-    sensitive_env_vars: list[str] = Field(
-        default_factory=list,
-        description="Environment variables that must be loaded before running the call.",
-    )
-    remarks: str = Field(
+    text_preview: str = Field(
         default="",
-        description="Implementation instructions for engineers executing the plan.",
+        description="Truncated text body when JSON decoding fails.",
+    )
+    attempts: int = Field(
+        default=1,
+        description="Number of attempts made (includes retries).",
+    )
+    notes: str = Field(
+        default="",
+        description="Operational notes and follow-up guidance.",
     )
 
 
 @function_tool
-def draft_http_request(
+async def execute_http_request(
     method: str,
     url: str,
     *,
@@ -160,33 +217,89 @@ def draft_http_request(
     extra_headers: list[HeaderInput] | None = None,
     auth_env: str | None = None,
     description: str = "",
-) -> HttpRequestPlan:
-    """Create a generic HTTP request blueprint for the caller agent."""
+    retry_attempts: int = 3,
+    timeout_seconds: float = 20.0,
+) -> HttpRequestResult:
+    """Execute an outbound HTTP call with simple retry and secret resolution."""
 
     headers = {"Content-Type": "application/json"}
     if extra_headers:
         headers.update({entry.name: entry.value for entry in extra_headers})
 
-    sensitive_env_vars: list[str] = []
+    bearer_env = None
     if requires_auth:
-        if auth_env:
-            sensitive_env_vars.append(auth_env)
-        else:
-            sensitive_env_vars.append("API_BEARER_TOKEN")
+        bearer_env = auth_env or "API_BEARER_TOKEN"
+        bearer_token = os.environ.get(bearer_env)
+        if not bearer_token:
+            raise ValueError(
+                "Requested authenticated call but no credential found in the environment for "
+                f"{bearer_env}."
+            )
+        headers.setdefault("Authorization", f"Bearer {bearer_token}")
 
-    json_payload: dict[str, Any] | None = None
+    payload: dict[str, Any] | None = None
     if json_body:
-        json_payload = {entry.key: entry.value for entry in json_body}
+        payload = {entry.key: entry.value for entry in json_body}
 
-    remarks = description or "Execute via the caller agent using your preferred HTTP client."
+    attempts = 0
+    last_error: Exception | None = None
+    timeout = httpx.Timeout(timeout_seconds)
+    response: httpx.Response | None = None
 
-    return HttpRequestPlan(
+    async with httpx.AsyncClient(timeout=timeout) as client:
+        for attempts in range(1, max(retry_attempts, 1) + 1):
+            try:
+                response = await client.request(
+                    method.upper(),
+                    url,
+                    headers=headers,
+                    json=payload,
+                )
+                response.raise_for_status()
+                break
+            except httpx.HTTPStatusError as exc:
+                # For non-retryable HTTP errors, propagate immediately with context.
+                raise RuntimeError(
+                    f"HTTP request failed with status {exc.response.status_code}"
+                ) from exc
+            except httpx.RequestError as exc:
+                last_error = exc
+                if attempts == max(retry_attempts, 1):
+                    raise RuntimeError("HTTP request failed after retries") from exc
+                await asyncio.sleep(0.5 * attempts)
+        else:
+            if last_error:
+                raise last_error
+            raise RuntimeError("HTTP request could not be completed")
+
+    if response is None:
+        raise RuntimeError("HTTP request completed with no response object")
+
+    body: dict[str, Any] | None
+    text_preview = ""
+    try:
+        body = response.json()
+    except ValueError:
+        body = None
+        text_preview = response.text[:500]
+
+    redacted_headers = {
+        key: value for key, value in response.headers.items() if key.lower() != "set-cookie"
+    }
+
+    notes = description or "Caller agent executed the HTTP request via execute_http_request."
+    if bearer_env:
+        notes += f" Credential sourced from {bearer_env}."
+
+    return HttpRequestResult(
         method=method.upper(),
         url=url,
-        headers=headers,
-        json_body=json_payload,
-        sensitive_env_vars=sensitive_env_vars,
-        remarks=remarks,
+        status_code=response.status_code,
+        response_headers=dict(redacted_headers),
+        response_body=body,
+        text_preview=text_preview,
+        attempts=attempts,
+        notes=notes,
     )
 
 
@@ -215,10 +328,11 @@ social_campaign_agent = Agent(
         "You design Meta Business Suite organic posts and ads for R Unlimited LLC. "
         "Produce campaign briefs that highlight health & wellness narratives, include "
         "platform-specific hashtags, and respect community guidelines. "
-        "When execution is required, call the build_meta_business_post_plan tool to "
-        "produce a publish-ready payload, then hand off to the caller agent."
+        "When execution is required, call the publish_meta_business_post tool to "
+        "submit content to the Graph API, then provide follow-up notes for the "
+        "caller agent if additional HTTP work is required."
     ),
-    tools=[build_meta_business_post_plan],
+    tools=[publish_meta_business_post],
     handoffs=[],
 )
 
@@ -254,7 +368,7 @@ analytics_insights_agent = Agent(
         + " Summarise campaign performance insights, propose experiments, and "
         "highlight any data gaps that require API pulls from Meta, Systeme.io, or "
         "Stripe dashboards. When data retrieval is necessary, request the caller "
-        "agent to draft HTTP calls using the draft_http_request tool."
+        "agent to execute HTTP calls using the execute_http_request tool."
     ),
     handoffs=[],
 )
@@ -265,10 +379,11 @@ caller_agent = Agent(
     instructions=(
         "You translate campaign plans into executable HTTP requests. Verify that "
         "all sensitive credentials are sourced from environment variables (never "
-        "hard-coded). Generate step-by-step execution notes and list the exact "
-        "commands for engineers to run with curl or Postman collections."
+        "hard-coded). Generate step-by-step execution notes, perform the HTTP call "
+        "directly via the execute_http_request tool, and list any follow-up "
+        "commands engineers should run with curl or Postman collections."
     ),
-    tools=[draft_http_request],
+    tools=[execute_http_request],
 )
 
 

@@ -14,7 +14,7 @@ grouped by theme so the team can parallelize implementation.
       CloudWatch, BigQuery, or Azure Monitor) and retention schedules.
 
 ## 2. Meta Business & Social Automation
-- [ ] Replace the `build_meta_business_post_plan` stub with a client that authenticates to the Meta
+- [x] Replace the `build_meta_business_post_plan` stub with a client that authenticates to the Meta
       Graph API, handling token refresh and error retries.
 - [ ] Extend `social_campaign_agent` prompts with channel-specific style guides (Facebook,
       Instagram, Threads) and add support for media asset selection.
@@ -47,7 +47,7 @@ grouped by theme so the team can parallelize implementation.
       funnels and recommend next actions.
 
 ## 6. Caller Agent & HTTP Execution
-- [ ] Replace the planning-only `draft_http_request` tool with concrete HTTP execution logic using a
+- [x] Replace the planning-only `draft_http_request` tool with concrete HTTP execution logic using a
       secure HTTP client (httpx/requests) and centralized retry/backoff policies.
 - [ ] Implement secrets resolution (e.g., AWS Secrets Manager or Google Secret Manager) that the
       caller agent uses before issuing requests.

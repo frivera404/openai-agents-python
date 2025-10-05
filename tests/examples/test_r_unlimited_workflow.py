@@ -4,6 +4,7 @@ import json
 
 from collections.abc import AsyncIterator
 
+import httpx
 import pytest
 
 from agents.agent_output import AgentOutputSchema
@@ -130,15 +131,45 @@ class StubGpt4Model(Model):
 
 
 @pytest.mark.asyncio
-async def test_social_campaign_agent_builds_meta_plan(monkeypatch: pytest.MonkeyPatch) -> None:
+async def test_social_campaign_agent_publishes_meta_post(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv(workflow.META_BUSINESS_ACCOUNT_ENV, "1234567890")
+    monkeypatch.setenv(workflow.META_BUSINESS_TOKEN_ENV, "meta-token")
+
+    calls: list[dict[str, object]] = []
+
+    class DummyAsyncClient:
+        def __init__(self, *args: object, **kwargs: object) -> None:
+            self._args = args
+            self._kwargs = kwargs
+
+        async def __aenter__(self) -> "DummyAsyncClient":
+            return self
+
+        async def __aexit__(self, exc_type, exc, tb) -> bool:
+            return False
+
+        async def post(
+            self,
+            url: str,
+            *,
+            params: dict[str, object] | None = None,
+            json: dict[str, object] | None = None,
+        ) -> httpx.Response:
+            calls.append({"url": url, "params": params, "json": json})
+            return httpx.Response(
+                status_code=200,
+                json={"id": "1234567890_987"},
+                request=httpx.Request("POST", url),
+            )
+
+    monkeypatch.setattr(httpx, "AsyncClient", DummyAsyncClient)
 
     model = StubGpt4Model()
     model.add_multiple_turn_outputs(
         [
             [
                 get_function_tool_call(
-                    workflow.build_meta_business_post_plan.name,
+                    workflow.publish_meta_business_post.name,
                     json.dumps(
                         {
                             "objective": "traffic",
@@ -158,22 +189,63 @@ async def test_social_campaign_agent_builds_meta_plan(monkeypatch: pytest.Monkey
 
     tool_outputs = [item for item in result.new_items if isinstance(item, ToolCallOutputItem)]
     assert tool_outputs, "expected the agent to call the Meta planning tool"
-    meta_plan = tool_outputs[0].output
+    meta_result = tool_outputs[0].output
 
-    assert isinstance(meta_plan, workflow.MetaBusinessPostPlan)
-    assert meta_plan.page_id == "1234567890"
-    assert meta_plan.payload["objective"] == "traffic"
+    assert isinstance(meta_result, workflow.MetaBusinessPostResult)
+    assert meta_result.page_id == "1234567890"
+    assert meta_result.status_code == 200
+    assert meta_result.response_body["id"] == "1234567890_987"
+    assert calls, "expected the Meta API helper to be invoked"
     assert "Campaign plan" in result.final_output
 
 
 @pytest.mark.asyncio
-async def test_caller_agent_drafts_http_request() -> None:
+async def test_caller_agent_executes_http_request(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("POSTMAN_API_KEY", "secret")
+
+    calls: list[dict[str, object]] = []
+
+    class DummyAsyncClient:
+        def __init__(self, *args: object, **kwargs: object) -> None:
+            self._args = args
+            self._kwargs = kwargs
+
+        async def __aenter__(self) -> "DummyAsyncClient":
+            return self
+
+        async def __aexit__(self, exc_type, exc, tb) -> bool:
+            return False
+
+        async def request(
+            self,
+            method: str,
+            url: str,
+            *,
+            headers: dict[str, str] | None = None,
+            json: dict[str, object] | None = None,
+        ) -> httpx.Response:
+            calls.append(
+                {
+                    "method": method,
+                    "url": url,
+                    "headers": headers,
+                    "json": json,
+                }
+            )
+            return httpx.Response(
+                status_code=200,
+                json={"ok": True},
+                request=httpx.Request(method, url),
+            )
+
+    monkeypatch.setattr(httpx, "AsyncClient", DummyAsyncClient)
+
     model = StubGpt4Model()
     model.add_multiple_turn_outputs(
         [
             [
                 get_function_tool_call(
-                    workflow.draft_http_request.name,
+                    workflow.execute_http_request.name,
                     json.dumps(
                         {
                             "method": "post",
@@ -200,11 +272,13 @@ async def test_caller_agent_drafts_http_request() -> None:
 
     tool_outputs = [item for item in result.new_items if isinstance(item, ToolCallOutputItem)]
     assert tool_outputs, "expected the caller agent to draft an HTTP plan"
-    request_plan = tool_outputs[0].output
+    request_result = tool_outputs[0].output
 
-    assert isinstance(request_plan, workflow.HttpRequestPlan)
-    assert request_plan.method == "POST"
-    assert request_plan.headers["X-Trace-Id"] == "abc123"
+    assert isinstance(request_result, workflow.HttpRequestResult)
+    assert request_result.status_code == 200
+    assert request_result.response_body == {"ok": True}
+    assert request_result.attempts == 1
+    assert calls, "expected the HTTP client to be invoked"
     assert "HTTP request" in result.final_output
 
 
