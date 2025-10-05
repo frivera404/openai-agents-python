@@ -2,12 +2,28 @@ from __future__ import annotations
 
 import json
 
+from collections.abc import AsyncIterator
+
 import pytest
 
-from agents.items import HandoffOutputItem, ToolCallOutputItem
+from agents.agent_output import AgentOutputSchema
+from agents.handoffs import Handoff
+from agents.items import (
+    HandoffOutputItem,
+    ModelResponse,
+    ToolCallOutputItem,
+    TResponseInputItem,
+    TResponseOutputItem,
+    TResponseStreamEvent,
+)
+from agents.model_settings import ModelSettings
+from agents.models.interface import Model, ModelTracing
 from agents.run import Runner
+from agents.tool import Tool
+from agents.tracing import SpanError, generation_span
+from agents.usage import Usage
+from openai.types.responses import Response, ResponseCompletedEvent
 
-from tests.fake_model import FakeModel
 from tests.test_responses import (
     get_function_tool_call,
     get_handoff_tool_call,
@@ -17,11 +33,107 @@ from tests.test_responses import (
 from examples.r_unlimited import workflow
 
 
+def _response_from_output(
+    output: list[TResponseOutputItem], response_id: str | None = None
+) -> Response:
+    return Response(
+        id=response_id or "gpt4-test-response",
+        created_at=0,
+        model="gpt-4",
+        object="response",
+        output=output,
+        tool_choice="none",
+        tools=[],
+        top_p=None,
+        parallel_tool_calls=False,
+    )
+
+
+class StubGpt4Model(Model):
+    """A lightweight GPT-4 stand-in used for deterministic test responses."""
+
+    def __init__(
+        self,
+        *,
+        tracing_enabled: bool = False,
+        initial_output: list[TResponseOutputItem] | Exception | None = None,
+    ) -> None:
+        self.model = "gpt-4"
+        self._queue: list[list[TResponseOutputItem] | Exception] = []
+        if initial_output is not None:
+            self._queue.append(initial_output)
+        self.tracing_enabled = tracing_enabled
+        self.last_turn_args: dict[str, object] = {}
+
+    def add_multiple_turn_outputs(
+        self, outputs: list[list[TResponseOutputItem] | Exception]
+    ) -> None:
+        self._queue.extend(outputs)
+
+    def _next_output(self) -> list[TResponseOutputItem] | Exception:
+        if not self._queue:
+            return []
+        return self._queue.pop(0)
+
+    async def get_response(
+        self,
+        system_instructions: str | None,
+        input: str | list[TResponseInputItem],
+        model_settings: ModelSettings,
+        tools: list[Tool],
+        output_schema: AgentOutputSchema | None,
+        handoffs: list[Handoff],
+        tracing: ModelTracing,
+    ) -> ModelResponse:
+        self.last_turn_args = {
+            "system_instructions": system_instructions,
+            "input": input,
+            "model_settings": model_settings,
+            "tools": tools,
+            "output_schema": output_schema,
+        }
+
+        with generation_span(model="gpt-4", disabled=not self.tracing_enabled) as span:
+            output = self._next_output()
+            if isinstance(output, Exception):
+                span.set_error(
+                    SpanError(
+                        message="Error",
+                        data={
+                            "name": output.__class__.__name__,
+                            "message": str(output),
+                        },
+                    )
+                )
+                raise output
+
+        return ModelResponse(output=output, usage=Usage(), referenceable_id=None)
+
+    async def stream_response(
+        self,
+        system_instructions: str | None,
+        input: str | list[TResponseInputItem],
+        model_settings: ModelSettings,
+        tools: list[Tool],
+        output_schema: AgentOutputSchema | None,
+        handoffs: list[Handoff],
+        tracing: ModelTracing,
+    ) -> AsyncIterator[TResponseStreamEvent]:
+        output = self._next_output()
+        if isinstance(output, Exception):
+            raise output
+
+        yield ResponseCompletedEvent(
+            type="response.completed",
+            response=_response_from_output(output),
+        )
+
+
 @pytest.mark.asyncio
 async def test_social_campaign_agent_builds_meta_plan(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv(workflow.META_BUSINESS_ACCOUNT_ENV, "1234567890")
 
-    model = FakeModel()
+    model = StubGpt4Model()
     model.add_multiple_turn_outputs(
         [
             [
@@ -56,7 +168,7 @@ async def test_social_campaign_agent_builds_meta_plan(monkeypatch: pytest.Monkey
 
 @pytest.mark.asyncio
 async def test_caller_agent_drafts_http_request() -> None:
-    model = FakeModel()
+    model = StubGpt4Model()
     model.add_multiple_turn_outputs(
         [
             [
@@ -98,11 +210,11 @@ async def test_caller_agent_drafts_http_request() -> None:
 
 @pytest.mark.asyncio
 async def test_orchestrator_handoff_to_social_agent() -> None:
-    social_model = FakeModel(initial_output=[get_text_message("Social updates prepared.")])
-    email_model = FakeModel(initial_output=[get_text_message("Newsletter outline ready.")])
-    affiliate_model = FakeModel(initial_output=[get_text_message("Affiliate copy drafted.")])
-    analytics_model = FakeModel(initial_output=[get_text_message("Analytics recap complete.")])
-    caller_model = FakeModel(initial_output=[get_text_message("Caller standing by.")])
+    social_model = StubGpt4Model(initial_output=[get_text_message("Social updates prepared.")])
+    email_model = StubGpt4Model(initial_output=[get_text_message("Newsletter outline ready.")])
+    affiliate_model = StubGpt4Model(initial_output=[get_text_message("Affiliate copy drafted.")])
+    analytics_model = StubGpt4Model(initial_output=[get_text_message("Analytics recap complete.")])
+    caller_model = StubGpt4Model(initial_output=[get_text_message("Caller standing by.")])
 
     social_agent = workflow.social_campaign_agent.clone(model=social_model)
     email_agent = workflow.email_outreach_agent.clone(model=email_model)
@@ -110,7 +222,7 @@ async def test_orchestrator_handoff_to_social_agent() -> None:
     analytics_agent = workflow.analytics_insights_agent.clone(model=analytics_model)
     caller_agent = workflow.caller_agent.clone(model=caller_model)
 
-    orchestrator_model = FakeModel()
+    orchestrator_model = StubGpt4Model()
     orchestrator_model.add_multiple_turn_outputs(
         [
             [
@@ -143,7 +255,7 @@ async def test_orchestrator_handoff_to_social_agent() -> None:
 
 @pytest.mark.asyncio
 async def test_email_outreach_agent_generates_copy() -> None:
-    model = FakeModel(initial_output=[get_text_message("Email copy drafted.")])
+    model = StubGpt4Model(initial_output=[get_text_message("Email copy drafted.")])
     agent = workflow.email_outreach_agent.clone(model=model)
 
     result = await Runner.run(agent, "Draft an update for subscribers.")
