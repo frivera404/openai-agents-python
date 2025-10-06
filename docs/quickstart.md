@@ -97,6 +97,7 @@ You can define custom guardrails to run on the input or output.
 from agents import GuardrailFunctionOutput, Agent, Runner
 from pydantic import BaseModel
 
+
 class HomeworkOutput(BaseModel):
     is_homework: bool
     reasoning: str
@@ -122,6 +123,7 @@ Let's put it all together and run the entire workflow, using handoffs and the in
 
 ```python
 from agents import Agent, InputGuardrail, GuardrailFunctionOutput, Runner
+from agents.exceptions import InputGuardrailTripwireTriggered
 from pydantic import BaseModel
 import asyncio
 
@@ -166,11 +168,19 @@ triage_agent = Agent(
 )
 
 async def main():
-    result = await Runner.run(triage_agent, "who was the first president of the united states?")
-    print(result.final_output)
+    # Example 1: History question
+    try:
+        result = await Runner.run(triage_agent, "who was the first president of the united states?")
+        print(result.final_output)
+    except InputGuardrailTripwireTriggered as e:
+        print("Guardrail blocked this input:", e)
 
-    result = await Runner.run(triage_agent, "what is life")
-    print(result.final_output)
+    # Example 2: General/philosophical question
+    try:
+        result = await Runner.run(triage_agent, "What is the meaning of life?")
+        print(result.final_output)
+    except InputGuardrailTripwireTriggered as e:
+        print("Guardrail blocked this input:", e)
 
 if __name__ == "__main__":
     asyncio.run(main())
@@ -186,4 +196,4 @@ Learn how to build more complex agentic flows:
 
 -   Learn about how to configure [Agents](agents.md).
 -   Learn about [running agents](running_agents.md).
--   Learn about [tools](tools.md), [guardrails](guardrails.md) and [models](models.md).
+-   Learn about [tools](tools.md), [guardrails](guardrails.md) and [models](models/index.md).

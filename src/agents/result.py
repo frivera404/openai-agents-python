@@ -10,18 +10,28 @@ from typing_extensions import TypeVar
 
 from ._run_impl import QueueCompleteSentinel
 from .agent import Agent
-from .agent_output import AgentOutputSchema
-from .exceptions import InputGuardrailTripwireTriggered, MaxTurnsExceeded
+from .agent_output import AgentOutputSchemaBase
+from .exceptions import (
+    AgentsException,
+    InputGuardrailTripwireTriggered,
+    MaxTurnsExceeded,
+    RunErrorDetails,
+)
 from .guardrail import InputGuardrailResult, OutputGuardrailResult
 from .items import ItemHelpers, ModelResponse, RunItem, TResponseInputItem
 from .logger import logger
+from .run_context import RunContextWrapper
 from .stream_events import StreamEvent
 from .tracing import Trace
-from .util._pretty_print import pretty_print_result, pretty_print_run_result_streaming
+from .util._pretty_print import (
+    pretty_print_result,
+    pretty_print_run_result_streaming,
+)
 
 if TYPE_CHECKING:
     from ._run_impl import QueueCompleteSentinel
     from .agent import Agent
+    from .tool_guardrails import ToolInputGuardrailResult, ToolOutputGuardrailResult
 
 T = TypeVar("T")
 
@@ -49,6 +59,15 @@ class RunResultBase(abc.ABC):
 
     output_guardrail_results: list[OutputGuardrailResult]
     """Guardrail results for the final output of the agent."""
+
+    tool_input_guardrail_results: list[ToolInputGuardrailResult]
+    """Tool input guardrail results from all tools executed during the run."""
+
+    tool_output_guardrail_results: list[ToolOutputGuardrailResult]
+    """Tool output guardrail results from all tools executed during the run."""
+
+    context_wrapper: RunContextWrapper[Any]
+    """The context wrapper for the agent run."""
 
     @property
     @abc.abstractmethod
@@ -79,6 +98,14 @@ class RunResultBase(abc.ABC):
         new_items = [item.to_input_item() for item in self.new_items]
 
         return original_items + new_items
+
+    @property
+    def last_response_id(self) -> str | None:
+        """Convenience method to get the response ID of the last model response."""
+        if not self.raw_responses:
+            return None
+
+        return self.raw_responses[-1].response_id
 
 
 @dataclass
@@ -116,9 +143,9 @@ class RunResultStreaming(RunResultBase):
     final_output: Any
     """The final output of the agent. This is None until the agent has finished running."""
 
-    _current_agent_output_schema: AgentOutputSchema | None = field(repr=False)
+    _current_agent_output_schema: AgentOutputSchemaBase | None = field(repr=False)
 
-    _trace: Trace | None = field(repr=False)
+    trace: Trace | None = field(repr=False)
 
     is_complete: bool = False
     """Whether the agent has finished running."""
@@ -144,6 +171,18 @@ class RunResultStreaming(RunResultBase):
         """
         return self.current_agent
 
+    def cancel(self) -> None:
+        """Cancels the streaming run, stopping all background tasks and marking the run as
+        complete."""
+        self._cleanup_tasks()  # Cancel all running tasks
+        self.is_complete = True  # Mark the run as complete to stop event streaming
+
+        # Optionally, clear the event queue to prevent processing stale events
+        while not self._event_queue.empty():
+            self._event_queue.get_nowait()
+        while not self._input_guardrail_queue.empty():
+            self._input_guardrail_queue.get_nowait()
+
     async def stream_events(self) -> AsyncIterator[StreamEvent]:
         """Stream deltas for new items as they are generated. We're using the types from the
         OpenAI Responses API, so these are semantic events: each event has a `type` field that
@@ -153,63 +192,93 @@ class RunResultStreaming(RunResultBase):
         - A MaxTurnsExceeded exception if the agent exceeds the max_turns limit.
         - A GuardrailTripwireTriggered exception if a guardrail is tripped.
         """
-        while True:
-            self._check_errors()
-            if self._stored_exception:
-                logger.debug("Breaking due to stored exception")
-                self.is_complete = True
-                break
-
-            if self.is_complete and self._event_queue.empty():
-                break
-
-            try:
-                item = await self._event_queue.get()
-            except asyncio.CancelledError:
-                break
-
-            if isinstance(item, QueueCompleteSentinel):
-                self._event_queue.task_done()
-                # Check for errors, in case the queue was completed due to an exception
+        try:
+            while True:
                 self._check_errors()
-                break
+                if self._stored_exception:
+                    logger.debug("Breaking due to stored exception")
+                    self.is_complete = True
+                    break
 
-            yield item
-            self._event_queue.task_done()
+                if self.is_complete and self._event_queue.empty():
+                    break
 
-        if self._trace:
-            self._trace.finish(reset_current=True)
+                try:
+                    item = await self._event_queue.get()
+                except asyncio.CancelledError:
+                    break
 
-        self._cleanup_tasks()
+                if isinstance(item, QueueCompleteSentinel):
+                    # Await input guardrails if they are still running, so late
+                    # exceptions are captured.
+                    await self._await_task_safely(self._input_guardrails_task)
+
+                    self._event_queue.task_done()
+
+                    # Check for errors, in case the queue was completed
+                    # due to an exception
+                    self._check_errors()
+                    break
+
+                yield item
+                self._event_queue.task_done()
+        finally:
+            # Ensure main execution completes before cleanup to avoid race conditions
+            # with session operations
+            await self._await_task_safely(self._run_impl_task)
+            # Safely terminate all background tasks after main execution has finished
+            self._cleanup_tasks()
 
         if self._stored_exception:
             raise self._stored_exception
 
+    def _create_error_details(self) -> RunErrorDetails:
+        """Return a `RunErrorDetails` object considering the current attributes of the class."""
+        return RunErrorDetails(
+            input=self.input,
+            new_items=self.new_items,
+            raw_responses=self.raw_responses,
+            last_agent=self.current_agent,
+            context_wrapper=self.context_wrapper,
+            input_guardrail_results=self.input_guardrail_results,
+            output_guardrail_results=self.output_guardrail_results,
+        )
+
     def _check_errors(self):
         if self.current_turn > self.max_turns:
-            self._stored_exception = MaxTurnsExceeded(f"Max turns ({self.max_turns}) exceeded")
+            max_turns_exc = MaxTurnsExceeded(f"Max turns ({self.max_turns}) exceeded")
+            max_turns_exc.run_data = self._create_error_details()
+            self._stored_exception = max_turns_exc
 
         # Fetch all the completed guardrail results from the queue and raise if needed
         while not self._input_guardrail_queue.empty():
             guardrail_result = self._input_guardrail_queue.get_nowait()
             if guardrail_result.output.tripwire_triggered:
-                self._stored_exception = InputGuardrailTripwireTriggered(guardrail_result)
+                tripwire_exc = InputGuardrailTripwireTriggered(guardrail_result)
+                tripwire_exc.run_data = self._create_error_details()
+                self._stored_exception = tripwire_exc
 
         # Check the tasks for any exceptions
         if self._run_impl_task and self._run_impl_task.done():
-            exc = self._run_impl_task.exception()
-            if exc and isinstance(exc, Exception):
-                self._stored_exception = exc
+            run_impl_exc = self._run_impl_task.exception()
+            if run_impl_exc and isinstance(run_impl_exc, Exception):
+                if isinstance(run_impl_exc, AgentsException) and run_impl_exc.run_data is None:
+                    run_impl_exc.run_data = self._create_error_details()
+                self._stored_exception = run_impl_exc
 
         if self._input_guardrails_task and self._input_guardrails_task.done():
-            exc = self._input_guardrails_task.exception()
-            if exc and isinstance(exc, Exception):
-                self._stored_exception = exc
+            in_guard_exc = self._input_guardrails_task.exception()
+            if in_guard_exc and isinstance(in_guard_exc, Exception):
+                if isinstance(in_guard_exc, AgentsException) and in_guard_exc.run_data is None:
+                    in_guard_exc.run_data = self._create_error_details()
+                self._stored_exception = in_guard_exc
 
         if self._output_guardrails_task and self._output_guardrails_task.done():
-            exc = self._output_guardrails_task.exception()
-            if exc and isinstance(exc, Exception):
-                self._stored_exception = exc
+            out_guard_exc = self._output_guardrails_task.exception()
+            if out_guard_exc and isinstance(out_guard_exc, Exception):
+                if isinstance(out_guard_exc, AgentsException) and out_guard_exc.run_data is None:
+                    out_guard_exc.run_data = self._create_error_details()
+                self._stored_exception = out_guard_exc
 
     def _cleanup_tasks(self):
         if self._run_impl_task and not self._run_impl_task.done():
@@ -223,3 +292,19 @@ class RunResultStreaming(RunResultBase):
 
     def __str__(self) -> str:
         return pretty_print_run_result_streaming(self)
+
+    async def _await_task_safely(self, task: asyncio.Task[Any] | None) -> None:
+        """Await a task if present, ignoring cancellation and storing exceptions elsewhere.
+
+        This ensures we do not lose late guardrail exceptions while not surfacing
+        CancelledError to callers of stream_events.
+        """
+        if task and not task.done():
+            try:
+                await task
+            except asyncio.CancelledError:
+                # Task was cancelled (e.g., due to result.cancel()). Nothing to do here.
+                pass
+            except Exception:
+                # The exception will be surfaced via _check_errors() if needed.
+                pass

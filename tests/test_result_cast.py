@@ -3,7 +3,7 @@ from typing import Any
 import pytest
 from pydantic import BaseModel
 
-from agents import Agent, RunResult
+from agents import Agent, RunContextWrapper, RunResult
 
 
 def create_run_result(final_output: Any) -> RunResult:
@@ -14,7 +14,10 @@ def create_run_result(final_output: Any) -> RunResult:
         final_output=final_output,
         input_guardrail_results=[],
         output_guardrail_results=[],
+        tool_input_guardrail_results=[],
+        tool_output_guardrail_results=[],
         _last_agent=Agent(name="test"),
+        context_wrapper=RunContextWrapper(context=None),
     )
 
 

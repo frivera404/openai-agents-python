@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 from openai.types.responses.response_computer_tool_call import (
     ActionScreenshot,
     ResponseComputerToolCall,
@@ -11,14 +13,19 @@ from openai.types.responses.response_file_search_tool_call_param import (
 )
 from openai.types.responses.response_function_tool_call import ResponseFunctionToolCall
 from openai.types.responses.response_function_tool_call_param import ResponseFunctionToolCallParam
-from openai.types.responses.response_function_web_search import ResponseFunctionWebSearch
+from openai.types.responses.response_function_web_search import (
+    ActionSearch,
+    ResponseFunctionWebSearch,
+)
 from openai.types.responses.response_function_web_search_param import ResponseFunctionWebSearchParam
 from openai.types.responses.response_output_message import ResponseOutputMessage
 from openai.types.responses.response_output_message_param import ResponseOutputMessageParam
 from openai.types.responses.response_output_refusal import ResponseOutputRefusal
 from openai.types.responses.response_output_text import ResponseOutputText
+from openai.types.responses.response_output_text_param import ResponseOutputTextParam
 from openai.types.responses.response_reasoning_item import ResponseReasoningItem, Summary
 from openai.types.responses.response_reasoning_item_param import ResponseReasoningItemParam
+from pydantic import TypeAdapter
 
 from agents import (
     Agent,
@@ -168,7 +175,7 @@ def test_to_input_items_for_message() -> None:
     message = ResponseOutputMessage(
         id="m1", content=[content], role="assistant", status="completed", type="message"
     )
-    resp = ModelResponse(output=[message], usage=Usage(), referenceable_id=None)
+    resp = ModelResponse(output=[message], usage=Usage(), response_id=None)
     input_items = resp.to_input_items()
     assert isinstance(input_items, list) and len(input_items) == 1
     # The dict should contain exactly the primitive values of the message
@@ -193,7 +200,7 @@ def test_to_input_items_for_function_call() -> None:
     tool_call = ResponseFunctionToolCall(
         id="f1", arguments="{}", call_id="c1", name="func", type="function_call"
     )
-    resp = ModelResponse(output=[tool_call], usage=Usage(), referenceable_id=None)
+    resp = ModelResponse(output=[tool_call], usage=Usage(), response_id=None)
     input_items = resp.to_input_items()
     assert isinstance(input_items, list) and len(input_items) == 1
     expected: ResponseFunctionToolCallParam = {
@@ -211,7 +218,7 @@ def test_to_input_items_for_file_search_call() -> None:
     fs_call = ResponseFileSearchToolCall(
         id="fs1", queries=["query"], status="completed", type="file_search_call"
     )
-    resp = ModelResponse(output=[fs_call], usage=Usage(), referenceable_id=None)
+    resp = ModelResponse(output=[fs_call], usage=Usage(), response_id=None)
     input_items = resp.to_input_items()
     assert isinstance(input_items, list) and len(input_items) == 1
     expected: ResponseFileSearchToolCallParam = {
@@ -225,14 +232,20 @@ def test_to_input_items_for_file_search_call() -> None:
 
 def test_to_input_items_for_web_search_call() -> None:
     """A web search tool call output should produce the same dict as a web search input."""
-    ws_call = ResponseFunctionWebSearch(id="w1", status="completed", type="web_search_call")
-    resp = ModelResponse(output=[ws_call], usage=Usage(), referenceable_id=None)
+    ws_call = ResponseFunctionWebSearch(
+        id="w1",
+        action=ActionSearch(type="search", query="query"),
+        status="completed",
+        type="web_search_call",
+    )
+    resp = ModelResponse(output=[ws_call], usage=Usage(), response_id=None)
     input_items = resp.to_input_items()
     assert isinstance(input_items, list) and len(input_items) == 1
     expected: ResponseFunctionWebSearchParam = {
         "id": "w1",
         "status": "completed",
         "type": "web_search_call",
+        "action": {"type": "search", "query": "query"},
     }
     assert input_items[0] == expected
 
@@ -248,7 +261,7 @@ def test_to_input_items_for_computer_call_click() -> None:
         pending_safety_checks=[],
         status="completed",
     )
-    resp = ModelResponse(output=[comp_call], usage=Usage(), referenceable_id=None)
+    resp = ModelResponse(output=[comp_call], usage=Usage(), response_id=None)
     input_items = resp.to_input_items()
     assert isinstance(input_items, list) and len(input_items) == 1
     converted_dict = input_items[0]
@@ -268,7 +281,7 @@ def test_to_input_items_for_reasoning() -> None:
     """A reasoning output should produce the same dict as a reasoning input item."""
     rc = Summary(text="why", type="summary_text")
     reasoning = ResponseReasoningItem(id="rid1", summary=[rc], type="reasoning")
-    resp = ModelResponse(output=[reasoning], usage=Usage(), referenceable_id=None)
+    resp = ModelResponse(output=[reasoning], usage=Usage(), response_id=None)
     input_items = resp.to_input_items()
     assert isinstance(input_items, list) and len(input_items) == 1
     converted_dict = input_items[0]
@@ -281,3 +294,34 @@ def test_to_input_items_for_reasoning() -> None:
     print(converted_dict)
     print(expected)
     assert converted_dict == expected
+
+
+def test_input_to_new_input_list_copies_the_ones_produced_by_pydantic() -> None:
+    # Given a list of message dictionaries, ensure the returned list is a deep copy.
+    original = ResponseOutputMessageParam(
+        id="a75654dc-7492-4d1c-bce0-89e8312fbdd7",
+        content=[
+            ResponseOutputTextParam(
+                type="output_text",
+                text="Hey, what's up?",
+                annotations=[],
+            )
+        ],
+        role="assistant",
+        status="completed",
+        type="message",
+    )
+    original_json = json.dumps(original)
+    output_item = TypeAdapter(ResponseOutputMessageParam).validate_json(original_json)
+    new_list = ItemHelpers.input_to_new_input_list([output_item])
+    assert len(new_list) == 1
+    assert new_list[0]["id"] == original["id"]  # type: ignore
+    size = 0
+    for i, item in enumerate(original["content"]):
+        size += 1  # pydantic_core._pydantic_core.ValidatorIterator does not support len()
+        assert item["type"] == original["content"][i]["type"]  # type: ignore
+        assert item["text"] == original["content"][i]["text"]  # type: ignore
+    assert size == 1
+    assert new_list[0]["role"] == original["role"]  # type: ignore
+    assert new_list[0]["status"] == original["status"]  # type: ignore
+    assert new_list[0]["type"] == original["type"]

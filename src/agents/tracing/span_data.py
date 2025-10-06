@@ -168,7 +168,7 @@ class ResponseSpanData(SpanData):
 class HandoffSpanData(SpanData):
     """
     Represents a Handoff Span in the trace.
-    Includes source and desitnation agents.
+    Includes source and destination agents.
     """
 
     __slots__ = ("from_agent", "to_agent")
@@ -338,7 +338,7 @@ class SpeechGroupSpanData(SpanData):
 
     @property
     def type(self) -> str:
-        return "speech-group"
+        return "speech_group"
 
     def export(self) -> dict[str, Any]:
         return {

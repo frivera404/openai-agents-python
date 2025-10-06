@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import AsyncIterator
+from typing import Any
 
 import pytest
 from inline_snapshot import snapshot
@@ -9,7 +10,7 @@ from openai.types.responses import ResponseCompletedEvent
 from openai.types.responses.response_text_delta_event import ResponseTextDeltaEvent
 
 from agents import Agent, Model, ModelSettings, ModelTracing, Tool
-from agents.agent_output import AgentOutputSchema
+from agents.agent_output import AgentOutputSchemaBase
 from agents.handoffs import Handoff
 from agents.items import (
     ModelResponse,
@@ -18,11 +19,12 @@ from agents.items import (
     TResponseStreamEvent,
 )
 
+from ..fake_model import get_response_obj
+from ..test_responses import get_function_tool, get_function_tool_call, get_text_message
+
 try:
     from agents.voice import SingleAgentVoiceWorkflow
 
-    from ..fake_model import get_response_obj
-    from ..test_responses import get_function_tool, get_function_tool_call, get_text_message
 except ImportError:
     pass
 
@@ -48,9 +50,13 @@ class FakeStreamingModel(Model):
         input: str | list[TResponseInputItem],
         model_settings: ModelSettings,
         tools: list[Tool],
-        output_schema: AgentOutputSchema | None,
+        output_schema: AgentOutputSchemaBase | None,
         handoffs: list[Handoff],
         tracing: ModelTracing,
+        *,
+        previous_response_id: str | None,
+        conversation_id: str | None,
+        prompt: Any | None,
     ) -> ModelResponse:
         raise NotImplementedError("Not implemented")
 
@@ -60,9 +66,13 @@ class FakeStreamingModel(Model):
         input: str | list[TResponseInputItem],
         model_settings: ModelSettings,
         tools: list[Tool],
-        output_schema: AgentOutputSchema | None,
+        output_schema: AgentOutputSchemaBase | None,
         handoffs: list[Handoff],
         tracing: ModelTracing,
+        *,
+        previous_response_id: str | None,
+        conversation_id: str | None,
+        prompt: Any | None,
     ) -> AsyncIterator[TResponseStreamEvent]:
         output = self.get_next_output()
         for item in output:
@@ -77,11 +87,14 @@ class FakeStreamingModel(Model):
                     type="response.output_text.delta",
                     output_index=0,
                     item_id=item.id,
+                    sequence_number=0,
+                    logprobs=[],
                 )
 
         yield ResponseCompletedEvent(
             type="response.completed",
             response=get_response_obj(output),
+            sequence_number=1,
         )
 
 

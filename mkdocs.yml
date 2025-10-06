@@ -19,6 +19,9 @@ theme:
   logo: assets/logo.svg
   favicon: images/favicon-platform.svg
 
+repo_name: openai-agents-python
+repo_url: https://github.com/openai/openai-agents-python
+
 plugins:
   - search
   - mkdocstrings:
@@ -54,8 +57,10 @@ plugins:
             - Documentation:
                 - agents.md
                 - running_agents.md
+                - sessions.md
                 - results.md
                 - streaming.md
+                - repl.md
                 - tools.md
                 - mcp.md
                 - handoffs.md
@@ -63,25 +68,36 @@ plugins:
                 - context.md
                 - guardrails.md
                 - multi_agent.md
-                - models.md
+                - usage.md
+                - Models:
+                    - models/index.md
+                    - models/litellm.md
                 - config.md
                 - visualization.md
+                - release.md
                 - Voice agents:
                     - voice/quickstart.md
                     - voice/pipeline.md
                     - voice/tracing.md
+                - Realtime agents:
+                    - realtime/quickstart.md
+                    - realtime/guide.md
             - API Reference:
                 - Agents:
                     - ref/index.md
                     - ref/agent.md
                     - ref/run.md
+                    - ref/memory.md
+                    - ref/repl.md
                     - ref/tool.md
+                    - ref/tool_context.md
                     - ref/result.md
                     - ref/stream_events.md
                     - ref/handoffs.md
                     - ref/lifecycle.md
                     - ref/items.md
                     - ref/run_context.md
+                    - ref/tool_context.md
                     - ref/usage.md
                     - ref/exceptions.md
                     - ref/guardrail.md
@@ -104,6 +120,13 @@ plugins:
                     - ref/tracing/setup.md
                     - ref/tracing/span_data.md
                     - ref/tracing/util.md
+                - Realtime:
+                    - ref/realtime/agent.md
+                    - ref/realtime/runner.md
+                    - ref/realtime/session.md
+                    - ref/realtime/events.md
+                    - ref/realtime/config.md
+                    - ref/realtime/model.md
                 - Voice:
                     - ref/voice/pipeline.md
                     - ref/voice/workflow.md
@@ -120,6 +143,8 @@ plugins:
                 - Extensions:
                     - ref/extensions/handoff_filters.md
                     - ref/extensions/handoff_prompt.md
+                    - ref/extensions/litellm.md
+                    - ref/extensions/memory/sqlalchemy_session.md
 
         - locale: ja
           name: 日本語
@@ -127,12 +152,14 @@ plugins:
           nav:
             - はじめに: index.md
             - クイックスタート: quickstart.md
-            - サンプル例: examples.md
+            - コード例: examples.md
             - ドキュメント:
                 - agents.md
                 - running_agents.md
+                - sessions.md
                 - results.md
                 - streaming.md
+                - repl.md
                 - tools.md
                 - mcp.md
                 - handoffs.md
@@ -140,13 +167,55 @@ plugins:
                 - context.md
                 - guardrails.md
                 - multi_agent.md
-                - models.md
+                - usage.md
+                - モデル:
+                    - models/index.md
+                    - models/litellm.md
                 - config.md
                 - visualization.md
                 - 音声エージェント:
                     - voice/quickstart.md
                     - voice/pipeline.md
                     - voice/tracing.md
+                - リアルタイムエージェント:
+                    - realtime/quickstart.md
+                    - realtime/guide.md
+
+        - locale: ko
+          name: 한국어
+          build: true
+          nav:
+            - 소개: index.md
+            - 빠른 시작: quickstart.md
+            - 코드 예제: examples.md
+            - 문서:
+                - agents.md
+                - running_agents.md
+                - sessions.md
+                - results.md
+                - streaming.md
+                - repl.md
+                - tools.md
+                - mcp.md
+                - handoffs.md
+                - tracing.md
+                - context.md
+                - guardrails.md
+                - multi_agent.md
+                - usage.md
+                - 모델:
+                    - models/index.md
+                    - models/litellm.md
+                - config.md
+                - visualization.md
+                - release.md
+                - 음성 에이전트:
+                    - voice/quickstart.md
+                    - voice/pipeline.md
+                    - voice/tracing.md
+                - 실시간 에이전트:
+                    - realtime/quickstart.md
+                    - realtime/guide.md
 
 extra:
   # Remove material generation message in footer
@@ -159,6 +228,9 @@ extra:
     - name: 日本語
       link: /openai-agents-python/ja/
       lang: ja
+    - name: 한국어
+      link: /openai-agents-python/ko/
+      lang: ko
 
 markdown_extensions:
   - pymdownx.superfences:

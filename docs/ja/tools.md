@@ -1,18 +1,26 @@
+---
+search:
+  exclude: true
+---
 # ツール
 
-ツールはエージェントがアクションを実行するためのものです。データの取得、コードの実行、外部 API の呼び出し、さらにはコンピュータの使用などが含まれます。Agent SDK には3つのクラスのツールがあります。
+ツールは エージェント にアクションを実行させます。たとえばデータの取得、コードの実行、外部 API の呼び出し、さらにはコンピュータの使用などです。Agents SDK には、ツールは次の 3 つのクラスに分類されます。
 
--   ホストされたツール: これらは LLM サーバー上で AI モデルと一緒に実行されます。OpenAI は、リトリーバル、Web 検索、コンピュータ操作をホストされたツールとして提供しています。
--   関数呼び出し: 任意の Python 関数をツールとして使用できます。
--   エージェントをツールとして使用: エージェントをツールとして使用し、エージェントが他のエージェントをハンドオフせずに呼び出すことができます。
+- Hosted tools: これらは LLM サーバー 上で AI モデルと並行して実行されます。OpenAI は、リトリーバル、Web 検索、コンピュータ操作 をホスト型ツールとして提供します。
+- Function Calling: 任意の Python 関数をツールとして利用できます。
+- ツールとしての エージェント: エージェント をツールとして使えるため、ハンドオフ せずに他の エージェント を呼び出せます。
 
-## ホストされたツール
+## ホスト型ツール
 
-OpenAI は、[`OpenAIResponsesModel`][agents.models.openai_responses.OpenAIResponsesModel] を使用する際にいくつかの組み込みツールを提供しています。
+OpenAI は [`OpenAIResponsesModel`][agents.models.openai_responses.OpenAIResponsesModel] を使用する際に、いくつかの組み込みツールを提供します。
 
--   [`WebSearchTool`][agents.tool.WebSearchTool] はエージェントが Web 検索を行うことを可能にします。
--   [`FileSearchTool`][agents.tool.FileSearchTool] は OpenAI ベクトルストアから情報を取得することを可能にします。
--   [`ComputerTool`][agents.tool.ComputerTool] はコンピュータ操作タスクを自動化することを可能にします。
+- [`WebSearchTool`][agents.tool.WebSearchTool] は、エージェント に Web を検索させます。
+- [`FileSearchTool`][agents.tool.FileSearchTool] は、OpenAI の ベクトルストア から情報を取得します。
+- [`ComputerTool`][agents.tool.ComputerTool] は、コンピュータ操作 の自動化を可能にします。
+- [`CodeInterpreterTool`][agents.tool.CodeInterpreterTool] は、LLM がサンドボックス環境でコードを実行できるようにします。
+- [`HostedMCPTool`][agents.tool.HostedMCPTool] は、リモートの MCP サーバー のツールをモデルに公開します。
+- [`ImageGenerationTool`][agents.tool.ImageGenerationTool] は、プロンプトから画像を生成します。
+- [`LocalShellTool`][agents.tool.LocalShellTool] は、ローカルマシン上でシェルコマンドを実行します。
 
 ```python
 from agents import Agent, FileSearchTool, Runner, WebSearchTool
@@ -35,14 +43,14 @@ async def main():
 
 ## 関数ツール
 
-任意の Python 関数をツールとして使用できます。Agents SDK はツールを自動的にセットアップします。
+任意の Python 関数をツールとして使用できます。Agents SDK が自動でツールをセットアップします。
 
--   ツールの名前は Python 関数の名前になります（または名前を指定できます）
--   ツールの説明は関数の docstring から取得されます（または説明を指定できます）
--   関数入力のスキーマは関数の引数から自動的に作成されます
--   各入力の説明は、無効にしない限り、関数の docstring から取得されます
+- ツール名は Python 関数名になります（任意で名前を指定可能）
+- ツールの説明は関数の docstring から取得されます（任意で説明を指定可能）
+- 関数入力のスキーマは、関数の引数から自動生成されます
+- 各入力の説明は、無効化しない限り関数の docstring から取得されます
 
-Python の `inspect` モジュールを使用して関数シグネチャを抽出し、[`griffe`](https://mkdocstrings.github.io/griffe/) を使用して docstring を解析し、`pydantic` を使用してスキーマを作成します。
+関数シグネチャの抽出には Python の `inspect` モジュールを使い、docstring の解析には [`griffe`](https://mkdocstrings.github.io/griffe/) を、スキーマ作成には `pydantic` を使用します。
 
 ```python
 import json
@@ -94,12 +102,12 @@ for tool in agent.tools:
 
 ```
 
-1.  任意の Python 型を関数の引数として使用でき、関数は同期または非同期であることができます。
-2.  Docstring が存在する場合、説明や引数の説明を取得するために使用されます。
-3.  関数はオプションで `context` を取ることができ（最初の引数である必要があります）、ツールの名前、説明、使用する docstring スタイルなどのオーバーライドを設定できます。
-4.  デコレートされた関数をツールのリストに渡すことができます。
+1. 関数の引数には任意の Python 型を使用でき、関数は sync/async いずれでも構いません。
+2. docstring があれば、説明および引数の説明を抽出します。
+3. 関数は任意で `context` を第 1 引数として受け取れます。ツール名、説明、docstring スタイルなどの上書き設定も可能です。
+4. デコレートした関数を tools のリストに渡せます。
 
-??? note "出力を表示するには展開してください"
+??? note "出力を表示"
 
     ```
     fetch_weather
@@ -171,12 +179,12 @@ for tool in agent.tools:
 
 ### カスタム関数ツール
 
-時には、Python 関数をツールとして使用したくない場合もあります。その場合、直接 [`FunctionTool`][agents.tool.FunctionTool] を作成できます。以下を提供する必要があります。
+Python 関数をツールとして使いたくない場合もあります。その場合は、[`FunctionTool`][agents.tool.FunctionTool] を直接作成できます。次を指定する必要があります。
 
--   `name`
--   `description`
--   `params_json_schema`（引数の JSON スキーマ）
--   `on_invoke_tool`（コンテキストと引数を JSON 文字列として受け取り、ツールの出力を文字列として返す非同期関数）
+- `name`
+- `description`
+- `params_json_schema`（引数の JSON スキーマ）
+- `on_invoke_tool`（[`ToolContext`][agents.tool_context.ToolContext] と引数の JSON 文字列を受け取り、ツール出力の文字列を返す async 関数）
 
 ```python
 from typing import Any
@@ -211,16 +219,16 @@ tool = FunctionTool(
 
 ### 引数と docstring の自動解析
 
-前述のように、ツールのスキーマを抽出するために関数シグネチャを自動的に解析し、ツールおよび個々の引数の説明を抽出するために docstring を解析します。以下の点に注意してください。
+前述のとおり、関数シグネチャを自動解析してツールのスキーマを抽出し、docstring を解析してツール全体および各引数の説明を抽出します。補足事項は次のとおりです。
 
-1. シグネチャの解析は `inspect` モジュールを通じて行われます。引数の型を理解するために型注釈を使用し、全体のスキーマを表す Pydantic モデルを動的に構築します。Python の基本コンポーネント、Pydantic モデル、TypedDict など、ほとんどの型をサポートしています。
-2. `griffe` を使用して docstring を解析します。サポートされている docstring フォーマットは `google`、`sphinx`、`numpy` です。docstring フォーマットを自動的に検出しようとしますが、これはベストエフォートであり、`function_tool` を呼び出す際に明示的に設定できます。`use_docstring_info` を `False` に設定することで docstring 解析を無効にすることもできます。
+1. シグネチャの解析は `inspect` モジュールで行います。引数の型は型アノテーションから読み取り、全体スキーマを表す Pydantic モデルを動的に構築します。Python の基本型、Pydantic モデル、TypedDict など、多くの型をサポートします。
+2. docstring の解析には `griffe` を使用します。サポートする docstring 形式は `google`、`sphinx`、`numpy` です。docstring 形式は自動検出を試みますがベストエフォートのため、`function_tool` 呼び出し時に明示的に設定できます。`use_docstring_info` を `False` に設定すると docstring 解析を無効化できます。
 
 スキーマ抽出のコードは [`agents.function_schema`][] にあります。
 
-## エージェントをツールとして使用
+## ツールとしてのエージェント
 
-一部のワークフローでは、中央のエージェントが専門エージェントのネットワークをオーケストレーションすることを望むかもしれません。これを行うには、エージェントをツールとしてモデル化します。
+一部のワークフローでは、ハンドオフ せずに中央の エージェント が専門特化した エージェント 群をオーケストレーションしたい場合があります。これは、エージェント をツールとしてモデリングすることで実現できます。
 
 ```python
 from agents import Agent, Runner
@@ -259,12 +267,151 @@ async def main():
     print(result.final_output)
 ```
 
+### ツール化したエージェントのカスタマイズ
+
+`agent.as_tool` は、エージェント を簡単にツール化するための便宜メソッドです。ただし、すべての設定に対応しているわけではありません（例: `max_turns` は設定不可）。高度なユースケースでは、ツール実装内で直接 `Runner.run` を使用してください。
+
+```python
+@function_tool
+async def run_my_agent() -> str:
+    """A tool that runs the agent with custom configs"""
+
+    agent = Agent(name="My agent", instructions="...")
+
+    result = await Runner.run(
+        agent,
+        input="...",
+        max_turns=5,
+        run_config=...
+    )
+
+    return str(result.final_output)
+```
+
+### カスタム出力抽出
+
+場合によっては、中央の エージェント に返す前にツール化した エージェント の出力を変更したいことがあります。これは次のような場合に有用です。
+
+- サブエージェント のチャット履歴から特定情報（例: JSON ペイロード）を抽出する。
+- エージェント の最終回答を変換・再整形する（例: Markdown をプレーンテキストや CSV に変換）。
+- 出力を検証し、エージェント の応答が欠落または不正な場合にフォールバック値を提供する。
+
+これは、`as_tool` メソッドに `custom_output_extractor` 引数を渡すことで実現できます。
+
+```python
+async def extract_json_payload(run_result: RunResult) -> str:
+    # Scan the agent’s outputs in reverse order until we find a JSON-like message from a tool call.
+    for item in reversed(run_result.new_items):
+        if isinstance(item, ToolCallOutputItem) and item.output.strip().startswith("{"):
+            return item.output.strip()
+    # Fallback to an empty JSON object if nothing was found
+    return "{}"
+
+
+json_tool = data_agent.as_tool(
+    tool_name="get_data_json",
+    tool_description="Run the data agent and return only its JSON payload",
+    custom_output_extractor=extract_json_payload,
+)
+```
+
+### 条件付きツール有効化
+
+`is_enabled` パラメーター を使って、実行時に エージェント ツールを条件付きで有効化/無効化できます。これにより、コンテキスト、ユーザー の設定、実行時の条件に基づいて、LLM に提供するツールを動的に絞り込めます。
+
+```python
+import asyncio
+from agents import Agent, AgentBase, Runner, RunContextWrapper
+from pydantic import BaseModel
+
+class LanguageContext(BaseModel):
+    language_preference: str = "french_spanish"
+
+def french_enabled(ctx: RunContextWrapper[LanguageContext], agent: AgentBase) -> bool:
+    """Enable French for French+Spanish preference."""
+    return ctx.context.language_preference == "french_spanish"
+
+# Create specialized agents
+spanish_agent = Agent(
+    name="spanish_agent",
+    instructions="You respond in Spanish. Always reply to the user's question in Spanish.",
+)
+
+french_agent = Agent(
+    name="french_agent",
+    instructions="You respond in French. Always reply to the user's question in French.",
+)
+
+# Create orchestrator with conditional tools
+orchestrator = Agent(
+    name="orchestrator",
+    instructions=(
+        "You are a multilingual assistant. You use the tools given to you to respond to users. "
+        "You must call ALL available tools to provide responses in different languages. "
+        "You never respond in languages yourself, you always use the provided tools."
+    ),
+    tools=[
+        spanish_agent.as_tool(
+            tool_name="respond_spanish",
+            tool_description="Respond to the user's question in Spanish",
+            is_enabled=True,  # Always enabled
+        ),
+        french_agent.as_tool(
+            tool_name="respond_french",
+            tool_description="Respond to the user's question in French",
+            is_enabled=french_enabled,
+        ),
+    ],
+)
+
+async def main():
+    context = RunContextWrapper(LanguageContext(language_preference="french_spanish"))
+    result = await Runner.run(orchestrator, "How are you?", context=context.context)
+    print(result.final_output)
+
+asyncio.run(main())
+```
+
+`is_enabled` パラメーター は次を受け付けます。
+
+- **Boolean 値**: `True`（常に有効）または `False`（常に無効）
+- **Callable 関数**: `(context, agent)` を受け取り boolean を返す関数
+- **Async 関数**: 複雑な条件ロジックのための非同期関数
+
+無効化されたツールは実行時に LLM から完全に隠蔽されるため、次の用途に役立ちます。
+
+- ユーザー 権限に基づく機能ゲーティング
+- 環境別のツール提供（dev と prod）
+- 異なるツール構成の A/B テスト
+- 実行時状態に基づく動的なツールフィルタリング
+
 ## 関数ツールでのエラー処理
 
-`@function_tool` を使用して関数ツールを作成する際、`failure_error_function` を渡すことができます。これは、ツール呼び出しがクラッシュした場合に LLM にエラーレスポンスを提供する関数です。
+`@function_tool` で関数ツールを作成する際、`failure_error_function` を渡せます。これは、ツール呼び出しがクラッシュした場合に LLM へ返すエラーレスポンスを生成する関数です。
 
--   デフォルトでは（何も渡さない場合）、`default_tool_error_function` が実行され、LLM にエラーが発生したことを伝えます。
--   独自のエラー関数を渡した場合、それが実行され、LLM にレスポンスが送信されます。
--   明示的に `None` を渡した場合、ツール呼び出しエラーは再度発生し、処理する必要があります。モデルが無効な JSON を生成した場合は `ModelBehaviorError`、コードがクラッシュした場合は `UserError` などが考えられます。
+- 既定（何も渡さない場合）では、`default_tool_error_function` が実行され、エラーが発生したことを LLM に伝えます。
+- 独自のエラー関数を渡した場合は、それが実行され、そのレスポンスが LLM に送られます。
+- 明示的に `None` を渡した場合、ツール呼び出し時のエラーは再スローされ、呼び出し側で処理できます。モデルが不正な JSON を生成した場合は `ModelBehaviorError`、あなたのコードがクラッシュした場合は `UserError` などになり得ます。
 
-`FunctionTool` オブジェクトを手動で作成する場合、`on_invoke_tool` 関数内でエラーを処理する必要があります。
+```python
+from agents import function_tool, RunContextWrapper
+from typing import Any
+
+def my_custom_error_function(context: RunContextWrapper[Any], error: Exception) -> str:
+    """A custom function to provide a user-friendly error message."""
+    print(f"A tool call failed with the following error: {error}")
+    return "An internal server error occurred. Please try again later."
+
+@function_tool(failure_error_function=my_custom_error_function)
+def get_user_profile(user_id: str) -> str:
+    """Fetches a user profile from a mock API.
+     This function demonstrates a 'flaky' or failing API call.
+    """
+    if user_id == "user_123":
+        return "User profile for user_123 successfully retrieved."
+    else:
+        raise ValueError(f"Could not retrieve profile for user_id: {user_id}. API returned an error.")
+
+```
+
+`FunctionTool` オブジェクトを手動で作成する場合は、`on_invoke_tool` 関数内でエラーを処理する必要があります。
