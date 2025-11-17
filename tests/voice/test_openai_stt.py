@@ -5,8 +5,11 @@ import json
 import time
 from unittest.mock import AsyncMock, patch
 
-import numpy as np
 import pytest
+
+pytest.importorskip("numpy")
+
+import numpy as np
 
 try:
     from agents.voice import OpenAISTTTranscriptionSession, StreamedAudioInput, STTModelSettings

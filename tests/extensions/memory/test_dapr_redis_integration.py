@@ -20,6 +20,20 @@ import pytest
 # Skip tests if dependencies are not available
 pytest.importorskip("dapr")  # Skip tests if Dapr is not installed
 pytest.importorskip("testcontainers")  # Skip if testcontainers is not installed
+docker = pytest.importorskip("docker")  # Skip if Docker SDK is not installed
+
+_client = None
+try:
+    _client = docker.from_env()
+    _client.ping()
+except Exception:  # pragma: no cover - environment guard
+    pytest.skip("Docker daemon is not available", allow_module_level=True)
+finally:
+    if _client is not None:
+        try:
+            _client.close()
+        except Exception:
+            pass
 
 from testcontainers.core.container import DockerContainer  # type: ignore[import-untyped]
 from testcontainers.core.network import Network  # type: ignore[import-untyped]

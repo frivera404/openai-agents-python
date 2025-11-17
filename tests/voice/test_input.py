@@ -1,8 +1,11 @@
 import io
 import wave
 
-import numpy as np
 import pytest
+
+pytest.importorskip("numpy")
+
+import numpy as np
 
 try:
     from agents import UserError

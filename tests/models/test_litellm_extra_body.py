@@ -1,5 +1,8 @@
-import litellm
 import pytest
+
+pytest.importorskip("litellm")
+
+import litellm
 from litellm.types.utils import Choices, Message, ModelResponse, Usage
 
 from agents.extensions.models.litellm_model import LitellmModel

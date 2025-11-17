@@ -8,7 +8,11 @@ import pytest
 try:
     from agents.voice import OpenAITTSModel, TTSModelSettings
 except ImportError:
-    pass
+    OpenAITTSModel = None  # type: ignore[assignment]
+    TTSModelSettings = None  # type: ignore[assignment]
+
+if OpenAITTSModel is None or TTSModelSettings is None:  # pragma: no cover - skip guard
+    pytest.skip("Voice components are not available", allow_module_level=True)
 
 
 class _FakeStreamResponse:
