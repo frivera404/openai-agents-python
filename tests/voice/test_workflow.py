@@ -24,9 +24,11 @@ from ..test_responses import get_function_tool, get_function_tool_call, get_text
 
 try:
     from agents.voice import SingleAgentVoiceWorkflow
-
 except ImportError:
-    pass
+    SingleAgentVoiceWorkflow = None  # type: ignore[assignment]
+
+if SingleAgentVoiceWorkflow is None:  # pragma: no cover - skip guard
+    pytest.skip("Voice components are not available", allow_module_level=True)
 
 
 class FakeStreamingModel(Model):

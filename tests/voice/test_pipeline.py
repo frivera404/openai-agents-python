@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import pytest
+
+pytest.importorskip("numpy")
+
 import numpy as np
 import numpy.typing as npt
-import pytest
 
 try:
     from agents.voice import AudioInput, TTSModelSettings, VoicePipeline, VoicePipelineConfig

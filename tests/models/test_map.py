@@ -1,3 +1,7 @@
+import pytest
+
+pytest.importorskip("litellm")
+
 from agents import Agent, OpenAIResponsesModel, RunConfig
 from agents.extensions.models.litellm_model import LitellmModel
 from agents.run import AgentRunner

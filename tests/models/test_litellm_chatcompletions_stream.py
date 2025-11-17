@@ -1,6 +1,8 @@
 from collections.abc import AsyncIterator
 
 import pytest
+
+pytest.importorskip("litellm")
 from openai.types.chat.chat_completion_chunk import (
     ChatCompletionChunk,
     Choice,

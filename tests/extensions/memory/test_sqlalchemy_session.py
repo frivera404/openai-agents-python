@@ -13,11 +13,11 @@ from openai.types.responses.response_reasoning_item_param import (
     ResponseReasoningItemParam,
     Summary,
 )
+pytest.importorskip("sqlalchemy")  # Skip tests if SQLAlchemy is not installed
+
 from sqlalchemy import select, text, update
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 from sqlalchemy.sql import Select
-
-pytest.importorskip("sqlalchemy")  # Skip tests if SQLAlchemy is not installed
 
 from agents import Agent, Runner, TResponseInputItem
 from agents.extensions.memory.sqlalchemy_session import SQLAlchemySession
