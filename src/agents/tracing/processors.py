@@ -22,9 +22,9 @@ class ConsoleSpanExporter(TracingExporter):
     def export(self, items: list[Trace | Span[Any]]) -> None:
         for item in items:
             if isinstance(item, Trace):
-                print(f"[Exporter] Export trace_id={item.trace_id}, name={item.name}")
+                logger.debug(f"[Exporter] Export trace_id={item.trace_id}, name={item.name}")
             else:
-                print(f"[Exporter] Export span: {item.export()}")
+                logger.debug(f"[Exporter] Export span: {item.export()}")
 
 
 class BackendSpanExporter(TracingExporter):
