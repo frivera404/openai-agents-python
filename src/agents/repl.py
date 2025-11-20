@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from openai.types.responses.response_text_delta_event import ResponseTextDeltaEvent
+from ..logger import logger
 
 from .agent import Agent
 from .items import TResponseInputItem
@@ -33,7 +34,7 @@ async def run_demo_loop(
         try:
             user_input = input(" > ")
         except (EOFError, KeyboardInterrupt):
-            print()
+            logger.debug("REPL: received EOF/KeyboardInterrupt, exiting loop")
             break
         if user_input.strip().lower() in {"exit", "quit"}:
             break
@@ -48,19 +49,19 @@ async def run_demo_loop(
             async for event in result.stream_events():
                 if isinstance(event, RawResponsesStreamEvent):
                     if isinstance(event.data, ResponseTextDeltaEvent):
-                        print(event.data.delta, end="", flush=True)
+                        logger.debug(event.data.delta)
                 elif isinstance(event, RunItemStreamEvent):
                     if event.item.type == "tool_call_item":
-                        print("\n[tool called]", flush=True)
+                        logger.debug("[tool called]")
                     elif event.item.type == "tool_call_output_item":
-                        print(f"\n[tool output: {event.item.output}]", flush=True)
+                        logger.debug(f"[tool output: {event.item.output}]")
                 elif isinstance(event, AgentUpdatedStreamEvent):
-                    print(f"\n[Agent updated: {event.new_agent.name}]", flush=True)
-            print()
+                    logger.debug(f"[Agent updated: {event.new_agent.name}]")
+            logger.debug("REPL: stream finished for turn")
         else:
             result = await Runner.run(current_agent, input_items, context=context)
             if result.final_output is not None:
-                print(result.final_output)
+                logger.debug("REPL final_output: %s", result.final_output)
 
         current_agent = result.last_agent
         input_items = result.to_input_list()
