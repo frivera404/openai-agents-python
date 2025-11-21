@@ -1274,7 +1274,6 @@ class TraceCtxManager:
             self.trace.finish(reset_current=True)
 
 
-
 class ComputerAction:  # type: ignore[no-untyped-def]
     @classmethod
     async def execute(  # type: ignore[no-untyped-def]

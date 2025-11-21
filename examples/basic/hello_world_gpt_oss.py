@@ -30,7 +30,7 @@ async def main():
     )
 
     result = await Runner.run(agent, "Tell me about recursion in programming.")
-    print(result.final_output)
+    logging.getLogger(__name__).info(result.final_output)
 
 
 if __name__ == "__main__":

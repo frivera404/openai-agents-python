@@ -1,5 +1,6 @@
 import asyncio
 import json
+import logging
 
 from agents import (
     Agent,
@@ -12,6 +13,8 @@ from agents import (
     tool_input_guardrail,
     tool_output_guardrail,
 )
+
+logger = logging.getLogger(__name__)
 
 
 @function_tool
@@ -113,42 +116,43 @@ agent = Agent(
 
 
 async def main():
-    print("=== Tool Guardrails Example ===\n")
+    logger.info("=== Tool Guardrails Example ===\n")
 
     try:
         # Example 1: Normal operation - should work fine
-        print("1. Normal email sending:")
+        logger.info("1. Normal email sending:")
         result = await Runner.run(agent, "Send a welcome email to john@example.com")
-        print(f"✅ Successful tool execution: {result.final_output}\n")
+        logger.info("✅ Successful tool execution: %s\n", result.final_output)
 
         # Example 2: Input guardrail triggers - function tool call is rejected but execution continues
-        print("2. Attempting to send email with suspicious content:")
+        logger.info("2. Attempting to send email with suspicious content:")
         result = await Runner.run(
             agent, "Send an email to john@example.com introducing the company ACME corp."
         )
-        print(f"❌ Guardrail rejected function tool call: {result.final_output}\n")
+        logger.info("❌ Guardrail rejected function tool call: %s\n", result.final_output)
     except Exception as e:
-        print(f"Error: {e}\n")
+        logger.exception("Error: %s\n", e)
 
     try:
         # Example 3: Output guardrail triggers - should raise exception for sensitive data
-        print("3. Attempting to get user data (contains SSN). Execution blocked:")
+        logger.info("3. Attempting to get user data (contains SSN). Execution blocked:")
         result = await Runner.run(agent, "Get the data for user ID user123")
-        print(f"✅ Successful tool execution: {result.final_output}\n")
+        logger.info("✅ Successful tool execution: %s\n", result.final_output)
     except ToolOutputGuardrailTripwireTriggered as e:
-        print("🚨 Output guardrail triggered: Execution halted for sensitive data")
-        print(f"Details: {e.output.output_info}\n")
+        logger.error("🚨 Output guardrail triggered: Execution halted for sensitive data")
+        logger.error("Details: %s\n", e.output.output_info)
 
     try:
         # Example 4: Output guardrail triggers - reject returning function tool output but continue execution
-        print("4. Rejecting function tool output containing phone numbers:")
+        logger.info("4. Rejecting function tool output containing phone numbers:")
         result = await Runner.run(agent, "Get contact info for user456")
-        print(f"❌ Guardrail rejected function tool output: {result.final_output}\n")
+        logger.info("❌ Guardrail rejected function tool output: %s\n", result.final_output)
     except Exception as e:
-        print(f"Error: {e}\n")
+        logger.exception("Error: %s\n", e)
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     asyncio.run(main())
 
 """

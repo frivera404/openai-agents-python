@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 
 from agents import (
     Agent,
@@ -79,13 +80,15 @@ async def main():
 
         try:
             result = await Runner.run(agent, input_data)
-            print(result.final_output)
+            logger = logging.getLogger(__name__)
+            logger.info(result.final_output)
             # If the guardrail didn't trigger, we use the result as the input for the next run
             input_data = result.to_input_list()
         except InputGuardrailTripwireTriggered:
             # If the guardrail triggered, we instead add a refusal message to the input
             message = "Sorry, I can't help you with your math homework."
-            print(message)
+            logger = logging.getLogger(__name__)
+            logger.info(message)
             input_data.append(
                 {
                     "role": "assistant",
@@ -101,4 +104,7 @@ async def main():
 
 
 if __name__ == "__main__":
+    import logging as _logging
+    _logging.basicConfig(level=_logging.INFO)
+
     asyncio.run(main())

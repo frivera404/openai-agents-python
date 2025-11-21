@@ -119,8 +119,7 @@ class RealtimeWebSocketManager:
                 event_data = await self._serialize_event(event)
                 await websocket.send_text(json.dumps(event_data))
         except Exception as e:
-            print(e)
-            logger.error(f"Error processing events for session {session_id}: {e}")
+            logger.exception("Error processing events for session %s: %s", session_id, e)
 
     def _sanitize_history_item(self, item: RealtimeItem) -> dict[str, Any]:
         """Remove large binary payloads from history items while keeping transcripts."""

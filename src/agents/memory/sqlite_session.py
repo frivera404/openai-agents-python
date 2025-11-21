@@ -55,6 +55,10 @@ class SQLiteSession(SessionABC):
             self._init_db_for_connection(init_conn)
             init_conn.close()
 
+        # Track all connections created for proper cleanup
+        self._all_connections: set[sqlite3.Connection] = set()
+        self._connections_lock = threading.Lock()
+
     def _get_connection(self) -> sqlite3.Connection:
         """Get a database connection."""
         if self._is_memory_db:
@@ -68,6 +72,9 @@ class SQLiteSession(SessionABC):
                     check_same_thread=False,
                 )
                 self._local.connection.execute("PRAGMA journal_mode=WAL")
+                # Track this connection for proper cleanup
+                with self._connections_lock:
+                    self._all_connections.add(self._local.connection)
             assert isinstance(self._local.connection, sqlite3.Connection), (
                 f"Expected sqlite3.Connection, got {type(self._local.connection)}"
             )
@@ -249,6 +256,7 @@ class SQLiteSession(SessionABC):
 
     async def clear_session(self) -> None:
         """Clear all items for this session."""
+
         def _clear_session_sync() -> None:
             conn = self._get_connection()
             with self._lock if self._is_memory_db else threading.Lock():
@@ -265,10 +273,24 @@ class SQLiteSession(SessionABC):
         await asyncio.to_thread(_clear_session_sync)
 
     def close(self) -> None:
-        """Close the database connection."""
+        """Close all database connections."""
         if self._is_memory_db:
             if hasattr(self, "_shared_connection"):
                 self._shared_connection.close()
         else:
+            # Close all tracked connections
+            with self._connections_lock:
+                for conn in self._all_connections:
+                    try:
+                        conn.close()
+                    except Exception:
+                        # Ignore errors when closing connections
+                        pass
+                self._all_connections.clear()
+            # Also close the thread-local connection if it exists
             if hasattr(self._local, "connection"):
-                self._local.connection.close()
+                try:
+                    self._local.connection.close()
+                except Exception:
+                    # Ignore errors when closing connections
+                    pass

@@ -1,4 +1,7 @@
+import logging
 from mcp.server.fastmcp import FastMCP
+
+logger = logging.getLogger(__name__)
 
 # Create server
 mcp = FastMCP("Prompt Server")
@@ -10,7 +13,7 @@ def generate_code_review_instructions(
     focus: str = "general code quality", language: str = "python"
 ) -> str:
     """Generate agent instructions for code review tasks"""
-    print(f"[debug-server] generate_code_review_instructions({focus}, {language})")
+    logger.debug(f"[debug-server] generate_code_review_instructions({focus}, {language})")
 
     return f"""You are a senior {language} code review specialist. Your role is to provide comprehensive code analysis with focus on {focus}.
 

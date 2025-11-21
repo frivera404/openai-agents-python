@@ -7,7 +7,7 @@ from agents import Agent
 from agents.mcp import MCPServerStdio
 from agents.run_context import RunContextWrapper
 
-from .helpers import DummyStreamsContextManager, tee
+from .helpers import DummyStreamsContextManager, tee, test_command
 
 
 @pytest.mark.asyncio
@@ -22,7 +22,7 @@ async def test_server_caching_works(
     """
     server = MCPServerStdio(
         params={
-            "command": tee,
+            "command": tee or test_command,
         },
         cache_tools_list=True,
     )

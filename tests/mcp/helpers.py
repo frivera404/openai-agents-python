@@ -18,7 +18,16 @@ from agents.mcp.server import _MCPServerWithClientSession
 from agents.mcp.util import ToolFilter
 
 tee = shutil.which("tee") or ""
-assert tee, "tee not found"
+# tee is not available on Windows, make it optional for tests
+if not tee:
+    tee = None
+
+# Provide a valid command string for Windows tests
+# Use a simple command that exists on all platforms
+test_command = "python" if shutil.which("python") else "python3"
+if not test_command or not shutil.which(test_command):
+    # Fallback for systems without python in PATH
+    test_command = "echo"
 
 
 # Added dummy stream classes for patching stdio_client to avoid real I/O during tests

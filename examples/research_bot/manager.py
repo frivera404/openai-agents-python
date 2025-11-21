@@ -6,6 +6,9 @@ import time
 from rich.console import Console
 
 from agents import Runner, custom_span, gen_trace_id, trace
+import logging
+
+logger = logging.getLogger(__name__)
 
 from .agents.planner_agent import WebSearchItem, WebSearchPlan, planner_agent
 from .agents.search_agent import search_agent
@@ -43,11 +46,11 @@ class ResearchManager:
 
             self.printer.end()
 
-        print("\n\n=====REPORT=====\n\n")
-        print(f"Report: {report.markdown_report}")
-        print("\n\n=====FOLLOW UP QUESTIONS=====\n\n")
+        logger.info("\n\n=====REPORT=====\n\n")
+        logger.info("Report: %s", report.markdown_report)
+        logger.info("\n\n=====FOLLOW UP QUESTIONS=====\n\n")
         follow_up_questions = "\n".join(report.follow_up_questions)
-        print(f"Follow up questions: {follow_up_questions}")
+        logger.info("Follow up questions: %s", follow_up_questions)
 
     async def _plan_searches(self, query: str) -> WebSearchPlan:
         self.printer.update_item("planning", "Planning searches...")

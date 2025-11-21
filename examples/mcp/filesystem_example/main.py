@@ -15,26 +15,29 @@ async def run(mcp_server: MCPServer):
 
     # List the files it can read
     message = "Read the files and list them."
-    print(f"Running: {message}")
+    logger = logging.getLogger(__name__)
+    logger.info("Running: %s", message)
     result = await Runner.run(starting_agent=agent, input=message)
-    print(result.final_output)
+    logger.info(result.final_output)
 
     # Ask about books
     message = "What is my #1 favorite book?"
-    print(f"\n\nRunning: {message}")
+    logger.info("\n\nRunning: %s", message)
     result = await Runner.run(starting_agent=agent, input=message)
-    print(result.final_output)
+    logger.info(result.final_output)
 
     # Ask a question that reads then reasons.
     message = "Look at my favorite songs. Suggest one new song that I might like."
-    print(f"\n\nRunning: {message}")
+    logger.info("\n\nRunning: %s", message)
     result = await Runner.run(starting_agent=agent, input=message)
-    print(result.final_output)
+    logger.info(result.final_output)
 
 
 async def main():
     current_dir = os.path.dirname(os.path.abspath(__file__))
     samples_dir = os.path.join(current_dir, "sample_files")
+
+    import logging
 
     async with MCPServerStdio(
         name="Filesystem Server, via npx",
@@ -45,7 +48,9 @@ async def main():
     ) as server:
         trace_id = gen_trace_id()
         with trace(workflow_name="MCP Filesystem Example", trace_id=trace_id):
-            print(f"View trace: https://platform.openai.com/traces/trace?trace_id={trace_id}\n")
+            logging.getLogger(__name__).info(
+                "View trace: https://platform.openai.com/traces/trace?trace_id=%s\n", trace_id
+            )
             await run(server)
 
 
@@ -53,5 +58,6 @@ if __name__ == "__main__":
     # Let's make sure the user has npx installed
     if not shutil.which("npx"):
         raise RuntimeError("npx is not installed. Please install it with `npm install -g npx`.")
+    logging.basicConfig(level=logging.INFO)
 
     asyncio.run(main())

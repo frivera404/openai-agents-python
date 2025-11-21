@@ -60,15 +60,19 @@ async def run_with_custom_client(mcp_server: MCPServer):
 
     # Use the `add` tool to add two numbers
     message = "Add these numbers: 7 and 22."
-    print(f"Running: {message}")
+    import logging
+    logging.getLogger(__name__).info("Running: %s", message)
     result = await Runner.run(starting_agent=agent, input=message)
-    print(result.final_output)
+    logging.getLogger(__name__).info(result.final_output)
 
 
 async def main():
     """Main function demonstrating different HTTP client configurations."""
 
-    print("=== Example: Custom HTTP Client with SSL disabled and custom headers ===")
+    import logging
+    logging.getLogger(__name__).info(
+        "=== Example: Custom HTTP Client with SSL disabled and custom headers ==="
+    )
     async with MCPServerStreamableHttp(
         name="Streamable HTTP with Custom Client",
         params={
@@ -78,7 +82,9 @@ async def main():
     ) as server:
         trace_id = gen_trace_id()
         with trace(workflow_name="Custom HTTP Client Example", trace_id=trace_id):
-            print(f"View trace: https://platform.openai.com/logs/trace?trace_id={trace_id}\n")
+            logging.getLogger(__name__).info(
+                "View trace: https://platform.openai.com/logs/trace?trace_id=%s\n", trace_id
+            )
             await run_with_custom_client(server)
 
 
@@ -96,19 +102,20 @@ if __name__ == "__main__":
         this_dir = os.path.dirname(os.path.abspath(__file__))
         server_file = os.path.join(this_dir, "server.py")
 
-        print("Starting Streamable HTTP server at http://localhost:8000/mcp ...")
+        logging.getLogger(__name__).info("Starting Streamable HTTP server at http://localhost:8000/mcp ...")
 
         # Run `uv run server.py` to start the Streamable HTTP server
         process = subprocess.Popen(["uv", "run", server_file])
         # Give it 3 seconds to start
         time.sleep(3)
 
-        print("Streamable HTTP server started. Running example...\n\n")
+        logging.getLogger(__name__).info("Streamable HTTP server started. Running example...\n\n")
     except Exception as e:
-        print(f"Error starting Streamable HTTP server: {e}")
+        logging.getLogger(__name__).error("Error starting Streamable HTTP server: %s", e)
         exit(1)
 
     try:
+        logging.basicConfig(level=logging.INFO)
         asyncio.run(main())
     finally:
         if process:

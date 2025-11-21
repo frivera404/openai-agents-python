@@ -5,7 +5,7 @@ from mcp.types import ListToolsResult, Tool as MCPTool
 
 from agents.mcp import MCPServerStdio
 
-from .helpers import DummyStreamsContextManager, tee
+from .helpers import DummyStreamsContextManager, tee, test_command
 
 
 @pytest.mark.asyncio
@@ -18,7 +18,7 @@ async def test_async_ctx_manager_works(
     """Test that the async context manager works."""
     server = MCPServerStdio(
         params={
-            "command": tee,
+            "command": tee or test_command,
         },
         cache_tools_list=True,
     )
@@ -48,7 +48,7 @@ async def test_manual_connect_disconnect_works(
     """Test that the async context manager works."""
     server = MCPServerStdio(
         params={
-            "command": tee,
+            "command": tee or test_command,
         },
         cache_tools_list=True,
     )

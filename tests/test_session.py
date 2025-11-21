@@ -445,6 +445,8 @@ async def test_session_callback_prepared_input(runner_method):
         assert len(model.last_turn_args["input"]) == 2
         assert model.last_turn_args["input"] == expected_model_input
 
+        session.close()
+
 
 @pytest.mark.asyncio
 async def test_sqlite_session_unicode_content():

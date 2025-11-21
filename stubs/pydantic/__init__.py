@@ -1,9 +1,11 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 from typing import Any, Callable, Generic, TypeVar
+
 from typing_extensions import Self
 
 T = TypeVar("T")
+
 
 # Minimal pydantic surface used by the codebase (stubs for mypy only)
 class ConfigDict(dict[str, Any]):
@@ -55,9 +57,11 @@ class TypeAdapter(Generic[T]):
 # Alias used by the codebase
 GetCoreSchemaHandler = Callable[..., Any]
 
+
 # Omit types used in the codebase
 class _Omit:
     pass
+
 
 Omit = _Omit
 

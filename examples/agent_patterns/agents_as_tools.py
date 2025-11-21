@@ -1,4 +1,7 @@
 import asyncio
+import logging
+
+logger = logging.getLogger(__name__)
 
 from agents import Agent, ItemHelpers, MessageOutputItem, Runner, trace
 
@@ -66,14 +69,15 @@ async def main():
             if isinstance(item, MessageOutputItem):
                 text = ItemHelpers.text_message_output(item)
                 if text:
-                    print(f"  - Translation step: {text}")
+                    logger.info(f"  - Translation step: {text}")
 
         synthesizer_result = await Runner.run(
             synthesizer_agent, orchestrator_result.to_input_list()
         )
 
-    print(f"\n\nFinal response:\n{synthesizer_result.final_output}")
+    logger.info(f"\n\nFinal response:\n{synthesizer_result.final_output}")
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     asyncio.run(main())

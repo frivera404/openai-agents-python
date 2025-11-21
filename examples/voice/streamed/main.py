@@ -176,7 +176,8 @@ class RealtimeApp(App[None]):
 
     async def send_mic_audio(self) -> None:
         device_info = sd.query_devices()
-        print(device_info)
+        logger = logging.getLogger(__name__)
+        logger.info(device_info)
 
         read_size = int(SAMPLE_RATE * 0.02)
 
@@ -229,5 +230,8 @@ class RealtimeApp(App[None]):
 
 
 if __name__ == "__main__":
+    import logging
+
+    logging.basicConfig(level=logging.INFO)
     app = RealtimeApp()
     app.run()

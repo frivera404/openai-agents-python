@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 from agents import Agent, CodeInterpreterTool, Runner, trace
 
@@ -18,7 +19,8 @@ async def main():
     )
 
     with trace("Code interpreter example"):
-        print("Solving math problem...")
+        logger = logging.getLogger(__name__)
+        logger.info("Solving math problem...")
         result = Runner.run_streamed(agent, "What is the square root of273 * 312821 plus 1782?")
         async for event in result.stream_events():
             if (
@@ -26,11 +28,11 @@ async def main():
                 and event.item.type == "tool_call_item"
                 and event.item.raw_item.type == "code_interpreter_call"
             ):
-                print(f"Code interpreter code:\n```\n{event.item.raw_item.code}\n```\n")
+                logger.info("Code interpreter code:\n```\n%s\n```\n", event.item.raw_item.code)
             elif event.type == "run_item_stream_event":
-                print(f"Other event: {event.item.type}")
+                logger.info("Other event: %s", event.item.type)
 
-        print(f"Final output: {result.final_output}")
+            logger.info("Final output: %s", result.final_output)
 
 
 if __name__ == "__main__":

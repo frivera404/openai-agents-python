@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 from agents import Agent, Runner, trace
 from pydantic import BaseModel
@@ -47,7 +48,8 @@ async def main():
             story_outline_agent,
             input_prompt,
         )
-        print("Outline generated")
+        logger = logging.getLogger(__name__)
+        logger.info("Outline generated")
 
         # 2. Check the outline
         outline_checker_result = await Runner.run(
@@ -58,22 +60,29 @@ async def main():
         # 3. Add a gate to stop if the outline is not good quality or not a scifi story
         assert isinstance(outline_checker_result.final_output, OutlineCheckerOutput)
         if not outline_checker_result.final_output.good_quality:
-            print("Outline is not good quality, so we stop here.")
+            logger = logging.getLogger(__name__)
+            logger.warning("Outline is not good quality, so we stop here.")
             exit(0)
 
         if not outline_checker_result.final_output.is_scifi:
-            print("Outline is not a scifi story, so we stop here.")
+            logger = logging.getLogger(__name__)
+            logger.warning("Outline is not a scifi story, so we stop here.")
             exit(0)
 
-        print("Outline is good quality and a scifi story, so we continue to write the story.")
+        logger = logging.getLogger(__name__)
+        logger.info("Outline is good quality and a scifi story, so we continue to write the story.")
 
         # 4. Write the story
         story_result = await Runner.run(
             story_agent,
             outline_result.final_output,
         )
-        print(f"Story: {story_result.final_output}")
+        logger = logging.getLogger(__name__)
+        logger.info(f"Story: {story_result.final_output}")
 
 
 if __name__ == "__main__":
+    import logging as _logging
+    _logging.basicConfig(level=_logging.INFO)
+
     asyncio.run(main())

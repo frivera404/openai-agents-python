@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import Any, Literal
+from typing import Literal
 
 # Placeholder classes for the openai.types.shared namespace.
+
 
 class Reasoning:
     effort: Literal["minimal", "low", "medium", "high"] | None

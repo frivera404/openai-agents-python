@@ -3,6 +3,7 @@
 This module intentionally keeps runtime behavior minimal and only exposes the
 symbols the codebase imports for static checking. Extend as needed.
 """
+
 from typing import Any, Dict
 
 # Re-export the `types` package (mypy will resolve submodules from `stubs/openai/types`).
@@ -15,6 +16,10 @@ def omit(obj: Dict[str, Any], *keys: str) -> Dict[str, Any]:
 
 
 Omit = dict  # alias used in the codebase; keep permissive for stubs
+
+# Sentinel value for optional parameters
+NOT_GIVEN = object()
+NotGiven = NOT_GIVEN
 
 
 class OpenAI:

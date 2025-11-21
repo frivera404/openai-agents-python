@@ -14,6 +14,9 @@ dependencies = [
     "requests>=2.0, <3",
     "types-requests>=2.0, <3",
     "mcp>=1.11.0, <2; python_version >= '3.10'",
+    "fastapi>=0.104.0,<1",
+    "uvicorn[standard]>=0.24.0,<1",
+    "temporalio>=1.18.2",
 ]
 classifiers = [
     "Typing :: Typed",
@@ -42,6 +45,7 @@ realtime = ["websockets>=15.0, <16"]
 sqlalchemy = ["SQLAlchemy>=2.0", "asyncpg>=0.29.0"]
 encrypt = ["cryptography>=45.0, <46"]
 redis = ["redis>=6.4.0"]
+temporal = ["temporalio>=1.0.0"]
 
 [dependency-groups]
 dev = [

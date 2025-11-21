@@ -1,6 +1,9 @@
 import asyncio
 
+import logging
 from agents import function_tool
+
+logger = logging.getLogger(__name__)
 from agents.extensions.handoff_prompt import RECOMMENDED_PROMPT_PREFIX
 from agents.realtime import RealtimeAgent, realtime_handoff
 
@@ -15,7 +18,7 @@ will use the agent returned from get_starting_agent() as the starting agent."""
     name_override="faq_lookup_tool", description_override="Lookup frequently asked questions."
 )
 async def faq_lookup_tool(question: str) -> str:
-    print("faq_lookup_tool called with question:", question)
+    logger.info("faq_lookup_tool called with question: %s", question)
 
     # Simulate a slow API call
     await asyncio.sleep(3)

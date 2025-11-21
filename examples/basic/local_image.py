@@ -41,7 +41,8 @@ async def main():
             },
         ],
     )
-    print(result.final_output)
+    import logging
+    logging.getLogger(__name__).info(result.final_output)
 
 
 if __name__ == "__main__":

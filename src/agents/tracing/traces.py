@@ -48,7 +48,12 @@ class Trace(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def __exit__(self, exc_type: type | None, exc_val: BaseException | None, exc_tb: types.TracebackType | None) -> None:
+    def __exit__(
+        self,
+        exc_type: type | None,
+        exc_val: BaseException | None,
+        exc_tb: types.TracebackType | None,
+    ) -> None:
         pass
 
     @abc.abstractmethod
@@ -156,7 +161,12 @@ class NoOpTrace(Trace):
 
         return self
 
-    def __exit__(self, exc_type: type | None, exc_val: BaseException | None, exc_tb: types.TracebackType | None) -> None:
+    def __exit__(
+        self,
+        exc_type: type | None,
+        exc_val: BaseException | None,
+        exc_tb: types.TracebackType | None,
+    ) -> None:
         self.finish(reset_current=True)
 
     def start(self, mark_as_current: bool = False) -> None:
@@ -266,7 +276,12 @@ class TraceImpl(Trace):
         self.start(mark_as_current=True)
         return self
 
-    def __exit__(self, exc_type: type | None, exc_val: BaseException | None, exc_tb: types.TracebackType | None) -> None:
+    def __exit__(
+        self,
+        exc_type: type | None,
+        exc_val: BaseException | None,
+        exc_tb: types.TracebackType | None,
+    ) -> None:
         self.finish(reset_current=exc_type is not GeneratorExit)
 
     def export(self) -> dict[str, Any] | None:

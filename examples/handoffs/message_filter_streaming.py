@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import json
+import logging
 import random
 
 from agents import Agent, HandoffInputData, Runner, function_tool, handoff, trace
 from agents.extensions import handoff_filters
 from agents.models import is_gpt_5_default
+
+logger = logging.getLogger(__name__)
 
 
 @function_tool
@@ -16,7 +19,7 @@ def random_number_tool(max: int) -> int:
 
 def spanish_handoff_message_filter(handoff_message_data: HandoffInputData) -> HandoffInputData:
     if is_gpt_5_default():
-        print("gpt-5 is enabled, so we're not filtering the input history")
+        logger.info("gpt-5 is enabled, so we're not filtering the input history")
         # when using gpt-5, removing some of the items could break things, so we do this filtering only for other models
         return HandoffInputData(
             input_history=handoff_message_data.input_history,
@@ -69,7 +72,7 @@ async def main():
         # 1. Send a regular message to the first agent
         result = await Runner.run(first_agent, input="Hi, my name is Sora.")
 
-        print("Step 1 done")
+        logger.info("Step 1 done")
 
         # 2. Ask it to generate a number
         result = await Runner.run(
@@ -78,7 +81,7 @@ async def main():
             + [{"content": "Can you generate a random number between 0 and 100?", "role": "user"}],
         )
 
-        print("Step 2 done")
+        logger.info("Step 2 done")
 
         # 3. Call the second agent
         result = await Runner.run(
@@ -92,7 +95,7 @@ async def main():
             ],
         )
 
-        print("Step 3 done")
+        logger.info("Step 3 done")
 
         # 4. Cause a handoff to occur
         stream_result = Runner.run_streamed(
@@ -108,15 +111,15 @@ async def main():
         async for _ in stream_result.stream_events():
             pass
 
-        print("Step 4 done")
+        logger.info("Step 4 done")
 
-    print("\n===Final messages===\n")
+    logger.info("\n===Final messages===\n")
 
     # 5. That should have caused spanish_handoff_message_filter to be called, which means the
     # output should be missing the first two messages, and have no tool calls.
     # Let's print the messages to see what happened
     for item in stream_result.to_input_list():
-        print(json.dumps(item, indent=2))
+        logger.info(json.dumps(item, indent=2))
         """
         $python examples/handoffs/message_filter_streaming.py
         Step 1 done
@@ -183,5 +186,6 @@ async def main():
 
 if __name__ == "__main__":
     import asyncio
+    logging.basicConfig(level=logging.INFO)
 
     asyncio.run(main())

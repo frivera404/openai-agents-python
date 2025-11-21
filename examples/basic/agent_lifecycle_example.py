@@ -1,9 +1,12 @@
 import asyncio
 import random
+import logging
 from typing import Any
 
 from agents import Agent, AgentHooks, RunContextWrapper, Runner, Tool, function_tool
 from pydantic import BaseModel
+
+logger = logging.getLogger(__name__)
 
 
 class CustomAgentHooks(AgentHooks):
@@ -13,32 +16,49 @@ class CustomAgentHooks(AgentHooks):
 
     async def on_start(self, context: RunContextWrapper, agent: Agent) -> None:
         self.event_counter += 1
-        print(f"### ({self.display_name}) {self.event_counter}: Agent {agent.name} started")
+        logger.info("### (%s) %d: Agent %s started", self.display_name, self.event_counter, agent.name)
 
     async def on_end(self, context: RunContextWrapper, agent: Agent, output: Any) -> None:
         self.event_counter += 1
-        print(
-            f"### ({self.display_name}) {self.event_counter}: Agent {agent.name} ended with output {output}"
+        logger.info(
+            "### (%s) %d: Agent %s ended with output %s",
+            self.display_name,
+            self.event_counter,
+            agent.name,
+            output,
         )
 
     async def on_handoff(self, context: RunContextWrapper, agent: Agent, source: Agent) -> None:
         self.event_counter += 1
-        print(
-            f"### ({self.display_name}) {self.event_counter}: Agent {source.name} handed off to {agent.name}"
+        logger.info(
+            "### (%s) %d: Agent %s handed off to %s",
+            self.display_name,
+            self.event_counter,
+            source.name,
+            agent.name,
         )
 
     async def on_tool_start(self, context: RunContextWrapper, agent: Agent, tool: Tool) -> None:
         self.event_counter += 1
-        print(
-            f"### ({self.display_name}) {self.event_counter}: Agent {agent.name} started tool {tool.name}"
+        logger.info(
+            "### (%s) %d: Agent %s started tool %s",
+            self.display_name,
+            self.event_counter,
+            agent.name,
+            tool.name,
         )
 
     async def on_tool_end(
         self, context: RunContextWrapper, agent: Agent, tool: Tool, result: str
     ) -> None:
         self.event_counter += 1
-        print(
-            f"### ({self.display_name}) {self.event_counter}: Agent {agent.name} ended tool {tool.name} with result {result}"
+        logger.info(
+            "### (%s) %d: Agent %s ended tool %s with result %s",
+            self.display_name,
+            self.event_counter,
+            agent.name,
+            tool.name,
+            result,
         )
 
 
@@ -90,13 +110,14 @@ async def main() -> None:
             input=f"Generate a random number between 0 and {max_number}.",
         )
     except ValueError:
-        print("Please enter a valid integer.")
+        logger.error("Please enter a valid integer.")
         return
 
-    print("Done!")
+    logger.info("Done!")
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     asyncio.run(main())
 """
 $ python examples/basic/agent_lifecycle_example.py

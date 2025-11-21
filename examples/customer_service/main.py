@@ -18,6 +18,7 @@ from agents import (
     handoff,
     trace,
 )
+import logging
 from agents.extensions.handoff_prompt import RECOMMENDED_PROMPT_PREFIX
 from pydantic import BaseModel
 
@@ -156,20 +157,29 @@ async def main():
             for new_item in result.new_items:
                 agent_name = new_item.agent.name
                 if isinstance(new_item, MessageOutputItem):
-                    print(f"{agent_name}: {ItemHelpers.text_message_output(new_item)}")
+                    logging.getLogger(__name__).info(
+                        "%s: %s", agent_name, ItemHelpers.text_message_output(new_item)
+                    )
                 elif isinstance(new_item, HandoffOutputItem):
-                    print(
-                        f"Handed off from {new_item.source_agent.name} to {new_item.target_agent.name}"
+                    logging.getLogger(__name__).info(
+                        "Handed off from %s to %s",
+                        new_item.source_agent.name,
+                        new_item.target_agent.name,
                     )
                 elif isinstance(new_item, ToolCallItem):
-                    print(f"{agent_name}: Calling a tool")
+                    logging.getLogger(__name__).info("%s: Calling a tool", agent_name)
                 elif isinstance(new_item, ToolCallOutputItem):
-                    print(f"{agent_name}: Tool call output: {new_item.output}")
+                    logging.getLogger(__name__).info(
+                        "%s: Tool call output: %s", agent_name, new_item.output
+                    )
                 else:
-                    print(f"{agent_name}: Skipping item: {new_item.__class__.__name__}")
+                    logging.getLogger(__name__).info(
+                        "%s: Skipping item: %s", agent_name, new_item.__class__.__name__
+                    )
             input_items = result.to_input_list()
             current_agent = result.last_agent
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     asyncio.run(main())

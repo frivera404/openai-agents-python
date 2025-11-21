@@ -1,9 +1,12 @@
 import asyncio
 import json
+import logging
 from dataclasses import dataclass
 from typing import Any
 
 from agents import Agent, AgentOutputSchema, AgentOutputSchemaBase, Runner
+
+logger = logging.getLogger(__name__)
 
 """This example demonstrates how to use an output type that is not in strict mode. Strict mode
 allows us to guarantee valid JSON output, but some schemas are not strict-compatible.
@@ -62,20 +65,21 @@ async def main():
         result = await Runner.run(agent, input)
         raise AssertionError("Should have raised an exception")
     except Exception as e:
-        print(f"Error (expected): {e}")
+        logger.info("Error (expected): %s", e)
 
     # Now let's try again with a non-strict output type. This should work.
     # In some cases, it will raise an error - the schema isn't strict, so the model may
     # produce an invalid JSON object.
     agent.output_type = AgentOutputSchema(OutputType, strict_json_schema=False)
     result = await Runner.run(agent, input)
-    print(result.final_output)
+    logger.info("%s", result.final_output)
 
     # Finally, let's try a custom output type.
     agent.output_type = CustomOutputSchema()
     result = await Runner.run(agent, input)
-    print(result.final_output)
+    logger.info("%s", result.final_output)
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     asyncio.run(main())

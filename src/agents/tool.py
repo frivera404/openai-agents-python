@@ -17,7 +17,12 @@ from openai.types.responses.response_output_item import LocalShellCall, McpAppro
 from openai.types.responses.tool_param import CodeInterpreter, ImageGeneration, Mcp
 from openai.types.responses.web_search_tool import Filters as WebSearchToolFilters
 from openai.types.responses.web_search_tool_param import UserLocation
-from pydantic import BaseModel, TypeAdapter, ValidationError, model_validator  # type: ignore[attr-defined]
+from pydantic import (  # type: ignore[attr-defined]
+    BaseModel,
+    TypeAdapter,
+    ValidationError,
+    model_validator,
+)
 
 from . import _debug
 from .computer import AsyncComputer, Computer

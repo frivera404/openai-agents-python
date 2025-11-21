@@ -1,6 +1,9 @@
 import asyncio
+import logging
 
 from agents import Agent, ItemHelpers, Runner, trace
+
+logger = logging.getLogger(__name__)
 
 """
 This example shows the parallelization pattern. We run the agent three times in parallel, and pick
@@ -45,17 +48,18 @@ async def main():
         ]
 
         translations = "\n\n".join(outputs)
-        print(f"\n\nTranslations:\n\n{translations}")
+        logger.info("\n\nTranslations:\n\n%s", translations)
 
         best_translation = await Runner.run(
             translation_picker,
             f"Input: {msg}\n\nTranslations:\n{translations}",
         )
 
-    print("\n\n-----")
+    logger.info("\n\n-----")
 
-    print(f"Best translation: {best_translation.final_output}")
+    logger.info("Best translation: %s", best_translation.final_output)
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     asyncio.run(main())

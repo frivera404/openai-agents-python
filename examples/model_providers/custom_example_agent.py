@@ -2,6 +2,7 @@ import asyncio
 import os
 
 from agents import Agent, OpenAIChatCompletionsModel, Runner, function_tool, set_tracing_disabled
+import logging
 from openai import AsyncOpenAI
 
 BASE_URL = os.getenv("EXAMPLE_BASE_URL") or ""
@@ -33,7 +34,8 @@ set_tracing_disabled(disabled=True)
 
 @function_tool
 def get_weather(city: str):
-    print(f"[debug] getting weather for {city}")
+    logger = logging.getLogger(__name__)
+    logger.debug(f"[debug] getting weather for {city}")
     return f"The weather in {city} is sunny."
 
 
@@ -47,8 +49,12 @@ async def main():
     )
 
     result = await Runner.run(agent, "What's the weather in Tokyo?")
-    print(result.final_output)
+    logger = logging.getLogger(__name__)
+    logger.info(result.final_output)
 
 
 if __name__ == "__main__":
+    import logging as _logging
+    _logging.basicConfig(level=_logging.INFO)
+
     asyncio.run(main())

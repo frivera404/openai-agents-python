@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 from agents import Agent, Runner
 
@@ -10,11 +11,15 @@ async def main():
     )
 
     result = await Runner.run(agent, "Tell me about recursion in programming.")
-    print(result.final_output)
+    logger = logging.getLogger(__name__)
+    logger.info(result.final_output)
     # Function calls itself,
     # Looping in smaller pieces,
     # Endless by design.
 
 
 if __name__ == "__main__":
+    import logging as _logging
+    _logging.basicConfig(level=_logging.INFO)
+
     asyncio.run(main())

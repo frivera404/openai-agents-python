@@ -1,7 +1,11 @@
 import asyncio
+import logging
 
 from agents import Agent, Runner, Usage, function_tool
 from pydantic import BaseModel
+
+
+logger = logging.getLogger(__name__)
 
 
 class Weather(BaseModel):
@@ -17,11 +21,11 @@ def get_weather(city: str) -> Weather:
 
 
 def print_usage(usage: Usage) -> None:
-    print("\n=== Usage ===")
-    print(f"Requests: {usage.requests}")
-    print(f"Input tokens: {usage.input_tokens}")
-    print(f"Output tokens: {usage.output_tokens}")
-    print(f"Total tokens: {usage.total_tokens}")
+    logger.info("=== Usage ===")
+    logger.info("Requests: %s", usage.requests)
+    logger.info("Input tokens: %s", usage.input_tokens)
+    logger.info("Output tokens: %s", usage.output_tokens)
+    logger.info("Total tokens: %s", usage.total_tokens)
 
 
 async def main() -> None:
@@ -33,12 +37,13 @@ async def main() -> None:
 
     result = await Runner.run(agent, "What's the weather in Tokyo?")
 
-    print("\nFinal output:")
-    print(result.final_output)
+    logger.info("Final output:")
+    logger.info("%s", result.final_output)
 
     # Access usage from the run context
     print_usage(result.context_wrapper.usage)
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     asyncio.run(main())

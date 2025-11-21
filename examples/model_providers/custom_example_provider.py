@@ -49,7 +49,9 @@ CUSTOM_MODEL_PROVIDER = CustomModelProvider()
 
 @function_tool
 def get_weather(city: str):
-    print(f"[debug] getting weather for {city}")
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.debug("[debug] getting weather for %s", city)
     return f"The weather in {city} is sunny."
 
 
@@ -62,7 +64,8 @@ async def main():
         "What's the weather in Tokyo?",
         run_config=RunConfig(model_provider=CUSTOM_MODEL_PROVIDER),
     )
-    print(result.final_output)
+    import logging as _logging
+    _logging.getLogger(__name__).info(result.final_output)
 
     # If you uncomment this, it will use OpenAI directly, not the custom provider
     # result = await Runner.run(
@@ -73,4 +76,7 @@ async def main():
 
 
 if __name__ == "__main__":
+    import logging as _logging
+    _logging.basicConfig(level=_logging.INFO)
+
     asyncio.run(main())

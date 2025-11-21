@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import logging
 
 from agents import (
     Agent,
@@ -9,15 +10,21 @@ from agents import (
     Runner,
 )
 
+logger = logging.getLogger(__name__)
+
 """This example demonstrates how to use the hosted MCP support in the OpenAI Responses API, with
 approval callbacks."""
 
 
 def approval_callback(request: MCPToolApprovalRequest) -> MCPToolApprovalFunctionResult:
+    # Keep the interactive prompt as `input()` so callers can approve interactively.
     answer = input(f"Approve running the tool `{request.data.name}`? (y/n) ")
     result: MCPToolApprovalFunctionResult = {"approve": answer == "y"}
     if not result["approve"]:
         result["reason"] = "User denied"
+        logger.info("User denied approval for tool %s", request.data.name)
+    else:
+        logger.info("User approved tool %s", request.data.name)
     return result
 
 
@@ -41,18 +48,20 @@ async def main(verbose: bool, stream: bool):
         result = Runner.run_streamed(agent, "Which language is this repo written in?")
         async for event in result.stream_events():
             if event.type == "run_item_stream_event":
-                print(f"Got event of type {event.item.__class__.__name__}")
-        print(f"Done streaming; final result: {result.final_output}")
+                logger.debug("Got event of type %s", event.item.__class__.__name__)
+        logger.info("Done streaming; final result: %s", result.final_output)
+        # Expose a consistent `res` variable for downstream verbose inspection.
+        res = result
     else:
         res = await Runner.run(
             agent,
             "Which language is this repo written in? Your MCP server should know what the repo is.",
         )
-        print(res.final_output)
+        logger.info("Run final output: %s", res.final_output)
 
     if verbose:
         for item in res.new_items:
-            print(item)
+            logger.debug("New item: %s", item)
 
 
 if __name__ == "__main__":
@@ -61,4 +70,5 @@ if __name__ == "__main__":
     parser.add_argument("--stream", action="store_true", default=False)
     args = parser.parse_args()
 
+    logging.basicConfig(level=logging.INFO)
     asyncio.run(main(args.verbose, args.stream))

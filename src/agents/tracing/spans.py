@@ -122,7 +122,12 @@ class Span(abc.ABC, Generic[TSpanData]):
         pass
 
     @abc.abstractmethod
-    def __exit__(self, exc_type: type | None, exc_val: BaseException | None, exc_tb: types.TracebackType | None) -> None:
+    def __exit__(
+        self,
+        exc_type: type | None,
+        exc_val: BaseException | None,
+        exc_tb: types.TracebackType | None,
+    ) -> None:
         pass
 
     @property
@@ -218,7 +223,12 @@ class NoOpSpan(Span[TSpanData]):
         self.start(mark_as_current=True)
         return self
 
-    def __exit__(self, exc_type: type | None, exc_val: BaseException | None, exc_tb: types.TracebackType | None) -> None:
+    def __exit__(
+        self,
+        exc_type: type | None,
+        exc_val: BaseException | None,
+        exc_tb: types.TracebackType | None,
+    ) -> None:
         reset_current = True
         if exc_type is GeneratorExit:
             logger.debug("GeneratorExit, skipping span reset")
@@ -317,7 +327,12 @@ class SpanImpl(Span[TSpanData]):
         self.start(mark_as_current=True)
         return self
 
-    def __exit__(self, exc_type: type | None, exc_val: BaseException | None, exc_tb: types.TracebackType | None) -> None:
+    def __exit__(
+        self,
+        exc_type: type | None,
+        exc_val: BaseException | None,
+        exc_tb: types.TracebackType | None,
+    ) -> None:
         reset_current = True
         if exc_type is GeneratorExit:
             logger.debug("GeneratorExit, skipping span reset")

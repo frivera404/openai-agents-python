@@ -545,6 +545,7 @@ class LitellmModel(Model):
     def _merge_headers(self, model_settings: ModelSettings) -> dict[str, Any]:
         return {**HEADERS, **(model_settings.extra_headers or {}), **(HEADERS_OVERRIDE.get() or {})}
 
+
 class LitellmConverter:
     @classmethod
     def convert_message_to_openai(

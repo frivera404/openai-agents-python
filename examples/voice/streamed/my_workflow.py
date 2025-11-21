@@ -1,4 +1,5 @@
 import random
+import logging
 from collections.abc import AsyncIterator
 from typing import Callable
 
@@ -10,7 +11,8 @@ from agents.voice import VoiceWorkflowBase, VoiceWorkflowHelper
 @function_tool
 def get_weather(city: str) -> str:
     """Get the weather for a given city."""
-    print(f"[debug] get_weather called with city: {city}")
+    logger = logging.getLogger(__name__)
+    logger.debug("[debug] get_weather called with city: %s", city)
     choices = ["sunny", "cloudy", "rainy", "snowy"]
     return f"The weather in {city} is {random.choice(choices)}."
 
@@ -21,7 +23,7 @@ spanish_agent = Agent(
     instructions=prompt_with_handoff_instructions(
         "You're speaking to a human, so be polite and concise. Speak in Spanish.",
     ),
-    model="gpt-4.1",
+    model="gpt-4o",
 )
 
 agent = Agent(
@@ -29,7 +31,7 @@ agent = Agent(
     instructions=prompt_with_handoff_instructions(
         "You're speaking to a human, so be polite and concise. If the user speaks in Spanish, handoff to the spanish agent.",
     ),
-    model="gpt-4.1",
+    model="gpt-4o",
     handoffs=[spanish_agent],
     tools=[get_weather],
 )

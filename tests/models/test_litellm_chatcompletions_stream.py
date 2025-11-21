@@ -14,9 +14,7 @@ from openai.types.chat.chat_completion_chunk import (
     ChoiceDeltaToolCallFunction,
 )
 from openai.types.completion_usage import (
-    CompletionTokensDetails,
     CompletionUsage,
-    PromptTokensDetails,
 )
 from openai.types.responses import (
     Response,
@@ -54,8 +52,6 @@ async def test_stream_response_yields_events_for_text_content(monkeypatch) -> No
             completion_tokens=5,
             prompt_tokens=7,
             total_tokens=12,
-            completion_tokens_details=CompletionTokensDetails(reasoning_tokens=2),
-            prompt_tokens_details=PromptTokensDetails(cached_tokens=6),
         ),
     )
 

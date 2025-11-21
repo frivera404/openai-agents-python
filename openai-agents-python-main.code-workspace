@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../../Downloads/vertex-ai-agent-builder-ui"
+		}
+	],
+	"settings": {
+		"powershell.cwd": "openai-agents-python-main"
+	}
+}

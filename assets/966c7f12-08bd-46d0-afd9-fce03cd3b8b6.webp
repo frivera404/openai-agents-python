@@ -1,0 +1,7 @@
+THIS IS A PLACEHOLDER FILE FOR `966c7f12-08bd-46d0-afd9-fce03cd3b8b6.webp`.
+
+I could not access the original image at `C:\Users\frive\OneDrive\Desktop\\.Logo\\966c7f12-08bd-46d0-afd9-fce03cd3b8b6.webp` from this environment.
+
+Please replace this file with the actual `.webp` image file from your OneDrive path. The server is configured to use this path via the `LOGO_PATH` env var.
+
+Binary images are not included here due to workspace access restrictions; this placeholder ensures the path exists and avoids runtime errors until you copy the real image.

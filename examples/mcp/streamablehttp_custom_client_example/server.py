@@ -1,5 +1,6 @@
 import random
 
+import logging
 from mcp.server.fastmcp import FastMCP
 
 # Create server
@@ -9,13 +10,13 @@ mcp = FastMCP("Echo Server")
 @mcp.tool()
 def add(a: int, b: int) -> int:
     """Add two numbers"""
-    print(f"[debug-server] add({a}, {b})")
+    logging.getLogger(__name__).debug("[debug-server] add(%s, %s)", a, b)
     return a + b
 
 
 @mcp.tool()
 def get_secret_word() -> str:
-    print("[debug-server] get_secret_word()")
+    logging.getLogger(__name__).debug("[debug-server] get_secret_word()")
     return random.choice(["apple", "banana", "cherry"])
 
 

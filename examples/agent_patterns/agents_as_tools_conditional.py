@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 from agents import Agent, AgentBase, RunContextWrapper, Runner, trace
 from pydantic import BaseModel
@@ -70,15 +71,16 @@ orchestrator = Agent(
 
 async def main():
     """Interactive demo with LLM interaction."""
-    print("Agents-as-Tools with Conditional Enabling\n")
-    print(
+    logger = logging.getLogger(__name__)
+    logger.info("Agents-as-Tools with Conditional Enabling\n")
+    logger.info(
         "This demonstrates how language response tools are dynamically enabled based on user preferences.\n"
     )
 
-    print("Choose language preference:")
-    print("1. Spanish only (1 tool)")
-    print("2. French and Spanish (2 tools)")
-    print("3. European languages (3 tools)")
+    logger.info("Choose language preference:")
+    logger.info("1. Spanish only (1 tool)")
+    logger.info("2. French and Spanish (2 tools)")
+    logger.info("3. European languages (3 tools)")
 
     choice = input("\nSelect option (1-3): ").strip()
     preference_map = {"1": "spanish_only", "2": "french_spanish", "3": "european"}
@@ -89,15 +91,15 @@ async def main():
     available_tools = await orchestrator.get_all_tools(context)
     tool_names = [tool.name for tool in available_tools]
 
-    print(f"\nLanguage preference: {language_preference}")
-    print(f"Available tools: {', '.join(tool_names)}")
-    print(f"The LLM will only see and can use these {len(available_tools)} tools\n")
+    logger.info(f"\nLanguage preference: {language_preference}")
+    logger.info(f"Available tools: {', '.join(tool_names)}")
+    logger.info(f"The LLM will only see and can use these {len(available_tools)} tools\n")
 
     # Get user request
     user_request = input("Ask a question and see responses in available languages:\n")
 
     # Run with LLM interaction
-    print("\nProcessing request...")
+    logger.info("\nProcessing request...")
     with trace("Conditional tool access"):
         result = await Runner.run(
             starting_agent=orchestrator,
@@ -105,8 +107,11 @@ async def main():
             context=context.context,
         )
 
-        print(f"\nResponse:\n{result.final_output}")
+        logger.info(f"\nResponse:\n{result.final_output}")
 
 
 if __name__ == "__main__":
+    import logging as _logging
+    _logging.basicConfig(level=_logging.INFO)
+
     asyncio.run(main())

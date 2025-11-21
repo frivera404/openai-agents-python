@@ -1,14 +1,17 @@
 import asyncio
+import logging
 
 from agents import Agent, FileSearchTool, Runner, trace
 from openai import OpenAI
+
+logger = logging.getLogger(__name__)
 
 
 async def main():
     vector_store_id: str | None = None
 
     if vector_store_id is None:
-        print("### Preparing vector store:\n")
+        logger.info("### Preparing vector store:\n")
         # Create a new vector store and index a file
         client = OpenAI()
         text = "Arrakis, the desert planet in Frank Herbert's 'Dune,' was inspired by the scarcity of water as a metaphor for oil and other finite resources."
@@ -16,16 +19,16 @@ async def main():
             file=("example.txt", text.encode("utf-8")),
             purpose="assistants",
         )
-        print(f"File uploaded: {file_upload.to_dict()}")
+        logger.info("File uploaded: %s", file_upload.to_dict())
 
         vector_store = client.vector_stores.create(name="example-vector-store")
-        print(f"Vector store created: {vector_store.to_dict()}")
+        logger.info("Vector store created: %s", vector_store.to_dict())
 
         indexed = client.vector_stores.files.create_and_poll(
             vector_store_id=vector_store.id,
             file_id=file_upload.id,
         )
-        print(f"Stored files in vector store: {indexed.to_dict()}")
+        logger.info("Stored files in vector store: %s", indexed.to_dict())
         vector_store_id = vector_store.id
 
     # Create an agent that can search the vector store
@@ -46,19 +49,20 @@ async def main():
             agent, "Be concise, and tell me 1 sentence about Arrakis I might not know."
         )
 
-        print("\n### Final output:\n")
-        print(result.final_output)
+        logger.info("\n### Final output:\n")
+        logger.info("%s", result.final_output)
         """
         Arrakis, the desert planet in Frank Herbert's "Dune," was inspired by the scarcity of water
         as a metaphor for oil and other finite resources.
         """
 
-        print("\n### Output items:\n")
-        print("\n".join([str(out.raw_item) + "\n" for out in result.new_items]))
+        logger.info("\n### Output items:\n")
+        logger.info("%s", "\n".join([str(out.raw_item) + "\n" for out in result.new_items]))
         """
         {"id":"...", "queries":["Arrakis"], "results":[...]}
         """
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     asyncio.run(main())

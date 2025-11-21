@@ -2,6 +2,7 @@ import asyncio
 import random
 from dataclasses import dataclass
 from typing import Literal
+import logging
 
 from agents import Agent, RunContextWrapper, Runner
 
@@ -31,16 +32,20 @@ agent = Agent(
 
 async def main():
     context = CustomContext(style=random.choice(["haiku", "pirate", "robot"]))
-    print(f"Using style: {context.style}\n")
+    logger = logging.getLogger(__name__)
+    logger.info(f"Using style: {context.style}\n")
 
     user_message = "Tell me a joke."
-    print(f"User: {user_message}")
+    logger.info(f"User: {user_message}")
     result = await Runner.run(agent, user_message, context=context)
 
-    print(f"Assistant: {result.final_output}")
+    logger.info(f"Assistant: {result.final_output}")
 
 
 if __name__ == "__main__":
+    import logging as _logging
+    _logging.basicConfig(level=_logging.INFO)
+
     asyncio.run(main())
 
 

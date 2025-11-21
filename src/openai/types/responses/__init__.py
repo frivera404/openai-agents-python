@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import sys
 import types
@@ -13,6 +13,7 @@ class Response(BaseModel):
     output: Any | None
     # `usage` holds token usage details
     usage: Any | None
+
     def model_copy(self, *, update: dict[str, Any] | None = None) -> Response:
         return super().model_copy(update=update)  # type: ignore[return-value]
 
@@ -30,6 +31,7 @@ class ResponseIncludable(BaseModel):
     The real SDK exposes a union/enum here; for static checking a permissive
     BaseModel subclass is sufficient.
     """
+
     pass
 
 
@@ -119,6 +121,7 @@ class ResponseStreamEvent(BaseModel):
     type: str | None
     response: Response | None
     delta: Any | None
+
 
 class ResponseOutputItem(BaseModel):
     pass
@@ -391,9 +394,3 @@ __all__ = [
     "Message",
     "response_create_params",
 ]
-
-
-
-
-
-

@@ -1,8 +1,12 @@
 import asyncio
+import logging
 from typing import Annotated
 
 from agents import Agent, Runner, function_tool
 from pydantic import BaseModel, Field
+
+
+logger = logging.getLogger(__name__)
 
 
 class Weather(BaseModel):
@@ -14,7 +18,7 @@ class Weather(BaseModel):
 @function_tool
 def get_weather(city: Annotated[str, "The city to get the weather for"]) -> Weather:
     """Get the current weather information for a specified city."""
-    print("[debug] get_weather called")
+    logger.debug("get_weather called for city=%s", city)
     return Weather(city=city, temperature_range="14-20C", conditions="Sunny with wind.")
 
 
@@ -27,9 +31,9 @@ agent = Agent(
 
 async def main():
     result = await Runner.run(agent, input="What's the weather in Tokyo?")
-    print(result.final_output)
-    # The weather in Tokyo is sunny.
+    logger.info("%s", result.final_output)
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     asyncio.run(main())

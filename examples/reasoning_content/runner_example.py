@@ -11,16 +11,19 @@ To run this example, you need to:
 
 import asyncio
 import os
+import logging
 
 from agents import Agent, ModelSettings, Runner, trace
 from agents.items import ReasoningItem
 from openai.types.shared.reasoning import Reasoning
 
+logger = logging.getLogger(__name__)
+
 MODEL_NAME = os.getenv("EXAMPLE_MODEL_NAME") or "gpt-5"
 
 
 async def main():
-    print(f"Using model: {MODEL_NAME}")
+    logger.info("Using model: %s", MODEL_NAME)
 
     # Create an agent with a model that supports reasoning content
     agent = Agent(
@@ -32,7 +35,7 @@ async def main():
 
     # Example 1: Non-streaming response
     with trace("Reasoning Content - Non-streaming"):
-        print("\n=== Example 1: Non-streaming response ===")
+        logger.info("\n=== Example 1: Non-streaming response ===")
         result = await Runner.run(
             agent, "What is the square root of 841? Please explain your reasoning."
         )
@@ -43,28 +46,29 @@ async def main():
                 reasoning_content = item.raw_item.summary[0].text
                 break
 
-        print("\n### Reasoning Content:")
-        print(reasoning_content or "No reasoning content provided")
-        print("\n### Final Output:")
-        print(result.final_output)
+        logger.info("\n### Reasoning Content:")
+        logger.info("%s", reasoning_content or "No reasoning content provided")
+        logger.info("\n### Final Output:")
+        logger.info("%s", result.final_output)
 
     # Example 2: Streaming response
     with trace("Reasoning Content - Streaming"):
-        print("\n=== Example 2: Streaming response ===")
+        logger.info("\n=== Example 2: Streaming response ===")
         stream = Runner.run_streamed(agent, "What is 15 x 27? Please explain your reasoning.")
         output_text_already_started = False
         async for event in stream.stream_events():
             if event.type == "raw_response_event":
                 if event.data.type == "response.reasoning_summary_text.delta":
-                    print(f"\033[33m{event.data.delta}\033[0m", end="", flush=True)
+                    logger.info("%s", event.data.delta)
                 elif event.data.type == "response.output_text.delta":
                     if not output_text_already_started:
-                        print("\n")
+                        logger.info("\n")
                         output_text_already_started = True
-                    print(f"\033[32m{event.data.delta}\033[0m", end="", flush=True)
+                    logger.info("%s", event.data.delta)
 
-        print("\n")
+        logger.info("\n")
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     asyncio.run(main())

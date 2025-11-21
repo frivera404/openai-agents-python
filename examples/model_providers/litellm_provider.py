@@ -3,13 +3,14 @@ from __future__ import annotations
 import asyncio
 
 from agents import Agent, Runner, function_tool, set_tracing_disabled
+import logging
 from agents.extensions.models.litellm_model import LitellmModel
 
 """This example uses the LitellmModel directly, to hit any model provider.
 You can run it like this:
-uv run examples/model_providers/litellm_provider.py --model anthropic/claude-3-5-sonnet-20240620
+uv run examples/model_providers/litellm_provider.py --model openai/gpt-4o
 or
-uv run examples/model_providers/litellm_provider.py --model gemini/gemini-2.0-flash
+uv run examples/model_providers/litellm_provider.py --model anthropic/claude-3-5-sonnet-20240620
 
 Find more providers here: https://docs.litellm.ai/docs/providers
 """
@@ -19,7 +20,8 @@ set_tracing_disabled(disabled=True)
 
 @function_tool
 def get_weather(city: str):
-    print(f"[debug] getting weather for {city}")
+    logger = logging.getLogger(__name__)
+    logger.debug("[debug] getting weather for %s", city)
     return f"The weather in {city} is sunny."
 
 
@@ -32,7 +34,7 @@ async def main(model: str, api_key: str):
     )
 
     result = await Runner.run(agent, "What's the weather in Tokyo?")
-    print(result.final_output)
+    logging.getLogger(__name__).info(result.final_output)
 
 
 if __name__ == "__main__":

@@ -11,6 +11,7 @@ To run this example, you need to:
 
 import asyncio
 import os
+import logging
 from typing import Any, cast
 
 from agents import ModelSettings
@@ -18,6 +19,8 @@ from agents.models.interface import ModelTracing
 from agents.models.openai_provider import OpenAIProvider
 from openai.types.responses import ResponseOutputRefusal, ResponseOutputText
 from openai.types.shared.reasoning import Reasoning
+
+logger = logging.getLogger(__name__)
 
 MODEL_NAME = os.getenv("EXAMPLE_MODEL_NAME") or "gpt-5"
 
@@ -30,8 +33,8 @@ async def stream_with_reasoning_content():
     provider = OpenAIProvider()
     model = provider.get_model(MODEL_NAME)
 
-    print("\n=== Streaming Example ===")
-    print("Prompt: Write a haiku about recursion in programming")
+    logger.info("\n=== Streaming Example ===")
+    logger.info("Prompt: Write a haiku about recursion in programming")
 
     reasoning_content = ""
     regular_content = ""
@@ -51,16 +54,16 @@ async def stream_with_reasoning_content():
     ):
         if event.type == "response.reasoning_summary_text.delta":
             # Yellow for reasoning content
-            print(f"\033[33m{event.delta}\033[0m", end="", flush=True)
+            logger.info("%s", event.delta)
             reasoning_content += event.delta
         elif event.type == "response.output_text.delta":
             if not output_text_already_started:
-                print("\n")
+                logger.info("\n")
                 output_text_already_started = True
             # Green for regular content
-            print(f"\033[32m{event.delta}\033[0m", end="", flush=True)
+            logger.info("%s", event.delta)
             regular_content += event.delta
-    print("\n")
+    logger.info("\n")
 
 
 async def get_response_with_reasoning_content():
@@ -71,8 +74,8 @@ async def get_response_with_reasoning_content():
     provider = OpenAIProvider()
     model = provider.get_model(MODEL_NAME)
 
-    print("\n=== Non-streaming Example ===")
-    print("Prompt: Explain the concept of recursion in programming")
+    logger.info("\n=== Non-streaming Example ===")
+    logger.info("Prompt: Explain the concept of recursion in programming")
 
     response = await model.get_response(
         system_instructions="You are a helpful assistant that explains technical concepts clearly.",
@@ -103,11 +106,11 @@ async def get_response_with_reasoning_content():
                     refusal_item = cast(Any, content_item)
                     regular_content = refusal_item.refusal
 
-    print("\n\n### Reasoning Content:")
-    print(reasoning_content or "No reasoning content provided")
-    print("\n\n### Regular Content:")
-    print(regular_content or "No regular content provided")
-    print("\n")
+    logger.info("\n\n### Reasoning Content:")
+    logger.info("%s", reasoning_content or "No reasoning content provided")
+    logger.info("\n\n### Regular Content:")
+    logger.info("%s", regular_content or "No regular content provided")
+    logger.info("\n")
 
 
 async def main():
@@ -115,10 +118,11 @@ async def main():
         await stream_with_reasoning_content()
         await get_response_with_reasoning_content()
     except Exception as e:
-        print(f"Error: {e}")
-        print("\nNote: This example requires a model that supports reasoning content.")
-        print("You may need to use a specific model like gpt-5 or similar.")
+        logger.error("Error: %s", e)
+        logger.info("\nNote: This example requires a model that supports reasoning content.")
+        logger.info("You may need to use a specific model like gpt-5 or similar.")
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     asyncio.run(main())

@@ -1,0 +1,57 @@
+{
+  "openai_assistant": {
+    "assistant_id": "asst_70Xrb6BnK0CtVx3qm89J6nEQ",
+    "vector_store_id": "vs_1BREGwaFlfMYaIIOlzW7xCuC",
+    "api_key": null,
+    "model": "gpt-4.1",
+    "model_configuration": "4.1",
+    "response_format": "json.object",
+    "tools": {
+      "file_search": {
+        "name": "File Search",
+        "description": "Search the project's vector store",
+        "vector_store_id": "vs_1BREGwaFlfMYaIIOlzW7xCuC",
+        "id": "123vector store"
+      },
+      "code_interpreter": {
+        "name": "Code Interpreter",
+        "description": "Execute Python code snippets for analysis and transformation",
+        "enabled": true
+      },
+      "functions": {
+        "add_all_assistants": {
+          "description": "Function that will be called to add or register assistants programmatically",
+          "invoked_by": "Add All Assistants"
+        }
+      }
+    },
+    "description": "Affiliate Marketing Manager assistant with vector store access and code interpreter enabled"
+  },
+  "mcp_servers": {
+    "cloudmcp-router": {
+      "command": "npx",
+      "args": ["mcp-remote", "https://18268932-48e7550c72e668.router.cloudmcp.run/mcp"],
+      "env": {},
+      "type": "stdio",
+      "description": "Cloud MCP Router for external service access"
+    },
+    "meta-api-mcp-server": {
+      "command": "npx",
+      "args": ["-y", "meta-api-mcp-server"],
+      "env": {},
+      "type": "stdio",
+      "description": "Meta API MCP Server with 69 tools for comprehensive API access"
+    }
+  },
+  "environment_variables": {
+    "OPENAI_API_KEY": "your-openai-api-key-here",
+    "CLOUDMCP_TOKEN": "your-cloud-mcp-token"
+  },
+  "features": {
+    "vector_store": "Knowledge base with file search capabilities",
+    "mcp_integration": "Access to external services via MCP protocol",
+    "conversation_threads": "Persistent conversation context",
+    "tool_execution": "Automated tool calling for external APIs",
+    "file_processing": "Document analysis and processing"
+  }
+}

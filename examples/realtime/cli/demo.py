@@ -2,6 +2,7 @@ import asyncio
 import queue
 import sys
 import threading
+import logging
 from typing import Any
 
 import numpy as np
@@ -26,11 +27,7 @@ ENERGY_THRESHOLD = 0.015  # RMS threshold for barge‑in while assistant is spea
 PREBUFFER_CHUNKS = 3  # initial jitter buffer (~120ms with 40ms chunks)
 FADE_OUT_MS = 12  # short fade to avoid clicks when interrupting
 
-# Set up logging for OpenAI agents SDK
-# logging.basicConfig(
-#     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-# )
-# logger.logger.setLevel(logging.ERROR)
+logger = logging.getLogger(__name__)
 
 
 @function_tool
@@ -82,7 +79,7 @@ class NoUIDemo:
     def _output_callback(self, outdata, frames: int, time, status) -> None:
         """Callback for audio output - handles continuous audio stream from server."""
         if status:
-            print(f"Output callback status: {status}")
+            logger.warning("Output callback status: %s", status)
 
         # Handle interruption with a short fade-out to prevent clicks.
         if self.interrupt_event.is_set():
@@ -202,7 +199,7 @@ class NoUIDemo:
                     self.chunk_position = 0
 
     async def run(self) -> None:
-        print("Connecting, may take a few seconds...")
+        logger.info("Connecting, may take a few seconds...")
 
         # Initialize audio player with callback
         chunk_size = int(SAMPLE_RATE * CHUNK_LENGTH_S)
@@ -230,11 +227,11 @@ class NoUIDemo:
             }
             async with await runner.run(model_config=model_config) as session:
                 self.session = session
-                print("Connected. Starting audio recording...")
+                logger.info("Connected. Starting audio recording...")
 
                 # Start audio recording
                 await self.start_audio_recording()
-                print("Audio recording started. You can start speaking - expect lots of logs!")
+                logger.info("Audio recording started. You can start speaking - expect lots of logs!")
 
                 # Process session events
                 async for event in session:
@@ -247,7 +244,7 @@ class NoUIDemo:
             if self.audio_player:
                 self.audio_player.close()
 
-        print("Session ended")
+        logger.info("Session ended")
 
     async def start_audio_recording(self) -> None:
         """Start recording audio from the microphone."""
@@ -311,7 +308,7 @@ class NoUIDemo:
                 await asyncio.sleep(0)
 
         except Exception as e:
-            print(f"Audio capture error: {e}")
+            logger.exception("Audio capture error: %s", e)
         finally:
             if self.audio_stream and self.audio_stream.active:
                 self.audio_stream.stop()
@@ -321,46 +318,47 @@ class NoUIDemo:
     async def _on_event(self, event: RealtimeSessionEvent) -> None:
         """Handle session events."""
         try:
-            if event.type == "agent_start":
-                print(f"Agent started: {event.agent.name}")
-            elif event.type == "agent_end":
-                print(f"Agent ended: {event.agent.name}")
-            elif event.type == "handoff":
-                print(f"Handoff from {event.from_agent.name} to {event.to_agent.name}")
-            elif event.type == "tool_start":
-                print(f"Tool started: {event.tool.name}")
-            elif event.type == "tool_end":
-                print(f"Tool ended: {event.tool.name}; output: {event.output}")
-            elif event.type == "audio_end":
-                print("Audio ended")
+                if event.type == "agent_start":
+                    logger.info("Agent started: %s", event.agent.name)
+                elif event.type == "agent_end":
+                    logger.info("Agent ended: %s", event.agent.name)
+                elif event.type == "handoff":
+                    logger.info("Handoff from %s to %s", event.from_agent.name, event.to_agent.name)
+                elif event.type == "tool_start":
+                    logger.info("Tool started: %s", event.tool.name)
+                elif event.type == "tool_end":
+                    logger.info("Tool ended: %s; output: %s", event.tool.name, event.output)
+                elif event.type == "audio_end":
+                    logger.info("Audio ended")
             elif event.type == "audio":
                 # Enqueue audio for callback-based playback with metadata
                 np_audio = np.frombuffer(event.audio.data, dtype=np.int16)
                 # Non-blocking put; queue is unbounded, so drops won’t occur.
                 self.output_queue.put_nowait((np_audio, event.item_id, event.content_index))
-            elif event.type == "audio_interrupted":
-                print("Audio interrupted")
+                elif event.type == "audio_interrupted":
+                    logger.info("Audio interrupted")
                 # Begin graceful fade + flush in the audio callback and rebuild jitter buffer.
                 self.prebuffering = True
                 self.interrupt_event.set()
-            elif event.type == "error":
-                print(f"Error: {event.error}")
+                elif event.type == "error":
+                    logger.error("Error: %s", event.error)
             elif event.type == "history_updated":
                 pass  # Skip these frequent events
             elif event.type == "history_added":
                 pass  # Skip these frequent events
-            elif event.type == "raw_model_event":
-                print(f"Raw model event: {_truncate_str(str(event.data), 200)}")
-            else:
-                print(f"Unknown event type: {event.type}")
+                elif event.type == "raw_model_event":
+                    logger.debug("Raw model event: %s", _truncate_str(str(event.data), 200))
+                else:
+                    logger.debug("Unknown event type: %s", event.type)
         except Exception as e:
-            print(f"Error processing event: {_truncate_str(str(e), 200)}")
+            logger.exception("Error processing event: %s", _truncate_str(str(e), 200))
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     demo = NoUIDemo()
     try:
         asyncio.run(demo.run())
     except KeyboardInterrupt:
-        print("\nExiting...")
+        logger.info("\nExiting...")
         sys.exit(0)

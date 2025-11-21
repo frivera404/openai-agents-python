@@ -1,0 +1,35 @@
+{
+  "name": "openai-agents-sdk-ui",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:client": "vite",
+    "dev:server": "ts-node server.ts",
+    "build": "vite build",
+    "build:server": "tsc server.ts --outDir dist --target es2020 --module commonjs --esModuleInterop",
+    "preview": "vite preview",
+    "start": "node dist/server.js",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "express": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@types/express": "^4.17.21",
+    "@types/cors": "^2.8.17",
+    "@types/mocha": "^10.0.10",
+    "@types/vscode": "^1.79.1",
+    "@vitejs/plugin-react": "^5.0.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0",
+    "ts-node": "^10.9.2",
+    "concurrently": "^8.2.2"
+  }
+}

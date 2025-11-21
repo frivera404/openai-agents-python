@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 
 from agents import Agent, Runner
 from openai.types.responses import ResponseTextDeltaEvent
@@ -59,9 +60,10 @@ async def main():
     next_guardrail_check_len = 300
     guardrail_task = None
 
+    logger = logging.getLogger(__name__)
     async for event in result.stream_events():
         if event.type == "raw_response_event" and isinstance(event.data, ResponseTextDeltaEvent):
-            print(event.data.delta, end="", flush=True)
+            logger.info(event.data.delta)
             current_text += event.data.delta
 
             # Check if it's time to run the guardrail check
@@ -69,7 +71,7 @@ async def main():
             # alternate implementation is to have N guardrails running, or cancel the previous
             # one.
             if len(current_text) >= next_guardrail_check_len and not guardrail_task:
-                print("Running guardrail check")
+                logger.info("Running guardrail check")
                 guardrail_task = asyncio.create_task(check_guardrail(current_text))
                 next_guardrail_check_len += 300
 
@@ -77,16 +79,17 @@ async def main():
         if guardrail_task and guardrail_task.done():
             guardrail_result = guardrail_task.result()
             if not guardrail_result.is_readable_by_ten_year_old:
-                print("\n\n================\n\n")
-                print(f"Guardrail triggered. Reasoning:\n{guardrail_result.reasoning}")
+                logger.info("\n\n================\n\n")
+                logger.info("Guardrail triggered. Reasoning:\n%s", guardrail_result.reasoning)
                 break
 
     # Do one final check on the final output
     guardrail_result = await check_guardrail(current_text)
     if not guardrail_result.is_readable_by_ten_year_old:
-        print("\n\n================\n\n")
-        print(f"Guardrail triggered. Reasoning:\n{guardrail_result.reasoning}")
+        logger.info("\n\n================\n\n")
+        logger.info("Guardrail triggered. Reasoning:\n%s", guardrail_result.reasoning)
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     asyncio.run(main())

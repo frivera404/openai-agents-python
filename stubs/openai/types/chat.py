@@ -4,6 +4,7 @@ from typing import Any
 
 # Minimal placeholders for chat-related types referenced by the codebase.
 
+
 class ChatCompletionMessageParam(dict[str, Any]):
     pass
 
@@ -23,14 +24,18 @@ class ChatCompletionMessage:
 class ChatCompletionUserMessageParam(dict[str, Any]):
     pass
 
+
 class ChatCompletionToolMessageParam(dict[str, Any]):
     pass
+
 
 class ChatCompletionContentPartTextParam(dict[str, Any]):
     pass
 
+
 class ChatCompletionContentPartImageParam(dict[str, Any]):
     pass
+
 
 # Add other placeholders as needed.
 

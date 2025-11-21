@@ -21,7 +21,8 @@ async def main():
     )
 
     result = await Runner.run(agent, "What is the largest country in South America?")
-    print(result.final_output)
+    import logging
+    logging.getLogger(__name__).info(result.final_output)
     # Brazil
 
     result = await Runner.run(
@@ -29,7 +30,7 @@ async def main():
         "What is the capital of that country?",
         previous_response_id=result.last_response_id,
     )
-    print(result.final_output)
+    logging.getLogger(__name__).info(result.final_output)
     # Brasilia
 
 
@@ -43,9 +44,9 @@ async def main_stream():
 
     async for event in result.stream_events():
         if event.type == "raw_response_event" and event.data.type == "response.output_text.delta":
-            print(event.data.delta, end="", flush=True)
+            logging.getLogger(__name__).info(event.data.delta)
 
-    print()
+    logging.getLogger(__name__).info("")
 
     result = Runner.run_streamed(
         agent,
@@ -55,7 +56,7 @@ async def main_stream():
 
     async for event in result.stream_events():
         if event.type == "raw_response_event" and event.data.type == "response.output_text.delta":
-            print(event.data.delta, end="", flush=True)
+            logging.getLogger(__name__).info(event.data.delta)
 
 
 if __name__ == "__main__":

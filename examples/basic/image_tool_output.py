@@ -1,5 +1,7 @@
 import asyncio
 
+import logging
+
 from agents import Agent, Runner, ToolOutputImage, ToolOutputImageDict, function_tool
 
 return_typed_dict = True
@@ -9,7 +11,7 @@ return_typed_dict = True
 def fetch_random_image() -> ToolOutputImage | ToolOutputImageDict:
     """Fetch a random image."""
 
-    print("Image tool called")
+    logging.getLogger(__name__).info("Image tool called")
     if return_typed_dict:
         return {
             "type": "image",
@@ -34,7 +36,7 @@ async def main():
         agent,
         input="Fetch an image using the random_image tool, then describe it",
     )
-    print(result.final_output)
+    logging.getLogger(__name__).info(result.final_output)
     """The image shows the iconic Golden Gate Bridge, a large suspension bridge painted in a
     bright reddish-orange color..."""
 

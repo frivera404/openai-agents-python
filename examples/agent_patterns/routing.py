@@ -1,5 +1,6 @@
 import asyncio
 import uuid
+import logging
 
 from agents import Agent, RawResponsesStreamEvent, Runner, TResponseInputItem, trace
 from openai.types.responses import ResponseContentPartDoneEvent, ResponseTextDeltaEvent
@@ -53,12 +54,14 @@ async def main():
                     continue
                 data = event.data
                 if isinstance(data, ResponseTextDeltaEvent):
-                    print(data.delta, end="", flush=True)
-                elif isinstance(data, ResponseContentPartDoneEvent):
-                    print("\n")
+                        logger = logging.getLogger(__name__)
+                        logger.info(data.delta)
+                    elif isinstance(data, ResponseContentPartDoneEvent):
+                        logger.info("\n")
 
         inputs = result.to_input_list()
-        print("\n")
+        logger = logging.getLogger(__name__)
+        logger.info("\n")
 
         user_msg = input("Enter a message: ")
         inputs.append({"content": user_msg, "role": "user"})

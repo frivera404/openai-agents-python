@@ -12,6 +12,7 @@ from agents import (
     Usage,
     function_tool,
 )
+import logging
 from agents.items import ModelResponse, TResponseInputItem
 from agents.tool_context import ToolContext
 from pydantic import BaseModel
@@ -23,7 +24,7 @@ class LoggingHooks(AgentHooks[Any]):
         context: RunContextWrapper[Any],
         agent: Agent[Any],
     ) -> None:
-        print(f"#### {agent.name} is starting.")
+        logging.getLogger(__name__).info("#### %s is starting.", agent.name)
 
     async def on_end(
         self,
@@ -31,7 +32,7 @@ class LoggingHooks(AgentHooks[Any]):
         agent: Agent[Any],
         output: Any,
     ) -> None:
-        print(f"#### {agent.name} produced output: {output}.")
+        logging.getLogger(__name__).info("#### %s produced output: %s.", agent.name, output)
 
 
 class ExampleHooks(RunHooks):
@@ -43,8 +44,11 @@ class ExampleHooks(RunHooks):
 
     async def on_agent_start(self, context: RunContextWrapper, agent: Agent) -> None:
         self.event_counter += 1
-        print(
-            f"### {self.event_counter}: Agent {agent.name} started. Usage: {self._usage_to_str(context.usage)}"
+        logging.getLogger(__name__).info(
+            "### %s: Agent %s started. Usage: %s",
+            self.event_counter,
+            agent.name,
+            self._usage_to_str(context.usage),
         )
 
     async def on_llm_start(
@@ -55,18 +59,26 @@ class ExampleHooks(RunHooks):
         input_items: list[TResponseInputItem],
     ) -> None:
         self.event_counter += 1
-        print(f"### {self.event_counter}: LLM started. Usage: {self._usage_to_str(context.usage)}")
+        logging.getLogger(__name__).info(
+            "### %s: LLM started. Usage: %s", self.event_counter, self._usage_to_str(context.usage)
+        )
 
     async def on_llm_end(
         self, context: RunContextWrapper, agent: Agent, response: ModelResponse
     ) -> None:
         self.event_counter += 1
-        print(f"### {self.event_counter}: LLM ended. Usage: {self._usage_to_str(context.usage)}")
+        logging.getLogger(__name__).info(
+            "### %s: LLM ended. Usage: %s", self.event_counter, self._usage_to_str(context.usage)
+        )
 
     async def on_agent_end(self, context: RunContextWrapper, agent: Agent, output: Any) -> None:
         self.event_counter += 1
-        print(
-            f"### {self.event_counter}: Agent {agent.name} ended with output {output}. Usage: {self._usage_to_str(context.usage)}"
+        logging.getLogger(__name__).info(
+            "### %s: Agent %s ended with output %s. Usage: %s",
+            self.event_counter,
+            agent.name,
+            output,
+            self._usage_to_str(context.usage),
         )
 
     async def on_tool_start(self, context: RunContextWrapper, agent: Agent, tool: Tool) -> None:
@@ -74,8 +86,14 @@ class ExampleHooks(RunHooks):
         # While this type cast is not ideal,
         # we don't plan to change the context arg type in the near future for backwards compatibility.
         tool_context = cast(ToolContext[Any], context)
-        print(
-            f"### {self.event_counter}: Tool {tool.name} started. name={tool_context.tool_name}, call_id={tool_context.tool_call_id}, args={tool_context.tool_arguments}. Usage: {self._usage_to_str(tool_context.usage)}"
+        logging.getLogger(__name__).info(
+            "### %s: Tool %s started. name=%s, call_id=%s, args=%s. Usage: %s",
+            self.event_counter,
+            tool.name,
+            tool_context.tool_name,
+            tool_context.tool_call_id,
+            tool_context.tool_arguments,
+            self._usage_to_str(tool_context.usage),
         )
 
     async def on_tool_end(
@@ -85,16 +103,27 @@ class ExampleHooks(RunHooks):
         # While this type cast is not ideal,
         # we don't plan to change the context arg type in the near future for backwards compatibility.
         tool_context = cast(ToolContext[Any], context)
-        print(
-            f"### {self.event_counter}: Tool {tool.name} finished. result={result}, name={tool_context.tool_name}, call_id={tool_context.tool_call_id}, args={tool_context.tool_arguments}. Usage: {self._usage_to_str(tool_context.usage)}"
+        logging.getLogger(__name__).info(
+            "### %s: Tool %s finished. result=%s, name=%s, call_id=%s, args=%s. Usage: %s",
+            self.event_counter,
+            tool.name,
+            result,
+            tool_context.tool_name,
+            tool_context.tool_call_id,
+            tool_context.tool_arguments,
+            self._usage_to_str(tool_context.usage),
         )
 
     async def on_handoff(
         self, context: RunContextWrapper, from_agent: Agent, to_agent: Agent
     ) -> None:
         self.event_counter += 1
-        print(
-            f"### {self.event_counter}: Handoff from {from_agent.name} to {to_agent.name}. Usage: {self._usage_to_str(context.usage)}"
+        logging.getLogger(__name__).info(
+            "### %s: Handoff from %s to %s. Usage: %s",
+            self.event_counter,
+            from_agent.name,
+            to_agent.name,
+            self._usage_to_str(context.usage),
         )
 
 
@@ -147,13 +176,14 @@ async def main() -> None:
             input=f"Generate a random number between 0 and {max_number}.",
         )
     except ValueError:
-        print("Please enter a valid integer.")
+        logging.getLogger(__name__).warning("Please enter a valid integer.")
         return
 
-    print("Done!")
+    logging.getLogger(__name__).info("Done!")
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     asyncio.run(main())
 """
 $ python examples/basic/lifecycle_example.py

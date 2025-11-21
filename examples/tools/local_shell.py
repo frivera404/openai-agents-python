@@ -29,7 +29,7 @@ async def main():
     agent = Agent(
         name="Shell Assistant",
         instructions="You are a helpful assistant that can execute shell commands.",
-        model="codex-mini-latest",  # Local shell tool requires a compatible model
+        model="gpt-4o-mini",  # Local shell tool requires a compatible model
         tools=[LocalShellTool(executor=shell_executor)],
     )
 
@@ -38,7 +38,8 @@ async def main():
             agent,
             "List the files in the current directory and tell me how many there are.",
         )
-        print(result.final_output)
+        import logging
+        logging.getLogger(__name__).info(result.final_output)
 
 
 if __name__ == "__main__":

@@ -52,6 +52,7 @@ plugins:
           build: true
           nav:
             - Intro: index.md
+            - Landing: landing.md
             - Quickstart: quickstart.md
             - Examples: examples.md
             - Documentation:

@@ -1,4 +1,5 @@
 import os
+import logging
 from typing import TYPE_CHECKING
 
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
@@ -24,7 +25,8 @@ class TwilioWebSocketManager:
 
     async def new_session(self, websocket: WebSocket) -> TwilioHandler:
         """Create and configure a new session."""
-        print("Creating twilio handler")
+        logger = logging.getLogger(__name__)
+        logger.info("Creating twilio handler")
 
         handler = TwilioHandler(websocket)
         return handler
@@ -68,13 +70,14 @@ async def media_stream_endpoint(websocket: WebSocket):
         await handler.wait_until_done()
 
     except WebSocketDisconnect:
-        print("WebSocket disconnected")
+        logging.getLogger(__name__).info("WebSocket disconnected")
     except Exception as e:
-        print(f"WebSocket error: {e}")
+        logging.getLogger(__name__).exception("WebSocket error: %s", e)
 
 
 if __name__ == "__main__":
     import uvicorn
+    logging.basicConfig(level=logging.INFO)
 
     port = int(os.getenv("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)

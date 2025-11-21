@@ -33,7 +33,8 @@ async def main():
                 model_settings=ModelSettings(truncation="auto"),
             )
             result = await Runner.run(agent, "Search for SF sports news and summarize.")
-            print(result.final_output)
+            import logging
+            logging.getLogger(__name__).info(result.final_output)
 
 
 CUA_KEY_TO_PLAYWRIGHT_KEY = {

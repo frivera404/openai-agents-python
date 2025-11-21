@@ -244,7 +244,10 @@ class _MCPServerWithClientSession(MCPServer, abc.ABC):
         return self
 
     async def __aexit__(
-        self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: types.TracebackType | None
+        self,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: types.TracebackType | None,
     ) -> None:
         await self.cleanup()
 

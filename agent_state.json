@@ -1,0 +1,7 @@
+{
+  "config_file": "openai_assistant_config.json",
+  "assistant_id": "asst_70Xrb6BnK0CtVx3qm89J6nEQ",
+  "vector_store_id": "vs_1BREGwaFlfMYaIIOlzW7xCuC",
+  "api_key": null,
+  "mcp_servers_initialized": true
+}

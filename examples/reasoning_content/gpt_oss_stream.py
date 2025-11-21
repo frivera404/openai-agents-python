@@ -1,5 +1,6 @@
 import asyncio
 import os
+import logging
 
 from agents import (
     Agent,
@@ -36,18 +37,20 @@ async def main():
     )
 
     result = Runner.run_streamed(agent, "Tell me about recursion in programming.")
-    print("=== Run starting ===")
-    print("\n")
+    logger = logging.getLogger(__name__)
+    logger.info("=== Run starting ===")
+    logger.info("\n")
     async for event in result.stream_events():
         if event.type == "raw_response_event":
             if event.data.type == "response.reasoning_text.delta":
-                print(f"\033[33m{event.data.delta}\033[0m", end="", flush=True)
+                logger.info(f"\033[33m{event.data.delta}\033[0m")
             elif event.data.type == "response.output_text.delta":
-                print(f"\033[32m{event.data.delta}\033[0m", end="", flush=True)
+                logger.info(f"\033[32m{event.data.delta}\033[0m")
 
-    print("\n")
-    print("=== Run complete ===")
+    logger.info("\n")
+    logger.info("=== Run complete ===")
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     asyncio.run(main())

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 from typing import Any, Literal
+import logging
 
 from agents import (
     Agent,
@@ -43,7 +44,8 @@ class Weather(BaseModel):
 
 @function_tool
 def get_weather(city: str) -> Weather:
-    print("[debug] get_weather called")
+    logger = logging.getLogger(__name__)
+    logger.debug("[debug] get_weather called")
     return Weather(city=city, temperature_range="14-20C", conditions="Sunny with wind")
 
 
@@ -77,11 +79,15 @@ async def main(tool_use_behavior: Literal["default", "first_tool", "custom"] = "
     )
 
     result = await Runner.run(agent, input="What's the weather in Tokyo?")
-    print(result.final_output)
+    logger = logging.getLogger(__name__)
+    logger.info(result.final_output)
 
 
 if __name__ == "__main__":
     import argparse
+
+    import logging as _logging
+    _logging.basicConfig(level=_logging.INFO)
 
     parser = argparse.ArgumentParser()
     parser.add_argument(

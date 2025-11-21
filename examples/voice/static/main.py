@@ -1,5 +1,6 @@
 import asyncio
 import random
+import logging
 
 import numpy as np
 
@@ -33,7 +34,8 @@ Try examples like:
 @function_tool
 def get_weather(city: str) -> str:
     """Get the weather for a given city."""
-    print(f"[debug] get_weather called with city: {city}")
+    logger = logging.getLogger(__name__)
+    logger.debug("[debug] get_weather called with city: %s", city)
     choices = ["sunny", "cloudy", "rainy", "snowy"]
     return f"The weather in {city} is {random.choice(choices)}."
 
@@ -44,7 +46,7 @@ spanish_agent = Agent(
     instructions=prompt_with_handoff_instructions(
         "You're speaking to a human, so be polite and concise. Speak in Spanish.",
     ),
-    model="gpt-5-mini",
+    model="gpt-4o-mini",
 )
 
 agent = Agent(
@@ -52,7 +54,7 @@ agent = Agent(
     instructions=prompt_with_handoff_instructions(
         "You're speaking to a human, so be polite and concise. If the user speaks in Spanish, handoff to the spanish agent.",
     ),
-    model="gpt-5-mini",
+    model="gpt-4o-mini",
     handoffs=[spanish_agent],
     tools=[get_weather],
 )
@@ -60,7 +62,8 @@ agent = Agent(
 
 class WorkflowCallbacks(SingleAgentWorkflowCallbacks):
     def on_run(self, workflow: SingleAgentVoiceWorkflow, transcription: str) -> None:
-        print(f"[debug] on_run called with transcription: {transcription}")
+        logger = logging.getLogger(__name__)
+        logger.debug("[debug] on_run called with transcription: %s", transcription)
 
 
 async def main():
@@ -74,15 +77,18 @@ async def main():
 
     with AudioPlayer() as player:
         async for event in result.stream():
-            if event.type == "voice_stream_event_audio":
+                if event.type == "voice_stream_event_audio":
                 player.add_audio(event.data)
-                print("Received audio")
+                logger = logging.getLogger(__name__)
+                logger.info("Received audio")
             elif event.type == "voice_stream_event_lifecycle":
-                print(f"Received lifecycle event: {event.event}")
+                logger = logging.getLogger(__name__)
+                logger.info("Received lifecycle event: %s", event.event)
 
         # Add 1 second of silence to the end of the stream to avoid cutting off the last audio.
         player.add_audio(np.zeros(24000 * 1, dtype=np.int16))
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     asyncio.run(main())

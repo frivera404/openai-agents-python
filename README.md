@@ -1,469 +1,53 @@
-# OpenAI Agents SDK [![PyPI](https://img.shields.io/pypi/v/openai-agents?label=pypi%20package)](https://pypi.org/project/openai-agents/)
 
-The OpenAI Agents SDK is a lightweight yet powerful framework for building multi-agent workflows. It is provider-agnostic, supporting the OpenAI Responses and Chat Completions APIs, as well as 100+ other LLMs.
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+</div>
 
-<img src="https://cdn.openai.com/API/docs/images/orchestration.png" alt="Image of the Agents Tracing UI" style="max-height: 803px;">
+# Run and deploy your AI Studio app
 
-> [!NOTE]
-> Looking for the JavaScript/TypeScript version? Check out [Agents SDK JS/TS](https://github.com/openai/openai-agents-js).
+This contains everything you need to run your app locally.
 
-### Core concepts:
+View your app in AI Studio: https://ai.studio/apps/drive/1ne2T75hjtSb8NIhSdnqp0S3icBVGgy6l
 
-1. [**Agents**](https://openai.github.io/openai-agents-python/agents): LLMs configured with instructions, tools, guardrails, and handoffs
-2. [**Handoffs**](https://openai.github.io/openai-agents-python/handoffs/): A specialized tool call used by the Agents SDK for transferring control between agents
-3. [**Guardrails**](https://openai.github.io/openai-agents-python/guardrails/): Configurable safety checks for input and output validation
-4. [**Sessions**](#sessions): Automatic conversation history management across agent runs
-5. [**Tracing**](https://openai.github.io/openai-agents-python/tracing/): Built-in tracking of agent runs, allowing you to view, debug and optimize your workflows
+## Run Locally
 
-Explore the [examples](examples) directory to see the SDK in action, and read our [documentation](https://openai.github.io/openai-agents-python/) for more details.
+**Prerequisites:**  Node.js
 
-## Get started
 
-To get started, set up your Python environment (Python 3.9 or newer required), and then install OpenAI Agents SDK package.
+1. Install dependencies:
+   `npm install`
+2. Copy `.env.local.example` to `.env.local` and populate `OPENAI_API_KEY` (and optionally `ASSISTANT_ID`/`VECTOR_STORE_ID`).
+3. Run the app:
+   `npm run dev`
 
-### venv
+### Backend configuration
+
+The backend server that powers `/api/agent/launch` runs `openai_assistant_runner.py`, which proxies every agent request through the OpenAI Assistants API. Before starting the backend you must populate the following variables in `.env` or your shell:
+
+- `OPENAI_API_KEY` – your OpenAI API key with access to the Assistants & Vector Stores features.
+- `ASSISTANT_ID` – the assistant ID you created in the OpenAI dashboard (defaults to the value stored in `openai_assistant_config.json`).
+- `VECTOR_STORE_ID` – optional vector store if you rely on knowledge retrieval, otherwise the runner falls back to the configuration file.
+
+You can keep the JSON defaults in `openai_assistant_config.json` but override them via environment variables when launching the server.
+
+### Environment hints for agent launches
+
+Each `/api/agent/launch` request streams the prompt, system overrides, and per-agent instructions through the runner script. Use the UI or your integration to pass the following request fields:
+
+- `agentId` – one of the preconfigured agent IDs listed in the UI (`customer-service`, `financial-research`, `senior-developer`, etc.).
+- `prompt` – the user message that will be forwarded to the assistant.
+- `model` / `temperature` / `systemInstruction` – optional tuning parameters that are forwarded as environment variables to `openai_assistant_runner.py` so that the assistant run honors them.
+
+Because the backend communicates with OpenAI's beta Threads API (which only supports `user` and `assistant` roles), any system instruction is emitted as an assistant message with a `"[System instructions]"` prefix before the user prompt.
+
+Keep in mind the backend expects valid JSON. If you build requests manually (for example with `curl`), wrap keys and strings in double quotes and include the `Content-Type: application/json` header:
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-pip install openai-agents
+curl -X POST http://localhost:3001/api/agent/launch \
+   -H "Content-Type: application/json" \
+   -d '{"agentId":"customer-service","prompt":"Summarize late delivery issues.","model":"gpt-4o","temperature":0.7}'
 ```
 
-For voice support, install with the optional `voice` group: `pip install 'openai-agents[voice]'`.
+Sending malformed JSON (like missing double quotes or relying on single quotes alone) will trigger the server's JSON parser and return an `entity.parse.failed` error so you can adjust the payload before retrying.
 
-For Redis session support, install with the optional `redis` group: `pip install 'openai-agents[redis]'`.
-
-### uv
-
-If you're familiar with [uv](https://docs.astral.sh/uv/), using the tool would be even similar:
-
-```bash
-uv init
-uv add openai-agents
-```
-
-For voice support, install with the optional `voice` group: `uv add 'openai-agents[voice]'`.
-
-For Redis session support, install with the optional `redis` group: `uv add 'openai-agents[redis]'`.
-
-### Set up your OpenAI API key
-
-The SDK requires an OpenAI API key to function. You can set it in one of the following ways:
-
-1. **Environment variable** (recommended for development):
-   ```bash
-   export OPENAI_API_KEY="your-api-key-here"
-   ```
-
-2. **.env file** (recommended for local development):
-   Create a `.env` file in your project root:
-   ```
-   OPENAI_API_KEY=your-api-key-here
-   ```
-   
-   The SDK will automatically load this file if `python-dotenv` is installed.
-
-3. **Runtime configuration**:
-   You can also pass the API key directly when creating OpenAI clients.
-
-## Hello world example
-
-```python
-from agents import Agent, Runner
-
-agent = Agent(name="Assistant", instructions="You are a helpful assistant")
-
-result = Runner.run_sync(agent, "Write a haiku about recursion in programming.")
-print(result.final_output)
-
-# Code within the code,
-# Functions calling themselves,
-# Infinite loop's dance.
-```
-
-(_If running this, ensure you set the `OPENAI_API_KEY` environment variable_)
-
-(_For Jupyter notebook users, see [hello_world_jupyter.ipynb](examples/basic/hello_world_jupyter.ipynb)_)
-
-## Handoffs example
-
-```python
-from agents import Agent, Runner
-import asyncio
-
-spanish_agent = Agent(
-    name="Spanish agent",
-    instructions="You only speak Spanish.",
-)
-
-english_agent = Agent(
-    name="English agent",
-    instructions="You only speak English",
-)
-
-triage_agent = Agent(
-    name="Triage agent",
-    instructions="Handoff to the appropriate agent based on the language of the request.",
-    handoffs=[spanish_agent, english_agent],
-)
-
-
-async def main():
-    result = await Runner.run(triage_agent, input="Hola, ¿cómo estás?")
-    print(result.final_output)
-    # ¡Hola! Estoy bien, gracias por preguntar. ¿Y tú, cómo estás?
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-## Functions example
-
-```python
-import asyncio
-
-from agents import Agent, Runner, function_tool
-
-
-@function_tool
-def get_weather(city: str) -> str:
-    return f"The weather in {city} is sunny."
-
-
-agent = Agent(
-    name="Hello world",
-    instructions="You are a helpful agent.",
-    tools=[get_weather],
-)
-
-
-async def main():
-    result = await Runner.run(agent, input="What's the weather in Tokyo?")
-    print(result.final_output)
-    # The weather in Tokyo is sunny.
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
-## The agent loop
-
-When you call `Runner.run()`, we run a loop until we get a final output.
-
-1. We call the LLM, using the model and settings on the agent, and the message history.
-2. The LLM returns a response, which may include tool calls.
-3. If the response has a final output (see below for more on this), we return it and end the loop.
-4. If the response has a handoff, we set the agent to the new agent and go back to step 1.
-5. We process the tool calls (if any) and append the tool responses messages. Then we go to step 1.
-
-There is a `max_turns` parameter that you can use to limit the number of times the loop executes.
-
-### Final output
-
-Final output is the last thing the agent produces in the loop.
-
-1.  If you set an `output_type` on the agent, the final output is when the LLM returns something of that type. We use [structured outputs](https://platform.openai.com/docs/guides/structured-outputs) for this.
-2.  If there's no `output_type` (i.e. plain text responses), then the first LLM response without any tool calls or handoffs is considered as the final output.
-
-As a result, the mental model for the agent loop is:
-
-1. If the current agent has an `output_type`, the loop runs until the agent produces structured output matching that type.
-2. If the current agent does not have an `output_type`, the loop runs until the current agent produces a message without any tool calls/handoffs.
-
-## Common agent patterns
-
-The Agents SDK is designed to be highly flexible, allowing you to model a wide range of LLM workflows including deterministic flows, iterative loops, and more. See examples in [`examples/agent_patterns`](examples/agent_patterns).
-
-## Tracing
-
-The Agents SDK automatically traces your agent runs, making it easy to track and debug the behavior of your agents. Tracing is extensible by design, supporting custom spans and a wide variety of external destinations, including [Logfire](https://logfire.pydantic.dev/docs/integrations/llms/openai/#openai-agents), [AgentOps](https://docs.agentops.ai/v1/integrations/agentssdk), [Braintrust](https://braintrust.dev/docs/guides/traces/integrations#openai-agents-sdk), [Scorecard](https://docs.scorecard.io/docs/documentation/features/tracing#openai-agents-sdk-integration), and [Keywords AI](https://docs.keywordsai.co/integration/development-frameworks/openai-agent). For more details about how to customize or disable tracing, see [Tracing](http://openai.github.io/openai-agents-python/tracing), which also includes a larger list of [external tracing processors](http://openai.github.io/openai-agents-python/tracing/#external-tracing-processors-list).
-
-## Long running agents & human-in-the-loop
-
-You can use the Agents SDK [Temporal](https://temporal.io/) integration to run durable, long-running workflows, including human-in-the-loop tasks. View a demo of Temporal and the Agents SDK working in action to complete long-running tasks [in this video](https://www.youtube.com/watch?v=fFBZqzT4DD8), and [view docs here](https://github.com/temporalio/sdk-python/tree/main/temporalio/contrib/openai_agents).
-
-### Install the Temporal Python SDK
-
-You should install the Temporal Python SDK in your project using a virtual environment.
-
-Create a directory for your Temporal project:
-
-```bash
-mkdir temporal-project
-```
-
-Switch to the new directory:
-
-```bash
-cd temporal-project
-```
-
-Create a Python virtual environment with venv:
-
-**Windows/macOS**
-```bash
-python -m venv env
-```
-
-Activate the environment:
-
-**Windows**
-```bash
-env\Scripts\activate
-```
-
-**macOS**
-```bash
-source env/bin/activate
-```
-
-Then install the Temporal SDK:
-
-```bash
-python -m pip install temporalio
-```
-
-You'll see an output similar to the following:
-
-```
-Successfully installed temporalio-x.y
-```
-
-### Set up a local Temporal Service for development with Temporal CLI
-
-The fastest way to get a development version of the Temporal Service running on your local machine is to use Temporal CLI.
-
-Temporal CLI is a tool for interacting with the Temporal Service from the command-line interface. It includes a self-contained distribution of the Temporal Service and Web UI as well which you can use for local development.
-
-Install Temporal CLI on your local machine using the following instructions for your platform.
-
-**macOS**
-```bash
-brew install temporal
-```
-
-**Windows/Linux**
-Download and install from: https://docs.temporal.io/cli#install
-
-Once you've installed Temporal CLI and added it to your PATH, open a new Terminal window and run the following command:
-
-```bash
-temporal server start-dev
-```
-
-This command starts a local Temporal Service. It starts the Web UI, creates the default Namespace, and uses an in-memory database.
-
-- The Temporal Service will be available on `localhost:7233`
-- The Temporal Web UI will be available at `http://localhost:8233`
-
-Leave the local Temporal Service running as you work through tutorials and other projects. You can stop the Temporal Service at any time by pressing `CTRL+C`.
-
-#### Change the Web UI port
-
-The Temporal Web UI may be on a different port in some examples or tutorials. To change the port for the Web UI, use the `--ui-port` option when starting the server:
-
-```bash
-temporal server start-dev --ui-port 8080
-```
-
-The Temporal Web UI will now be available at `http://localhost:8080`.
-
-#### Persist data between restarts
-
-The `temporal server start-dev` command uses an in-memory database, so stopping the server will erase all your Workflows and all your Task Queues. If you want to retain those between runs, start the server and specify a database filename using the `--db-filename` option, like this:
-
-```bash
-temporal server start-dev --db-filename your_temporal.db
-```
-
-When you stop and restart the Temporal Service and specify the same filename again, your Workflows and other information will be available.
-
-Once you have everything installed, you're ready to build Temporal Applications with Python on your local machine.
-
-### ✅ Implementation Complete: AI Agent Workflows
-
-**Status: Successfully Implemented**
-
-This repository now includes a complete Temporal integration for durable AI agent workflows! The `temporal-project/` directory contains:
-
-- **Durable AI Conversations**: Agent conversations that persist across server restarts and failures
-- **Human-in-the-Loop Ready**: Framework for workflows that can wait for human input
-- **Production Architecture**: Multi-worker setup with proper error handling and monitoring
-- **Web UI Monitoring**: Full workflow observability at `http://localhost:8233`
-
-#### Quick Start with AI Workflows
-
-1. **Start Server**: `cd temporal-project && .\start-temporal.bat`
-2. **Run Worker**: `python run_worker.py` (new terminal)
-3. **Start Workflow**: `python start_workflow.py` (new terminal)
-4. **Monitor**: Visit `http://localhost:8233` to see running workflows
-
-#### Key Features Implemented
-
-- ✅ **Durable State**: Conversation history survives server restarts
-- ✅ **Tool Integration**: Agents can save/load conversation context
-- ✅ **Error Recovery**: Automatic retries and failure handling
-- ✅ **Scalable Workers**: Multiple worker processes supported
-- ✅ **Web Monitoring**: Real-time workflow tracking and debugging
-
-See `temporal-project/README.md` for complete documentation and examples.
-
-## Sessions
-
-The Agents SDK provides built-in session memory to automatically maintain conversation history across multiple agent runs, eliminating the need to manually handle `.to_input_list()` between turns.
-
-### Quick start
-
-```python
-from agents import Agent, Runner, SQLiteSession
-
-# Create agent
-agent = Agent(
-    name="Assistant",
-    instructions="Reply very concisely.",
-)
-
-# Create a session instance
-session = SQLiteSession("conversation_123")
-
-# First turn
-result = await Runner.run(
-    agent,
-    "What city is the Golden Gate Bridge in?",
-    session=session
-)
-print(result.final_output)  # "San Francisco"
-
-# Second turn - agent automatically remembers previous context
-result = await Runner.run(
-    agent,
-    "What state is it in?",
-    session=session
-)
-print(result.final_output)  # "California"
-
-# Also works with synchronous runner
-result = Runner.run_sync(
-    agent,
-    "What's the population?",
-    session=session
-)
-print(result.final_output)  # "Approximately 39 million"
-```
-
-### Session options
-
--   **No memory** (default): No session memory when session parameter is omitted
--   **`session: Session = DatabaseSession(...)`**: Use a Session instance to manage conversation history
-
-```python
-from agents import Agent, Runner, SQLiteSession
-
-# SQLite - file-based or in-memory database
-session = SQLiteSession("user_123", "conversations.db")
-
-# Redis - for scalable, distributed deployments
-# from agents.extensions.memory import RedisSession
-# session = RedisSession.from_url("user_123", url="redis://localhost:6379/0")
-
-agent = Agent(name="Assistant")
-
-# Different session IDs maintain separate conversation histories
-result1 = await Runner.run(
-    agent,
-    "Hello",
-    session=session
-)
-result2 = await Runner.run(
-    agent,
-    "Hello",
-    session=SQLiteSession("user_456", "conversations.db")
-)
-```
-
-### Custom session implementations
-
-You can implement your own session memory by creating a class that follows the `Session` protocol:
-
-```python
-from agents.memory import Session
-from typing import List
-
-class MyCustomSession:
-    """Custom session implementation following the Session protocol."""
-
-    def __init__(self, session_id: str):
-        self.session_id = session_id
-        # Your initialization here
-
-    async def get_items(self, limit: int | None = None) -> List[dict]:
-        # Retrieve conversation history for the session
-        pass
-
-    async def add_items(self, items: List[dict]) -> None:
-        # Store new items for the session
-        pass
-
-    async def pop_item(self) -> dict | None:
-        # Remove and return the most recent item from the session
-        pass
-
-    async def clear_session(self) -> None:
-        # Clear all items for the session
-        pass
-
-# Use your custom session
-agent = Agent(name="Assistant")
-result = await Runner.run(
-    agent,
-    "Hello",
-    session=MyCustomSession("my_session")
-)
-```
-
-## Development (only needed if you need to edit the SDK/examples)
-
-0. Ensure you have [`uv`](https://docs.astral.sh/uv/) installed.
-
-```bash
-uv --version
-```
-
-1. Install dependencies
-
-```bash
-make sync
-```
-
-For voice support, install with the optional `voice` group: `uv add 'openai-agents[voice]'`.
-
-For Redis session support, install with the optional `redis` group: `uv add 'openai-agents[redis]'`.
-
-2. (After making changes) lint/test
-
-```
-make check # run tests linter and typechecker
-```
-
-Or to run them individually:
-
-```
-make tests  # run tests
-make mypy   # run typechecker
-make lint   # run linter
-make format-check # run style checker
-```
-
-## Acknowledgements
-
-We'd like to acknowledge the excellent work of the open-source community, especially:
-
--   [Pydantic](https://docs.pydantic.dev/latest/) (data validation) and [PydanticAI](https://ai.pydantic.dev/) (advanced agent framework)
--   [LiteLLM](https://github.com/BerriAI/litellm) (unified interface for 100+ LLMs)
--   [MkDocs](https://github.com/squidfunk/mkdocs-material)
--   [Griffe](https://github.com/mkdocstrings/griffe)
--   [uv](https://github.com/astral-sh/uv) and [ruff](https://github.com/astral-sh/ruff)
-
-We're committed to continuing to build the Agents SDK as an open source framework so others in the community can expand on our approach.
+With these values in place, `npm run dev` starts both the Vite client and the Express server that now launches the OpenAI Assistants API for every agent call.

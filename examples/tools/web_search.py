@@ -1,6 +1,9 @@
 import asyncio
+import logging
 
 from agents import Agent, Runner, WebSearchTool, trace
+
+logger = logging.getLogger(__name__)
 
 
 async def main():
@@ -15,9 +18,10 @@ async def main():
             agent,
             "search the web for 'local sports news' and give me 1 interesting update in a sentence.",
         )
-        print(result.final_output)
+        logger.info("%s", result.final_output)
         # The New York Giants are reportedly pursuing quarterback Aaron Rodgers after his ...
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     asyncio.run(main())

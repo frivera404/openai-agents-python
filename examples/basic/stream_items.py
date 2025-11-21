@@ -1,7 +1,10 @@
 import asyncio
 import random
+import logging
 
 from agents import Agent, ItemHelpers, Runner, function_tool
+
+logger = logging.getLogger(__name__)
 
 
 @function_tool
@@ -21,28 +24,29 @@ async def main():
         agent,
         input="Hello",
     )
-    print("=== Run starting ===")
+    logger.info("=== Run starting ===")
     async for event in result.stream_events():
         # We'll ignore the raw responses event deltas
         if event.type == "raw_response_event":
             continue
         elif event.type == "agent_updated_stream_event":
-            print(f"Agent updated: {event.new_agent.name}")
+            logger.info("Agent updated: %s", event.new_agent.name)
             continue
         elif event.type == "run_item_stream_event":
-            if event.item.type == "tool_call_item":
-                print("-- Tool was called")
+                if event.item.type == "tool_call_item":
+                logger.info("-- Tool was called")
             elif event.item.type == "tool_call_output_item":
-                print(f"-- Tool output: {event.item.output}")
+                logger.info("-- Tool output: %s", event.item.output)
             elif event.item.type == "message_output_item":
-                print(f"-- Message output:\n {ItemHelpers.text_message_output(event.item)}")
+                logger.info("-- Message output:\n %s", ItemHelpers.text_message_output(event.item))
             else:
                 pass  # Ignore other event types
 
-    print("=== Run complete ===")
+    logger.info("=== Run complete ===")
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     asyncio.run(main())
 
     # === Run starting ===

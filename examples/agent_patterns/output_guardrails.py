@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 
 from agents import (
     Agent,
@@ -60,20 +61,25 @@ agent = Agent(
 async def main():
     # This should be ok
     await Runner.run(agent, "What's the capital of California?")
-    print("First message passed")
+    logger = logging.getLogger(__name__)
+    logger.info("First message passed")
 
     # This should trip the guardrail
     try:
         result = await Runner.run(
             agent, "My phone number is 650-123-4567. Where do you think I live?"
         )
-        print(
-            f"Guardrail didn't trip - this is unexpected. Output: {json.dumps(result.final_output.model_dump(), indent=2)}"
+        logger = logging.getLogger(__name__)
+        logger.error(
+            "Guardrail didn't trip - this is unexpected. Output: %s",
+            json.dumps(result.final_output.model_dump(), indent=2),
         )
 
     except OutputGuardrailTripwireTriggered as e:
-        print(f"Guardrail tripped. Info: {e.guardrail_result.output.output_info}")
+        logger = logging.getLogger(__name__)
+        logger.info("Guardrail tripped. Info: %s", e.guardrail_result.output.output_info)
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     asyncio.run(main())

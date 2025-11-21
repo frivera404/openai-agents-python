@@ -1,8 +1,12 @@
 import asyncio
 import shutil
 
+import logging
+
 from agents import Agent, Runner, trace
 from agents.mcp import MCPServer, MCPServerStdio
+
+logger = logging.getLogger(__name__)
 
 
 async def run(mcp_server: MCPServer, directory_path: str):
@@ -13,16 +17,16 @@ async def run(mcp_server: MCPServer, directory_path: str):
     )
 
     message = "Who's the most frequent contributor?"
-    print("\n" + "-" * 40)
-    print(f"Running: {message}")
+    logger.info("\n" + "-" * 40)
+    logger.info(f"Running: {message}")
     result = await Runner.run(starting_agent=agent, input=message)
-    print(result.final_output)
+    logger.info(result.final_output)
 
     message = "Summarize the last change in the repository."
-    print("\n" + "-" * 40)
-    print(f"Running: {message}")
+    logger.info("\n" + "-" * 40)
+    logger.info(f"Running: {message}")
     result = await Runner.run(starting_agent=agent, input=message)
-    print(result.final_output)
+    logger.info(result.final_output)
 
 
 async def main():
@@ -40,5 +44,7 @@ async def main():
 if __name__ == "__main__":
     if not shutil.which("uvx"):
         raise RuntimeError("uvx is not installed. Please install it with `pip install uvx`.")
+    import logging as _logging
+    _logging.basicConfig(level=_logging.INFO)
 
     asyncio.run(main())

@@ -1,4 +1,5 @@
 import random
+import logging
 
 import requests
 from mcp.server.fastmcp import FastMCP
@@ -10,19 +11,22 @@ mcp = FastMCP("Echo Server")
 @mcp.tool()
 def add(a: int, b: int) -> int:
     """Add two numbers"""
-    print(f"[debug-server] add({a}, {b})")
+    logger = logging.getLogger(__name__)
+    logger.debug("[debug-server] add(%s, %s)", a, b)
     return a + b
 
 
 @mcp.tool()
 def get_secret_word() -> str:
-    print("[debug-server] get_secret_word()")
+    logger = logging.getLogger(__name__)
+    logger.debug("[debug-server] get_secret_word()")
     return random.choice(["apple", "banana", "cherry"])
 
 
 @mcp.tool()
 def get_current_weather(city: str) -> str:
-    print(f"[debug-server] get_current_weather({city})")
+    logger = logging.getLogger(__name__)
+    logger.debug("[debug-server] get_current_weather(%s)", city)
 
     endpoint = "https://wttr.in"
     response = requests.get(f"{endpoint}/{city}")

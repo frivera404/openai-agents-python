@@ -2,6 +2,7 @@ import asyncio
 from typing import Annotated, Any, Optional
 
 from agents import Agent, Runner, function_tool
+import logging
 from openai.types.responses import ResponseFunctionCallArgumentsDeltaEvent
 
 
@@ -34,7 +35,7 @@ async def main():
         tools=[write_file, create_config],
     )
 
-    print("🚀 Function Call Arguments Streaming Demo")
+    logging.getLogger(__name__).info("🚀 Function Call Arguments Streaming Demo")
 
     result = Runner.run_streamed(
         agent,
@@ -55,31 +56,35 @@ async def main():
 
                     function_calls[call_id] = {"name": function_name, "arguments": ""}
                     current_active_call_id = call_id
-                    print(f"\n📞 Function call streaming started: {function_name}()")
-                    print("📝 Arguments building...")
+                    logging.getLogger(__name__).info(
+                        "\n📞 Function call streaming started: %s()", function_name
+                    )
+                    logging.getLogger(__name__).info("📝 Arguments building...")
 
             # Real-time argument streaming
             elif isinstance(event.data, ResponseFunctionCallArgumentsDeltaEvent):
-                if current_active_call_id and current_active_call_id in function_calls:
-                    function_calls[current_active_call_id]["arguments"] += event.data.delta
-                    print(event.data.delta, end="", flush=True)
+                    if current_active_call_id and current_active_call_id in function_calls:
+                        function_calls[current_active_call_id]["arguments"] += event.data.delta
+                        logging.getLogger(__name__).info(event.data.delta)
 
             # Function call completed
             elif event.data.type == "response.output_item.done":
                 if hasattr(event.data.item, "call_id"):
                     call_id = getattr(event.data.item, "call_id", "unknown")
-                    if call_id in function_calls:
-                        function_info = function_calls[call_id]
-                        print(f"\n✅ Function call streaming completed: {function_info['name']}")
-                        print()
+                        if call_id in function_calls:
+                            function_info = function_calls[call_id]
+                            logging.getLogger(__name__).info(
+                                "\n✅ Function call streaming completed: %s", function_info["name"]
+                            )
+                            logging.getLogger(__name__).info("")
                         if current_active_call_id == call_id:
                             current_active_call_id = None
 
-    print("Summary of all function calls:")
+    logging.getLogger(__name__).info("Summary of all function calls:")
     for call_id, info in function_calls.items():
-        print(f"  - #{call_id}: {info['name']}({info['arguments']})")
+        logging.getLogger(__name__).info("  - #%s: %s(%s)", call_id, info["name"], info["arguments"])
 
-    print(f"\nResult: {result.final_output}")
+    logging.getLogger(__name__).info("\nResult: %s", result.final_output)
 
 
 if __name__ == "__main__":

@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import time
 from collections.abc import Sequence
+import logging
 
 from rich.console import Console
 
@@ -53,13 +54,14 @@ class FinancialResearchManager:
 
             self.printer.end()
 
-        # Print to stdout
-        print("\n\n=====REPORT=====\n\n")
-        print(f"Report:\n{report.markdown_report}")
-        print("\n\n=====FOLLOW UP QUESTIONS=====\n\n")
-        print("\n".join(report.follow_up_questions))
-        print("\n\n=====VERIFICATION=====\n\n")
-        print(verification)
+        # Emit final report via logger
+        logger = logging.getLogger(__name__)
+        logger.info("\n\n=====REPORT=====\n\n")
+        logger.info(f"Report:\n{report.markdown_report}")
+        logger.info("\n\n=====FOLLOW UP QUESTIONS=====_\n\n")
+        logger.info("\n".join(report.follow_up_questions))
+        logger.info("\n\n=====VERIFICATION=====_\n\n")
+        logger.info(verification)
 
     async def _plan_searches(self, query: str) -> FinancialSearchPlan:
         self.printer.update_item("planning", "Planning searches...")

@@ -5,6 +5,13 @@ from typing import Any, Dict, Optional
 # Placeholder classes for the openai.types.responses namespace.
 # Extend with attributes as needed to satisfy mypy attr-defined checks.
 
+
+# Minimal placeholder for ResponseIncludable used by runtime imports in the repo.
+class ResponseIncludable:
+    pass
+
+
+
 class Response:
     id: str | None
     output: Any
