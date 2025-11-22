@@ -4,7 +4,7 @@ This document outlines different ways to configure MCP servers with the OpenAI A
 
 ## Available MCP Server Types
 
-### 1. HTTP Streamable MCP (Recommended for CloudMCP)
+### 1. HTTP Streamable MCP
 ```python
 from agents.mcp import MCPServerStreamableHttp, MCPServerStreamableHttpParams
 
@@ -68,19 +68,6 @@ For external configuration, you can use JSON format:
       "env": {
         "AUTH_HEADER": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NDZhNDM3NS01OTM1LTQyZDQtOGNiNC03NWU0NjNlZmRhNDciLCJlbWFpbCI6InJpdmVyYWYzMEBnbWFpbC5jb20iLCJuYW1lIjoiRmVybmFuZG8g4oCcRGFkZHlHcHTigJ0gUml2ZXJhIiwidGllciI6IkZyZWUgVGllciIsImp0aSI6IjdkZThhOThhODkzOWRhYzRkYTFkZDRjYzIxZTM0N2ExIiwiaWF0IjoxNzYzMDAwMTM1fQ.YiWT_ZpAYcAcvQOuQ8lWM0oduoSNikh7UJ6MCCrqvwo"
       }
-    },
-    "cloudmcp-server-6837335c7e6338": {
-      "url": "https://18268932-6837335c7e6338.router.cloudmcp.run/mcp",
-      "headers": {"Authorization": "Bearer your-token"},
-      "type": "http"
-    },
-    "cloudmcp-server-48e7550c72e668": {
-      "command": "npx",
-      "args": [
-        "mcp-remote",
-        "https://18268932-48e7550c72e668.router.cloudmcp.run/mcp"
-      ],
-      "env": {}
     }
   }
 }
@@ -107,5 +94,4 @@ agent = Agent(
 
 Run the examples:
 - `python docker_mcp_example.py` - Docker gateway
-- `python mcp_integration_example.py` - HTTP/CloudMCP
 - `python local_stdio_mcp_example.py` - Local stdio (may require roots configuration)

@@ -10,7 +10,8 @@
 import express from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import 'dotenv/config';
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
 import { spawn } from 'child_process';
 import path from 'path';
 
@@ -19,7 +20,7 @@ const app = express();
 // Priority: process.env.PYTHON_EXECUTABLE (explicit override), then
 // process.env.VIRTUAL_ENV (if set), otherwise plain 'python'.
 const pythonExecutable = process.env.PYTHON_EXECUTABLE || (process.env.VIRTUAL_ENV ? `${process.env.VIRTUAL_ENV}${path.sep}Scripts${path.sep}python.exe` : 'python');
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3002;
 
 // Middleware
 app.use(cors({
@@ -209,7 +210,7 @@ app.get('/api/health', (req: Request, res: Response) => {
 
 // Validation middleware for agent launch
 const validateAgentLaunchRequest = (req: Request, res: Response, next: NextFunction) => {
-    const { agentId, model, temperature, systemInstruction, prompt } = req.body;
+    const { agentId, model, temperature, systemInstruction, prompt, tools } = req.body;
     
     // Validate required fields
     if (!agentId || typeof agentId !== 'string' || agentId.trim().length === 0) {
@@ -246,11 +247,26 @@ const validateAgentLaunchRequest = (req: Request, res: Response, next: NextFunct
         });
     }
     
+    if (tools !== undefined) {
+        if (!Array.isArray(tools)) {
+            return res.status(400).json({ 
+                error: 'Tools must be an array.' 
+            });
+        }
+        for (const tool of tools) {
+            if (!tool.id || !tool.name || !tool.description) {
+                return res.status(400).json({ 
+                    error: 'Each tool must have id, name, and description.' 
+                });
+            }
+        }
+    }
+    
     next();
 };
 
 app.post('/api/agent/launch', validateAgentLaunchRequest, async (req: Request, res: Response) => {
-    const { agentId, model, temperature, systemInstruction, prompt } = req.body;
+    const { agentId, model, temperature, systemInstruction, prompt, tools } = req.body;
     
     const startTime = Date.now();
     const requestId = Math.random().toString(36).substring(7);
@@ -300,6 +316,7 @@ app.post('/api/agent/launch', validateAgentLaunchRequest, async (req: Request, r
                 AGENT_INSTRUCTIONS: instructions,
                 AGENT_ID: agentId,
                 ASSISTANT_ID: agentAssistantIds[agentId] || process.env.ASSISTANT_ID,
+                TOOLS: JSON.stringify(tools || []),
                 PYTHONIOENCODING: 'utf-8',
                 // Ensure Python can import local modules in this repository.
                 // This adds the workspace root to PYTHONPATH for subprocesses.
@@ -339,7 +356,7 @@ app.post('/api/agent/launch', validateAgentLaunchRequest, async (req: Request, r
                     requestId,
                     duration,
                     agentId,
-                    model: model || 'gpt-4o',
+                    model: model || 'gpt-4.1',
                     temperature: temperature || 0.9
                 }
             });
@@ -370,6 +387,105 @@ app.post('/api/agent/launch', validateAgentLaunchRequest, async (req: Request, r
 // Deployed agents listing endpoint: returns assistant IDs for pre-deployed assistants
 app.get('/api/agents/deployed', (req: Request, res: Response) => {
     res.json({ agents: agentAssistantIds });
+});
+
+// In-memory storage for tools (in production, this would be a database)
+interface Tool {
+    id: string;
+    name: string;
+    description: string;
+    category?: string;
+    createdAt: string;
+}
+
+const tools: Tool[] = [];
+
+// Tools endpoints
+app.get('/api/tools', (req: Request, res: Response) => {
+    res.json({ tools });
+});
+
+app.post('/api/tools', (req: Request, res: Response) => {
+    const { name, description, category } = req.body;
+    
+    if (!name || typeof name !== 'string' || name.trim().length === 0) {
+        return res.status(400).json({ error: 'Tool name is required and must be a non-empty string.' });
+    }
+    
+    if (!description || typeof description !== 'string' || description.trim().length === 0) {
+        return res.status(400).json({ error: 'Tool description is required and must be a non-empty string.' });
+    }
+    
+    const tool: Tool = {
+        id: Math.random().toString(36).substring(2, 15),
+        name: name.trim(),
+        description: description.trim(),
+        category: category || 'General',
+        createdAt: new Date().toISOString()
+    };
+    
+    tools.push(tool);
+    
+    console.log(`Tool created: ${tool.name} (${tool.id})`);
+    
+    res.status(201).json({ 
+        message: 'Tool created successfully.',
+        tool 
+    });
+});
+
+app.delete('/api/tools/:id', (req: Request, res: Response) => {
+    const { id } = req.params;
+    const toolIndex = tools.findIndex(tool => tool.id === id);
+    
+    if (toolIndex === -1) {
+        return res.status(404).json({ error: 'Tool not found.' });
+    }
+    
+    const deletedTool = tools.splice(toolIndex, 1)[0];
+    
+    console.log(`Tool deleted: ${deletedTool.name} (${deletedTool.id})`);
+    
+    res.json({ 
+        message: 'Tool deleted successfully.',
+        tool: deletedTool 
+    });
+});
+
+app.put('/api/tools/:id', (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { name, description, category } = req.body;
+    
+    const toolIndex = tools.findIndex(tool => tool.id === id);
+    
+    if (toolIndex === -1) {
+        return res.status(404).json({ error: 'Tool not found.' });
+    }
+    
+    if (name !== undefined) {
+        if (typeof name !== 'string' || name.trim().length === 0) {
+            return res.status(400).json({ error: 'Tool name must be a non-empty string.' });
+        }
+        tools[toolIndex].name = name.trim();
+    }
+    
+    if (description !== undefined) {
+        if (typeof description !== 'string' || description.trim().length === 0) {
+            return res.status(400).json({ error: 'Tool description must be a non-empty string.' });
+        }
+        tools[toolIndex].description = description.trim();
+    }
+    
+    if (category !== undefined) {
+        tools[toolIndex].category = category || 'General';
+    }
+    
+    console.log(`Tool updated: ${tools[toolIndex].name} (${tools[toolIndex].id})`);
+    
+    res.json({ 
+        message: 'Tool updated successfully.',
+        tool: tools[toolIndex] 
+    });
 });
 
 // Validation middleware for agent command (targeting a deployed assistant)
@@ -423,7 +539,7 @@ app.post('/api/agent/command', validateAgentCommandRequest, async (req: Request,
         });
 
         child.on('close', (code) => {
-            const metadata = { requestId, agentId: assistantId, model: model || 'gpt-4o', temperature: (temperature || 0.9) };
+            const metadata = { requestId, agentId: assistantId, model: model || 'gpt-4.1', temperature: (temperature || 0.9) };
             if (code !== 0) {
                 console.error(`[${requestId}] Command runner exited with code ${code}`, stderr);
                 return res.status(500).json({ error: 'Agent execution failed.', details: stderr, metadata });

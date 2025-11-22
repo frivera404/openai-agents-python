@@ -27,7 +27,7 @@ const CommunicationCenter: React.FC = () => {
         if (!selected || !prompt.trim()) return;
         setIsLoading(true);
         try {
-            const resp = await sendAgentCommand({ assistantId: selected, prompt, model: 'gpt-4o', temperature: 0.7 });
+            const resp = await sendAgentCommand({ assistantId: selected, prompt, model: 'gpt-4.1', temperature: 0.7 });
             // response might contain a `text` property and metadata
             const text = resp.text || (typeof resp === 'string' ? resp : JSON.stringify(resp, null, 2));
             setResult(text);

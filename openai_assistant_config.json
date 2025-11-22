@@ -28,13 +28,6 @@
     "description": "Affiliate Marketing Manager assistant with vector store access and code interpreter enabled"
   },
   "mcp_servers": {
-    "cloudmcp-router": {
-      "command": "npx",
-      "args": ["mcp-remote", "https://18268932-48e7550c72e668.router.cloudmcp.run/mcp"],
-      "env": {},
-      "type": "stdio",
-      "description": "Cloud MCP Router for external service access"
-    },
     "meta-api-mcp-server": {
       "command": "npx",
       "args": ["-y", "meta-api-mcp-server"],
@@ -44,8 +37,7 @@
     }
   },
   "environment_variables": {
-    "OPENAI_API_KEY": "your-openai-api-key-here",
-    "CLOUDMCP_TOKEN": "your-cloud-mcp-token"
+    "OPENAI_API_KEY": "your-openai-api-key-here"
   },
   "features": {
     "vector_store": "Knowledge base with file search capabilities",

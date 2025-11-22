@@ -70,7 +70,7 @@ const App: React.FC = () => {
             try {
                 const response = await launchAgent({
                     agentId: agent.id,
-                    model: 'gpt-4o',
+                    model: 'gpt-4.1',
                     temperature: 0.6,
                     systemInstruction: `You are ${agent.name} ready to help the user.`,
                     prompt: `Provide a concise summary of how the ${agent.name} helps users and why it is useful.`,

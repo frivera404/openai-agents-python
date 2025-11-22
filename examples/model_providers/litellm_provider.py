@@ -8,7 +8,7 @@ from agents.extensions.models.litellm_model import LitellmModel
 
 """This example uses the LitellmModel directly, to hit any model provider.
 You can run it like this:
-uv run examples/model_providers/litellm_provider.py --model openai/gpt-4o
+uv run examples/model_providers/litellm_provider.py --model openai/gpt-4.1
 or
 uv run examples/model_providers/litellm_provider.py --model anthropic/claude-3-5-sonnet-20240620
 

@@ -48,8 +48,6 @@ A production-ready MCP (Model Context Protocol) client application built with th
 # OpenAI Configuration
 OPENAI_API_KEY=your_openai_api_key_here
 
-# MCP Server Authentication
-CLOUDMCP_TOKEN=your_cloudmcp_token_here
 WIKIPEDIA_TOKEN=your_wikipedia_token_here
 ```
 
@@ -58,12 +56,6 @@ WIKIPEDIA_TOKEN=your_wikipedia_token_here
 ```json
 {
   "servers": {
-    "cloudmcp-server-6837335c7e6338": {
-      "url": "https://18268932-6837335c7e6338.router.cloudmcp.run/mcp",
-      "headers": {"Authorization": "Bearer ${CLOUDMCP_TOKEN}"},
-      "type": "http",
-      "timeout": 30
-    },
     "wikipedia-mcp": {
       "command": "npx",
       "args": ["mcp-remote", "--header", "Authorization:Bearer ${WIKIPEDIA_TOKEN}", "https://wiki-1763000517527.server.mcp-cloud.ai/sse"],
@@ -110,11 +102,6 @@ WIKIPEDIA_TOKEN=your_wikipedia_token_here
    ```
 
 ### Advanced Usage
-
-**Initialize specific servers only**:
-```bash
-python mcp_client.py init --servers cloudmcp-server-6837335c7e6338
-```
 
 **Use verbose logging**:
 ```bash

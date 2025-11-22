@@ -6,12 +6,15 @@ interface LaunchAgentConfig {
     systemInstruction: string;
     prompt: string;
     temperature: number;
+    tools: ToolDefinition[];
 }
 
 export interface ToolDefinition {
+    id: string;
     name: string;
     description: string;
     category?: string;
+    createdAt: string;
 }
 
 export interface ToolCreationResponse {
@@ -76,6 +79,21 @@ export const addTool = async (tool: ToolDefinition): Promise<ToolCreationRespons
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(tool),
+    });
+
+    const data = await handleResponse(response);
+    return data;
+};
+
+export const getTools = async (): Promise<ToolDefinition[]> => {
+    const response = await fetch(buildApiUrl('/api/tools'));
+    const data = await handleResponse(response);
+    return data.tools || [];
+};
+
+export const deleteTool = async (toolId: string): Promise<{ message: string }> => {
+    const response = await fetch(buildApiUrl(`/api/tools/${toolId}`), {
+        method: 'DELETE',
     });
 
     const data = await handleResponse(response);

@@ -14,33 +14,6 @@
       "url": "http://localhost:3000/mcp",
       "type": "http"
     },
-    "cloudmcp-server-6837335c7e6338": {
-      "url": "https://18268932-6837335c7e6338.router.cloudmcp.run/mcp",
-      "headers": {
-        "Authorization": "Bearer ${CLOUDMCP_TOKEN}"
-      },
-      "type": "http",
-      "timeout": 30,
-      "sse_read_timeout": 60
-    },
-    "cloudmcp-server-48e7550c724608": {
-      "url": "https://18268932-48e7550c724608.router.cloudmcp.run/mcp",
-      "headers": {
-        "Authorization": "Bearer ${CLOUDMCP_TOKEN}"
-      },
-      "type": "http",
-      "timeout": 30,
-      "sse_read_timeout": 60
-    },
-    "cloudmcp-server-48e7550c72e668": {
-      "command": "npx",
-      "args": [
-        "mcp-remote",
-        "https://18268932-48e7550c72e668.router.cloudmcp.run/mcp"
-      ],
-      "env": {},
-      "type": "stdio"
-    },
     "wikipedia-mcp": {
       "command": "npx",
       "args": [
@@ -53,24 +26,6 @@
         "WIKIPEDIA_TOKEN": "${WIKIPEDIA_TOKEN}"
       },
       "type": "stdio"
-    },
-    "cloudmcp-server-287e552a0e46e8": {
-      "command": "npx",
-      "args": [
-        "mcp-remote",
-        "https://18268932-287e552a0e46e8.router.cloudmcp.run/mcp"
-      ],
-      "env": {},
-      "type": "stdio"
-    },
-    "cloudmcp-server-7847221c230d98": {
-      "url": "https://18268932-7847221c230d98.router.cloudmcp.run/mcp",
-      "headers": {
-        "Authorization": "Bearer ${CLOUDMCP_TOKEN}"
-      },
-      "type": "http",
-      "timeout": 30,
-      "sse_read_timeout": 60
     }
   }
 }

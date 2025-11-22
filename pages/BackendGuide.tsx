@@ -75,7 +75,7 @@ VECTOR_STORE_ID="OPTIONAL_VECTOR_STORE_ID"`}</CodeBlock>
                 <CodeBlock>
 {`{
     "agentId": "customer-service",
-    "model": "gpt-4o",
+    "model": "gpt-4.1",
     "temperature": 0.7,
     "systemInstruction": "You are a proactive customer support partner.",
     "prompt": "Summarize late delivery issues with empathy."

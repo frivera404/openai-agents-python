@@ -48,9 +48,9 @@ Default MCP server configuration:
 
 ```json
 {
-  "cloudmcp-router": {
+  "meta-api-mcp-server": {
     "command": "npx",
-    "args": ["mcp-remote", "https://18268932-48e7550c72e668.router.cloudmcp.run/mcp"],
+    "args": ["-y", "meta-api-mcp-server"],
     "type": "stdio"
   }
 }
@@ -176,7 +176,7 @@ asyncio.run(main())
 
 ```python
 # With specific MCP servers
-await agent.initialize_mcp_servers(['cloudmcp-router'])
+await agent.initialize_mcp_servers(['meta-api-mcp-server'])
 
 # With conversation threads
 result1 = await agent.run_query("Analyze this data", "thread_123")

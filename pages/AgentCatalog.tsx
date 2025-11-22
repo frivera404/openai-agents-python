@@ -37,7 +37,7 @@ const AgentCatalog: React.FC<AgentCatalogProps> = ({ agents, onSelectAgent, onLa
                 body: JSON.stringify({
                     agentId: selectedAgentForPrompt.id,
                     prompt: prompt.trim(),
-                    model: 'gpt-4o',
+                    model: 'gpt-4.1',
                     temperature: 0.7,
                 }),
             });

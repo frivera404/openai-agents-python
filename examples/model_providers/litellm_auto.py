@@ -33,7 +33,7 @@ async def main():
         name="Assistant",
         instructions="You only respond in haikus.",
         # We prefix with litellm/ to tell the Runner to use the LitellmModel
-        model="litellm/openai/gpt-4o",
+        model="litellm/openai/gpt-4.1",
         tools=[get_weather],
         model_settings=ModelSettings(tool_choice="required"),
         output_type=Result,
