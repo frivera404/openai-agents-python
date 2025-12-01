@@ -2,9 +2,9 @@
 search:
   exclude: true
 ---
-# 快速开始
+# 快速入门
 
-## 项目与虚拟环境
+## 项目与虚拟环境创建
 
 你只需执行一次。
 
@@ -16,7 +16,7 @@ python -m venv .venv
 
 ### 虚拟环境激活
 
-每次开启新的终端会话时执行。
+每次开启新的终端会话时都需要执行。
 
 ```bash
 source .venv/bin/activate
@@ -36,9 +36,9 @@ pip install openai-agents # or `uv add openai-agents`, etc
 export OPENAI_API_KEY=sk-...
 ```
 
-## 首个智能体创建
+## 第一个智能体创建
 
-智能体由 instructions、名称以及可选配置（例如 `model_config`）定义。
+智能体由 instructions、名称和可选配置（例如 `model_config`）定义。
 
 ```python
 from agents import Agent
@@ -51,7 +51,7 @@ agent = Agent(
 
 ## 更多智能体添加
 
-其他智能体可以用相同方式定义。`handoff_descriptions` 为确定任务转移路由提供额外上下文。
+可以用相同方式定义其他智能体。`handoff_descriptions` 提供用于确定任务转移路由的额外上下文。
 
 ```python
 from agents import Agent
@@ -71,7 +71,7 @@ math_tutor_agent = Agent(
 
 ## 任务转移定义
 
-在每个智能体上，你可以定义一个外发任务转移选项清单，供智能体选择以决定如何推进其任务。
+在每个智能体上，你可以定义一份可选的外向任务转移清单，智能体可从中选择以决定如何推进其任务。
 
 ```python
 triage_agent = Agent(
@@ -83,7 +83,7 @@ triage_agent = Agent(
 
 ## 智能体编排运行
 
-让我们检查工作流是否正常运行，以及分诊智能体是否能在两个专家智能体之间正确路由。
+让我们检查工作流是否运行，以及分诊智能体是否在两个专家智能体之间正确路由。
 
 ```python
 from agents import Runner
@@ -95,7 +95,7 @@ async def main():
 
 ## 安全防护措施添加
 
-你可以定义自定义的安全防护措施，运行在输入或输出上。
+你可以定义自定义的安全防护措施在输入或输出阶段运行。
 
 ```python
 from agents import GuardrailFunctionOutput, Agent, Runner
@@ -121,7 +121,7 @@ async def homework_guardrail(ctx, agent, input_data):
     )
 ```
 
-## 整合运行
+## 整体整合
 
 让我们把以上内容整合起来，运行整个工作流，使用任务转移和输入安全防护措施。
 
@@ -192,7 +192,7 @@ if __name__ == "__main__":
 
 ## 追踪查看
 
-要回顾智能体运行期间发生的事情，请前往 [OpenAI 控制台中的 Trace viewer](https://platform.openai.com/traces) 查看你的智能体运行追踪。
+要回顾智能体运行期间发生的事件，请前往 [OpenAI 控制台中的 Trace viewer](https://platform.openai.com/traces) 查看你的运行追踪。
 
 ## 后续步骤
 
