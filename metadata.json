@@ -1,0 +1,7 @@
+{
+  "name": "New Agent Dashboard",
+  "description": "A futuristic, AI-driven command center. Interact with the Primary Agent (Gemini) to manage tasks, analyze system status, and visualize background operations.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
