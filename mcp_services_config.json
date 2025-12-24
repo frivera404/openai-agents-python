@@ -1,34 +1,34 @@
 {
-  "servers": {
-    "google-calendar": {
-      "type": "hosted",
-      "connector_id": "connector_googlecalendar",
-      "authorization": "${GOOGLE_CALENDAR_AUTHORIZATION}",
-      "require_approval": "never",
-      "description": "Google Calendar integration via hosted MCP"
+    "servers": {
+        "google-calendar": {
+            "type": "hosted",
+            "connector_id": "connector_googlecalendar",
+            "authorization": "${GOOGLE_CALENDAR_AUTHORIZATION}",
+            "require_approval": "never",
+            "description": "Google Calendar integration via hosted MCP"
+        },
+        "github-tools": {
+            "type": "hosted",
+            "server_label": "gitmcp",
+            "server_url": "https://gitmcp.io/openai/codex",
+            "require_approval": "never",
+            "description": "GitHub repository tools via hosted MCP"
+        },
+        "web-search": {
+            "type": "hosted",
+            "connector_id": "connector_websearch",
+            "authorization": "${WEB_SEARCH_API_KEY}",
+            "require_approval": "auto",
+            "description": "Web search capabilities via hosted MCP"
+        }
     },
-    "github-tools": {
-      "type": "hosted",
-      "server_label": "gitmcp",
-      "server_url": "https://gitmcp.io/openai/codex",
-      "require_approval": "never",
-      "description": "GitHub repository tools via hosted MCP"
+    "environment_variables": {
+        "GOOGLE_CALENDAR_AUTHORIZATION": "ya29.your-google-oauth-token",
+        "WEB_SEARCH_API_KEY": "your-web-search-api-key"
     },
-    "web-search": {
-      "type": "hosted",
-      "connector_id": "connector_websearch",
-      "authorization": "${WEB_SEARCH_API_KEY}",
-      "require_approval": "auto",
-      "description": "Web search capabilities via hosted MCP"
+    "usage_examples": {
+        "calendar_integration": "Query your Google Calendar events and schedule",
+        "github_operations": "Search repositories, read files, create issues",
+        "web_search": "Search the web for current information"
     }
-  },
-  "environment_variables": {
-    "GOOGLE_CALENDAR_AUTHORIZATION": "ya29.your-google-oauth-token",
-    "WEB_SEARCH_API_KEY": "your-web-search-api-key"
-  },
-  "usage_examples": {
-    "calendar_integration": "Query your Google Calendar events and schedule",
-    "github_operations": "Search repositories, read files, create issues",
-    "web_search": "Search the web for current information"
-  }
 }

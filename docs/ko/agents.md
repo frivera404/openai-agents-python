@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 에이전트
 
 에이전트는 앱의 핵심 구성 요소입니다. 에이전트는 instructions와 tools로 구성된 대규모 언어 모델(LLM)입니다.

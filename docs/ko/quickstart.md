@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 빠른 시작
 
 ## 프로젝트와 가상 환경 생성

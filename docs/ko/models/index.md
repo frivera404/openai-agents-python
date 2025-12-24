@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 모델
 
 Agents SDK 는 OpenAI 모델을 다음 두 가지 방식으로 기본 지원합니다:

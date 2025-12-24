@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 에이전트 실행
 
 에이전트는 [`Runner`][agents.run.Runner] 클래스를 통해 실행할 수 있습니다. 선택지는 3가지입니다:
@@ -125,7 +126,6 @@ Sessions 는 자동으로 다음을 수행합니다:
 
 자세한 내용은 [Sessions 문서](sessions/index.md)를 참조하세요.
 
-
 ### 서버 관리 대화
 
 `to_input_list()` 또는 `Sessions` 로 로컬에서 처리하는 대신, OpenAI conversation state 기능에 서버 측 대화 상태 관리를 맡길 수도 있습니다. 이를 통해 과거 메시지를 모두 수동으로 재전송하지 않고도 대화 기록을 보존할 수 있습니다. 자세한 내용은 [OpenAI Conversation state 가이드](https://platform.openai.com/docs/guides/conversation-state?api-mode=responses)에서 확인하세요.
@@ -145,7 +145,7 @@ client = AsyncOpenAI()
 async def main():
     # Create a server-managed conversation
     conversation = await client.conversations.create()
-    conv_id = conversation.id    
+    conv_id = conversation.id
 
     agent = Agent(name="Assistant", instructions="Reply very concisely.")
 
@@ -188,7 +188,6 @@ async def main():
     print(result2.final_output)
     # California
 ```
-
 
 ## 장기 실행 에이전트 및 휴먼인더루프 (HITL)
 

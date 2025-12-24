@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import AgentCard from '../components/AgentCard';
 import type { Agent } from '../types';
@@ -10,7 +9,12 @@ interface AgentCatalogProps {
     launchingAgentId: string | null;
 }
 
-const AgentCatalog: React.FC<AgentCatalogProps> = ({ agents, onSelectAgent, onLaunch, launchingAgentId }) => {
+const AgentCatalog: React.FC<AgentCatalogProps> = ({
+    agents,
+    onSelectAgent,
+    onLaunch,
+    launchingAgentId,
+}) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [languageFilter, setLanguageFilter] = useState('All');
     const [selectedAgentForPrompt, setSelectedAgentForPrompt] = useState<Agent | null>(null);
@@ -18,9 +22,10 @@ const AgentCatalog: React.FC<AgentCatalogProps> = ({ agents, onSelectAgent, onLa
     const [result, setResult] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    const filteredAgents = agents.filter(agent => {
-        const matchesSearch = agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                              agent.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const filteredAgents = agents.filter((agent) => {
+        const matchesSearch =
+            agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            agent.description.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesLang = languageFilter === 'All' || agent.language === languageFilter;
         return matchesSearch && matchesLang;
     });
@@ -59,13 +64,20 @@ const AgentCatalog: React.FC<AgentCatalogProps> = ({ agents, onSelectAgent, onLa
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Agents</h1>
                 <p className="mt-2 text-gray-600 dark:text-gray-400">
-                    Browse, configure, and launch your AI agents. Each agent is designed for a specific task and can be customized to fit your needs.
+                    Browse, configure, and launch your AI agents. Each agent is designed for a
+                    specific task and can be customized to fit your needs.
                 </p>
                 <div className="mt-6 flex flex-col sm:flex-row gap-4">
                     <div className="relative flex-grow">
                         <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                             <svg className="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none">
-                                <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
+                                <path
+                                    d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                ></path>
                             </svg>
                         </span>
                         <input
@@ -89,7 +101,7 @@ const AgentCatalog: React.FC<AgentCatalogProps> = ({ agents, onSelectAgent, onLa
             </div>
 
             <div className="grid gap-6 md:gap-8 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 mt-8">
-                {filteredAgents.map(agent => (
+                {filteredAgents.map((agent) => (
                     <AgentCard
                         key={agent.id}
                         agent={agent}
@@ -102,7 +114,9 @@ const AgentCatalog: React.FC<AgentCatalogProps> = ({ agents, onSelectAgent, onLa
 
             {/* Prompting and Results Section */}
             <div className="mt-12 bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Test Agents</h2>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                    Test Agents
+                </h2>
                 <p className="text-gray-600 dark:text-gray-400 mb-6">
                     Select an agent, enter a prompt, and see the results in real-time.
                 </p>
@@ -114,15 +128,17 @@ const AgentCatalog: React.FC<AgentCatalogProps> = ({ agents, onSelectAgent, onLa
                         <select
                             value={selectedAgentForPrompt?.id || ''}
                             onChange={(e) => {
-                                const agent = agents.find(a => a.id === e.target.value);
+                                const agent = agents.find((a) => a.id === e.target.value);
                                 setSelectedAgentForPrompt(agent || null);
                             }}
                             className="w-full border rounded-md px-3 py-2 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             required
                         >
                             <option value="">Choose an agent...</option>
-                            {agents.map(agent => (
-                                <option key={agent.id} value={agent.id}>{agent.name}</option>
+                            {agents.map((agent) => (
+                                <option key={agent.id} value={agent.id}>
+                                    {agent.name}
+                                </option>
                             ))}
                         </select>
                     </div>
@@ -149,9 +165,13 @@ const AgentCatalog: React.FC<AgentCatalogProps> = ({ agents, onSelectAgent, onLa
                 </form>
                 {result && (
                     <div className="mt-6">
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Result</h3>
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                            Result
+                        </h3>
                         <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-md border">
-                            <pre className="whitespace-pre-wrap text-gray-800 dark:text-gray-200">{result}</pre>
+                            <pre className="whitespace-pre-wrap text-gray-800 dark:text-gray-200">
+                                {result}
+                            </pre>
                         </div>
                     </div>
                 )}

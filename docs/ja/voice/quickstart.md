@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # クイックスタート
 
 ## 前提条件

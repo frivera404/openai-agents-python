@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 通过 LiteLLM 使用任意模型
 
 !!! note
@@ -24,9 +25,9 @@ pip install "openai-agents[litellm]"
 
 这是一个可直接运行的示例。运行后会提示输入模型名称和 API key。例如，你可以输入：
 
--   模型使用 `openai/gpt-4.1`，并提供你的 OpenAI API key
--   模型使用 `anthropic/claude-3-5-sonnet-20240620`，并提供你的 Anthropic API key
--   等等
+- 模型使用 `openai/gpt-4.1`，并提供你的 OpenAI API key
+- 模型使用 `anthropic/claude-3-5-sonnet-20240620`，并提供你的 Anthropic API key
+- 等等
 
 关于 LiteLLM 支持的完整模型列表，请参见 [litellm providers 文档](https://docs.litellm.ai/docs/providers)。
 

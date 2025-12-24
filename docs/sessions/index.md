@@ -253,18 +253,18 @@ See [Encrypted Sessions](encrypted_session.md) for detailed documentation.
 
 Use meaningful session IDs that help you organize conversations:
 
--   User-based: `"user_12345"`
--   Thread-based: `"thread_abc123"`
--   Context-based: `"support_ticket_456"`
+- User-based: `"user_12345"`
+- Thread-based: `"thread_abc123"`
+- Context-based: `"support_ticket_456"`
 
 ### Memory persistence
 
--   Use in-memory SQLite (`SQLiteSession("session_id")`) for temporary conversations
--   Use file-based SQLite (`SQLiteSession("session_id", "path/to/db.sqlite")`) for persistent conversations
--   Use SQLAlchemy-powered sessions (`SQLAlchemySession("session_id", engine=engine, create_tables=True)`) for production systems with existing databases supported by SQLAlchemy
--   Use OpenAI-hosted storage (`OpenAIConversationsSession()`) when you prefer to store history in the OpenAI Conversations API
--   Use encrypted sessions (`EncryptedSession(session_id, underlying_session, encryption_key)`) to wrap any session with transparent encryption and TTL-based expiration
--   Consider implementing custom session backends for other production systems (Redis, Django, etc.) for more advanced use cases
+- Use in-memory SQLite (`SQLiteSession("session_id")`) for temporary conversations
+- Use file-based SQLite (`SQLiteSession("session_id", "path/to/db.sqlite")`) for persistent conversations
+- Use SQLAlchemy-powered sessions (`SQLAlchemySession("session_id", engine=engine, create_tables=True)`) for production systems with existing databases supported by SQLAlchemy
+- Use OpenAI-hosted storage (`OpenAIConversationsSession()`) when you prefer to store history in the OpenAI Conversations API
+- Use encrypted sessions (`EncryptedSession(session_id, underlying_session, encryption_key)`) to wrap any session with transparent encryption and TTL-based expiration
+- Consider implementing custom session backends for other production systems (Redis, Django, etc.) for more advanced use cases
 
 ### Multiple sessions
 
@@ -423,9 +423,9 @@ result = await Runner.run(
 
 For detailed API documentation, see:
 
--   [`Session`][agents.memory.session.Session] - Protocol interface
--   [`OpenAIConversationsSession`][agents.memory.OpenAIConversationsSession] - OpenAI Conversations API implementation
--   [`SQLiteSession`][agents.memory.sqlite_session.SQLiteSession] - Basic SQLite implementation
--   [`SQLAlchemySession`][agents.extensions.memory.sqlalchemy_session.SQLAlchemySession] - SQLAlchemy-powered implementation
--   [`AdvancedSQLiteSession`][agents.extensions.memory.advanced_sqlite_session.AdvancedSQLiteSession] - Enhanced SQLite with branching and analytics
--   [`EncryptedSession`][agents.extensions.memory.encrypt_session.EncryptedSession] - Encrypted wrapper for any session
+- [`Session`][agents.memory.session.Session] - Protocol interface
+- [`OpenAIConversationsSession`][agents.memory.OpenAIConversationsSession] - OpenAI Conversations API implementation
+- [`SQLiteSession`][agents.memory.sqlite_session.SQLiteSession] - Basic SQLite implementation
+- [`SQLAlchemySession`][agents.extensions.memory.sqlalchemy_session.SQLAlchemySession] - SQLAlchemy-powered implementation
+- [`AdvancedSQLiteSession`][agents.extensions.memory.advanced_sqlite_session.AdvancedSQLiteSession] - Enhanced SQLite with branching and analytics
+- [`EncryptedSession`][agents.extensions.memory.encrypt_session.EncryptedSession] - Encrypted wrapper for any session

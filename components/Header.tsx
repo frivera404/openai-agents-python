@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface HeaderProps {
@@ -7,11 +6,13 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ title }) => {
     return (
-        <header className="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex-shrink-0 flex items-center justify-between px-6">
-            <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">{title}</h2>
-            <div>
-                {/* Placeholder for user profile or actions */}
-                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
+        <header className="h-16 bg-black/20 border-b border-gray-600 flex-shrink-0 flex items-center justify-between px-6 backdrop-blur-sm">
+            <h2 className="text-lg font-bold text-white">{title}</h2>
+            <div className="flex items-center space-x-4">
+                <div className="text-sm text-gray-300">
+                    System Status: <span className="text-green-400 font-semibold">ONLINE</span>
+                </div>
+                <div className="w-8 h-8 bg-tech-accent rounded-full flex items-center justify-center text-black font-bold animate-pulse">
                     A
                 </div>
             </div>

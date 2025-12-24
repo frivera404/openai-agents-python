@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 高度な SQLite セッション
 
 `AdvancedSQLiteSession` は、会話の分岐、詳細な使用状況の分析、構造化された会話クエリなどの高度な会話管理機能を提供する、基本の `SQLiteSession` を強化したバージョンです。
@@ -154,13 +155,13 @@ print(f"Created branch: {branch_id}")
 
 # Create a branch with custom name
 branch_id = await session.create_branch_from_turn(
-    2, 
+    2,
     branch_name="alternative_path"
 )
 
 # Create branch by searching for content
 branch_id = await session.create_branch_from_content(
-    "weather", 
+    "weather",
     branch_name="weather_focus"
 )
 ```
@@ -197,8 +198,8 @@ branch_id = await session.create_branch_from_turn(2, "weather_focus")
 
 # Continue in new branch with different question
 result = await Runner.run(
-    agent, 
-    "What are the main tourist attractions in Paris?", 
+    agent,
+    "What are the main tourist attractions in Paris?",
     session=session
 )
 await session.store_run_usage(result)
@@ -208,8 +209,8 @@ await session.switch_to_branch("main")
 
 # Continue original conversation
 result = await Runner.run(
-    agent, 
-    "How expensive is it to visit?", 
+    agent,
+    "How expensive is it to visit?",
     session=session
 )
 await session.store_run_usage(result)
@@ -299,7 +300,6 @@ CREATE TABLE turn_usage (
 ## 完全な例
 
 すべての機能を網羅する [完全な例](https://github.com/openai/openai-agents-python/tree/main/examples/memory/advanced_sqlite_session_example.py) をご覧ください。
-
 
 ## API リファレンス
 

@@ -1,0 +1,20 @@
+{
+  "task_id": "realworld-0001",
+  "goal": "Run a short market and implementation research for LLM deployment on Windows + Docker",
+  "inputs": {
+    "query": "LLM deployment patterns, docker on Windows, GPU passthrough, dev ergonomics",
+    "context_files": []
+  },
+  "constraints": {},
+  "success_criteria": [
+    "summary",
+    "recommended architecture",
+    "example commands"
+  ],
+  "status": "queued",
+  "attempts": 0,
+  "steps": [],
+  "history": [],
+  "artifacts": {},
+  "created_at": 1766299999.0
+}

@@ -1,13 +1,14 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # モデル
 
 Agents SDK には、OpenAI モデルに対する即時利用可能なサポートが 2 つの形で用意されています。
 
--  **推奨**: [`OpenAIResponsesModel`][agents.models.openai_responses.OpenAIResponsesModel]。新しい [Responses API](https://platform.openai.com/docs/api-reference/responses) を使って OpenAI API を呼び出します。
--  [`OpenAIChatCompletionsModel`][agents.models.openai_chatcompletions.OpenAIChatCompletionsModel]。 [Chat Completions API](https://platform.openai.com/docs/api-reference/chat) を使って OpenAI API を呼び出します。
+- **推奨**: [`OpenAIResponsesModel`][agents.models.openai_responses.OpenAIResponsesModel]。新しい [Responses API](https://platform.openai.com/docs/api-reference/responses) を使って OpenAI API を呼び出します。
+- [`OpenAIChatCompletionsModel`][agents.models.openai_chatcompletions.OpenAIChatCompletionsModel]。 [Chat Completions API](https://platform.openai.com/docs/api-reference/chat) を使って OpenAI API を呼び出します。
 
 ## OpenAI モデル
 
@@ -187,6 +188,6 @@ BadRequestError: Error code: 400 - {'error': {'message': "'response_format.type'
 
 モデルプロバイダー間の機能差に注意しないと、エラーが発生する可能性があります。例えば、OpenAI は structured outputs、マルチモーダル入力、ホスト型のファイル検索と Web 検索をサポートしますが、多くの他社プロバイダーはこれらの機能をサポートしていません。次の制限に注意してください。
 
--  サポートされていない `tools` を理解しないプロバイダーに送らないでください
--  テキスト専用のモデルを呼び出す前に、マルチモーダル入力を除外してください
--  structured JSON 出力をサポートしないプロバイダーは、無効な JSON を出力することがあります
+- サポートされていない `tools` を理解しないプロバイダーに送らないでください
+- テキスト専用のモデルを呼び出す前に、マルチモーダル入力を除外してください
+- structured JSON 出力をサポートしないプロバイダーは、無効な JSON を出力することがあります

@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 트레이싱
 
 Agents SDK에는 기본 제공 트레이싱이 포함되어 있어 에이전트 실행 중 발생하는 이벤트의 포괄적인 기록을 수집합니다: LLM 생성, 도구 호출, 핸드오프, 가드레일, 그리고 사용자 정의 이벤트까지. [Traces 대시보드](https://platform.openai.com/traces)를 사용하여 개발 중과 프로덕션 환경에서 워크플로를 디버깅, 시각화, 모니터링할 수 있습니다.
@@ -13,35 +14,35 @@ Agents SDK에는 기본 제공 트레이싱이 포함되어 있어 에이전트 
     1. 환경 변수 `OPENAI_AGENTS_DISABLE_TRACING=1` 를 설정하여 전역적으로 트레이싱을 비활성화할 수 있습니다
     2. 단일 실행에 대해서는 [`agents.run.RunConfig.tracing_disabled`][] 를 `True` 로 설정하여 트레이싱을 비활성화할 수 있습니다
 
-***OpenAI의 API를 사용하는 Zero Data Retention (ZDR) 정책 하의 조직에서는 트레이싱을 사용할 수 없습니다.***
+**_OpenAI의 API를 사용하는 Zero Data Retention (ZDR) 정책 하의 조직에서는 트레이싱을 사용할 수 없습니다._**
 
 ## 트레이스와 스팬
 
--   **트레이스(Traces)** 는 "워크플로"의 단일 엔드투엔드 동작을 나타냅니다. 스팬으로 구성됩니다. 트레이스에는 다음 속성이 있습니다:
-    -   `workflow_name`: 논리적 워크플로 또는 앱입니다. 예: "Code generation" 또는 "Customer service"
-    -   `trace_id`: 트레이스의 고유 ID입니다. 전달하지 않으면 자동으로 생성됩니다. 형식은 `trace_<32_alphanumeric>` 이어야 합니다
-    -   `group_id`: 선택적 그룹 ID로, 동일한 대화의 여러 트레이스를 연결합니다. 예를 들어 채팅 스레드 ID를 사용할 수 있습니다
-    -   `disabled`: True 인 경우 트레이스가 기록되지 않습니다
-    -   `metadata`: 트레이스의 선택적 메타데이터
--   **스팬(Spans)** 은 시작 및 종료 시간이 있는 작업을 나타냅니다. 스팬에는 다음이 포함됩니다:
-    -   `started_at` 및 `ended_at` 타임스탬프
-    -   속한 트레이스를 나타내는 `trace_id`
-    -   이 스팬의 상위 스팬(있는 경우)을 가리키는 `parent_id`
-    -   스팬에 대한 정보인 `span_data`. 예를 들어, `AgentSpanData` 는 에이전트 정보, `GenerationSpanData` 는 LLM 생성 정보를 포함합니다
+- **트레이스(Traces)** 는 "워크플로"의 단일 엔드투엔드 동작을 나타냅니다. 스팬으로 구성됩니다. 트레이스에는 다음 속성이 있습니다:
+    - `workflow_name`: 논리적 워크플로 또는 앱입니다. 예: "Code generation" 또는 "Customer service"
+    - `trace_id`: 트레이스의 고유 ID입니다. 전달하지 않으면 자동으로 생성됩니다. 형식은 `trace_<32_alphanumeric>` 이어야 합니다
+    - `group_id`: 선택적 그룹 ID로, 동일한 대화의 여러 트레이스를 연결합니다. 예를 들어 채팅 스레드 ID를 사용할 수 있습니다
+    - `disabled`: True 인 경우 트레이스가 기록되지 않습니다
+    - `metadata`: 트레이스의 선택적 메타데이터
+- **스팬(Spans)** 은 시작 및 종료 시간이 있는 작업을 나타냅니다. 스팬에는 다음이 포함됩니다:
+    - `started_at` 및 `ended_at` 타임스탬프
+    - 속한 트레이스를 나타내는 `trace_id`
+    - 이 스팬의 상위 스팬(있는 경우)을 가리키는 `parent_id`
+    - 스팬에 대한 정보인 `span_data`. 예를 들어, `AgentSpanData` 는 에이전트 정보, `GenerationSpanData` 는 LLM 생성 정보를 포함합니다
 
 ## 기본 트레이싱
 
 기본적으로 SDK는 다음을 트레이싱합니다:
 
--   전체 `Runner.{run, run_sync, run_streamed}()` 가 `trace()` 로 감싸집니다
--   에이전트가 실행될 때마다 `agent_span()` 으로 감싸집니다
--   LLM 생성은 `generation_span()` 으로 감싸집니다
--   함수 도구 호출은 각각 `function_span()` 으로 감싸집니다
--   가드레일은 `guardrail_span()` 으로 감싸집니다
--   핸드오프는 `handoff_span()` 으로 감싸집니다
--   오디오 입력(음성-텍스트)은 `transcription_span()` 으로 감싸집니다
--   오디오 출력(텍스트-음성)은 `speech_span()` 으로 감싸집니다
--   관련 오디오 스팬은 `speech_group_span()` 아래에 상위로 배치될 수 있습니다
+- 전체 `Runner.{run, run_sync, run_streamed}()` 가 `trace()` 로 감싸집니다
+- 에이전트가 실행될 때마다 `agent_span()` 으로 감싸집니다
+- LLM 생성은 `generation_span()` 으로 감싸집니다
+- 함수 도구 호출은 각각 `function_span()` 으로 감싸집니다
+- 가드레일은 `guardrail_span()` 으로 감싸집니다
+- 핸드오프는 `handoff_span()` 으로 감싸집니다
+- 오디오 입력(음성-텍스트)은 `transcription_span()` 으로 감싸집니다
+- 오디오 출력(텍스트-음성)은 `speech_span()` 으로 감싸집니다
+- 관련 오디오 스팬은 `speech_group_span()` 아래에 상위로 배치될 수 있습니다
 
 기본적으로 트레이스 이름은 "Agent workflow" 입니다. `trace` 를 사용하면 이 이름을 설정할 수 있고, [`RunConfig`][agents.run.RunConfig] 를 통해 이름 및 기타 속성을 구성할 수도 있습니다.
 
@@ -93,8 +94,8 @@ async def main():
 
 트레이싱의 상위 수준 아키텍처는 다음과 같습니다:
 
--   초기화 시, 트레이스를 생성하는 역할을 하는 전역 [`TraceProvider`][agents.tracing.setup.TraceProvider] 를 생성합니다
--   트레이스/스팬을 배치로 [`BackendSpanExporter`][agents.tracing.processors.BackendSpanExporter] 에 보내는 [`BatchTraceProcessor`][agents.tracing.processors.BatchTraceProcessor] 로 `TraceProvider` 를 구성합니다. 이는 스팬과 트레이스를 배치로 OpenAI 백엔드에 내보냅니다
+- 초기화 시, 트레이스를 생성하는 역할을 하는 전역 [`TraceProvider`][agents.tracing.setup.TraceProvider] 를 생성합니다
+- 트레이스/스팬을 배치로 [`BackendSpanExporter`][agents.tracing.processors.BackendSpanExporter] 에 보내는 [`BatchTraceProcessor`][agents.tracing.processors.BatchTraceProcessor] 로 `TraceProvider` 를 구성합니다. 이는 스팬과 트레이스를 배치로 OpenAI 백엔드에 내보냅니다
 
 기본 설정을 사용자 정의하여 대체 또는 추가 백엔드로 트레이스를 전송하거나 내보내기 동작을 변경하려면 두 가지 옵션이 있습니다:
 
@@ -125,26 +126,27 @@ agent = Agent(
 ```
 
 ## 참고
+
 - OpenAI Traces 대시보드에서 무료 트레이스를 확인하세요
 
 ## 외부 트레이싱 프로세서 목록
 
--   [Weights & Biases](https://weave-docs.wandb.ai/guides/integrations/openai_agents)
--   [Arize-Phoenix](https://docs.arize.com/phoenix/tracing/integrations-tracing/openai-agents-sdk)
--   [Future AGI](https://docs.futureagi.com/future-agi/products/observability/auto-instrumentation/openai_agents)
-    -   [MLflow (self-hosted/OSS)](https://mlflow.org/docs/latest/tracing/integrations/openai-agent)
--   [Braintrust](https://braintrust.dev/docs/guides/traces/integrations#openai-agents-sdk)
--   [Pydantic Logfire](https://logfire.pydantic.dev/docs/integrations/llms/openai/#openai-agents)
--   [AgentOps](https://docs.agentops.ai/v1/integrations/agentssdk)
--   [Scorecard](https://docs.scorecard.io/docs/documentation/features/tracing#openai-agents-sdk-integration)
--   [Keywords AI](https://docs.keywordsai.co/integration/development-frameworks/openai-agent)
--   [LangSmith](https://docs.smith.langchain.com/observability/how_to_guides/trace_with_openai_agents_sdk)
--   [Maxim AI](https://www.getmaxim.ai/docs/observe/integrations/openai-agents-sdk)
--   [Comet Opik](https://www.comet.com/docs/opik/tracing/integrations/openai_agents)
--   [Langfuse](https://langfuse.com/docs/integrations/openaiagentssdk/openai-agents)
--   [Langtrace](https://docs.langtrace.ai/supported-integrations/llm-frameworks/openai-agents-sdk)
--   [Okahu-Monocle](https://github.com/monocle2ai/monocle)
--   [Galileo](https://v2docs.galileo.ai/integrations/openai-agent-integration#openai-agent-integration)
--   [Portkey AI](https://portkey.ai/docs/integrations/agents/openai-agents)
--   [LangDB AI](https://docs.langdb.ai/getting-started/working-with-agent-frameworks/working-with-openai-agents-sdk)
--   [Agenta](https://docs.agenta.ai/observability/integrations/openai-agents)
+- [Weights & Biases](https://weave-docs.wandb.ai/guides/integrations/openai_agents)
+- [Arize-Phoenix](https://docs.arize.com/phoenix/tracing/integrations-tracing/openai-agents-sdk)
+- [Future AGI](https://docs.futureagi.com/future-agi/products/observability/auto-instrumentation/openai_agents)
+    - [MLflow (self-hosted/OSS)](https://mlflow.org/docs/latest/tracing/integrations/openai-agent)
+- [Braintrust](https://braintrust.dev/docs/guides/traces/integrations#openai-agents-sdk)
+- [Pydantic Logfire](https://logfire.pydantic.dev/docs/integrations/llms/openai/#openai-agents)
+- [AgentOps](https://docs.agentops.ai/v1/integrations/agentssdk)
+- [Scorecard](https://docs.scorecard.io/docs/documentation/features/tracing#openai-agents-sdk-integration)
+- [Keywords AI](https://docs.keywordsai.co/integration/development-frameworks/openai-agent)
+- [LangSmith](https://docs.smith.langchain.com/observability/how_to_guides/trace_with_openai_agents_sdk)
+- [Maxim AI](https://www.getmaxim.ai/docs/observe/integrations/openai-agents-sdk)
+- [Comet Opik](https://www.comet.com/docs/opik/tracing/integrations/openai_agents)
+- [Langfuse](https://langfuse.com/docs/integrations/openaiagentssdk/openai-agents)
+- [Langtrace](https://docs.langtrace.ai/supported-integrations/llm-frameworks/openai-agents-sdk)
+- [Okahu-Monocle](https://github.com/monocle2ai/monocle)
+- [Galileo](https://v2docs.galileo.ai/integrations/openai-agent-integration#openai-agent-integration)
+- [Portkey AI](https://portkey.ai/docs/integrations/agents/openai-agents)
+- [LangDB AI](https://docs.langdb.ai/getting-started/working-with-agent-frameworks/working-with-openai-agents-sdk)
+- [Agenta](https://docs.agenta.ai/observability/integrations/openai-agents)

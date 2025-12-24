@@ -2,21 +2,21 @@
 
 Tools let agents take actions: things like fetching data, running code, calling external APIs, and even using a computer. There are three classes of tools in the Agent SDK:
 
--   Hosted tools: these run on LLM servers alongside the AI models. OpenAI offers retrieval, web search and computer use as hosted tools.
--   Function calling: these allow you to use any Python function as a tool.
--   Agents as tools: this allows you to use an agent as a tool, allowing Agents to call other agents without handing off to them.
+- Hosted tools: these run on LLM servers alongside the AI models. OpenAI offers retrieval, web search and computer use as hosted tools.
+- Function calling: these allow you to use any Python function as a tool.
+- Agents as tools: this allows you to use an agent as a tool, allowing Agents to call other agents without handing off to them.
 
 ## Hosted tools
 
 OpenAI offers a few built-in tools when using the [`OpenAIResponsesModel`][agents.models.openai_responses.OpenAIResponsesModel]:
 
--   The [`WebSearchTool`][agents.tool.WebSearchTool] lets an agent search the web.
--   The [`FileSearchTool`][agents.tool.FileSearchTool] allows retrieving information from your OpenAI Vector Stores.
--   The [`ComputerTool`][agents.tool.ComputerTool] allows automating computer use tasks.
--   The [`CodeInterpreterTool`][agents.tool.CodeInterpreterTool] lets the LLM execute code in a sandboxed environment.
--   The [`HostedMCPTool`][agents.tool.HostedMCPTool] exposes a remote MCP server's tools to the model.
--   The [`ImageGenerationTool`][agents.tool.ImageGenerationTool] generates images from a prompt.
--   The [`LocalShellTool`][agents.tool.LocalShellTool] runs shell commands on your machine.
+- The [`WebSearchTool`][agents.tool.WebSearchTool] lets an agent search the web.
+- The [`FileSearchTool`][agents.tool.FileSearchTool] allows retrieving information from your OpenAI Vector Stores.
+- The [`ComputerTool`][agents.tool.ComputerTool] allows automating computer use tasks.
+- The [`CodeInterpreterTool`][agents.tool.CodeInterpreterTool] lets the LLM execute code in a sandboxed environment.
+- The [`HostedMCPTool`][agents.tool.HostedMCPTool] exposes a remote MCP server's tools to the model.
+- The [`ImageGenerationTool`][agents.tool.ImageGenerationTool] generates images from a prompt.
+- The [`LocalShellTool`][agents.tool.LocalShellTool] runs shell commands on your machine.
 
 ```python
 from agents import Agent, FileSearchTool, Runner, WebSearchTool
@@ -41,10 +41,10 @@ async def main():
 
 You can use any Python function as a tool. The Agents SDK will setup the tool automatically:
 
--   The name of the tool will be the name of the Python function (or you can provide a name)
--   Tool description will be taken from the docstring of the function (or you can provide a description)
--   The schema for the function inputs is automatically created from the function's arguments
--   Descriptions for each input are taken from the docstring of the function, unless disabled
+- The name of the tool will be the name of the Python function (or you can provide a name)
+- Tool description will be taken from the docstring of the function (or you can provide a description)
+- The schema for the function inputs is automatically created from the function's arguments
+- Descriptions for each input are taken from the docstring of the function, unless disabled
 
 We use Python's `inspect` module to extract the function signature, along with [`griffe`](https://mkdocstrings.github.io/griffe/) to parse docstrings and `pydantic` for schema creation.
 
@@ -177,18 +177,18 @@ for tool in agent.tools:
 
 In addition to returning text outputs, you can return one or many images or files as the output of a function tool. To do so, you can return any of:
 
--   Images: [`ToolOutputImage`][agents.tool.ToolOutputImage] (or the TypedDict version, [`ToolOutputImageDict`][agents.tool.ToolOutputImageDict])
--   Files: [`ToolOutputFileContent`][agents.tool.ToolOutputFileContent] (or the TypedDict version, [`ToolOutputFileContentDict`][agents.tool.ToolOutputFileContentDict])
--   Text: either a string or stringable objects, or [`ToolOutputText`][agents.tool.ToolOutputText] (or the TypedDict version, [`ToolOutputTextDict`][agents.tool.ToolOutputTextDict])
+- Images: [`ToolOutputImage`][agents.tool.ToolOutputImage] (or the TypedDict version, [`ToolOutputImageDict`][agents.tool.ToolOutputImageDict])
+- Files: [`ToolOutputFileContent`][agents.tool.ToolOutputFileContent] (or the TypedDict version, [`ToolOutputFileContentDict`][agents.tool.ToolOutputFileContentDict])
+- Text: either a string or stringable objects, or [`ToolOutputText`][agents.tool.ToolOutputText] (or the TypedDict version, [`ToolOutputTextDict`][agents.tool.ToolOutputTextDict])
 
 ### Custom function tools
 
 Sometimes, you don't want to use a Python function as a tool. You can directly create a [`FunctionTool`][agents.tool.FunctionTool] if you prefer. You'll need to provide:
 
--   `name`
--   `description`
--   `params_json_schema`, which is the JSON schema for the arguments
--   `on_invoke_tool`, which is an async function that receives a [`ToolContext`][agents.tool_context.ToolContext] and the arguments as a JSON string, and must return the tool output as a string.
+- `name`
+- `description`
+- `params_json_schema`, which is the JSON schema for the arguments
+- `on_invoke_tool`, which is an async function that receives a [`ToolContext`][agents.tool_context.ToolContext] and the arguments as a JSON string, and must return the tool output as a string.
 
 ```python
 from typing import Any
@@ -296,9 +296,9 @@ async def run_my_agent() -> str:
 
 In certain cases, you might want to modify the output of the tool-agents before returning it to the central agent. This may be useful if you want to:
 
--   Extract a specific piece of information (e.g., a JSON payload) from the sub-agent's chat history.
--   Convert or reformat the agent’s final answer (e.g., transform Markdown into plain text or CSV).
--   Validate the output or provide a fallback value when the agent’s response is missing or malformed.
+- Extract a specific piece of information (e.g., a JSON payload) from the sub-agent's chat history.
+- Convert or reformat the agent’s final answer (e.g., transform Markdown into plain text or CSV).
+- Validate the output or provide a fallback value when the agent’s response is missing or malformed.
 
 You can do this by supplying the `custom_output_extractor` argument to the `as_tool` method:
 
@@ -378,24 +378,24 @@ asyncio.run(main())
 
 The `is_enabled` parameter accepts:
 
--   **Boolean values**: `True` (always enabled) or `False` (always disabled)
--   **Callable functions**: Functions that take `(context, agent)` and return a boolean
--   **Async functions**: Async functions for complex conditional logic
+- **Boolean values**: `True` (always enabled) or `False` (always disabled)
+- **Callable functions**: Functions that take `(context, agent)` and return a boolean
+- **Async functions**: Async functions for complex conditional logic
 
 Disabled tools are completely hidden from the LLM at runtime, making this useful for:
 
--   Feature gating based on user permissions
--   Environment-specific tool availability (dev vs prod)
--   A/B testing different tool configurations
--   Dynamic tool filtering based on runtime state
+- Feature gating based on user permissions
+- Environment-specific tool availability (dev vs prod)
+- A/B testing different tool configurations
+- Dynamic tool filtering based on runtime state
 
 ## Handling errors in function tools
 
 When you create a function tool via `@function_tool`, you can pass a `failure_error_function`. This is a function that provides an error response to the LLM in case the tool call crashes.
 
--   By default (i.e. if you don't pass anything), it runs a `default_tool_error_function` which tells the LLM an error occurred.
--   If you pass your own error function, it runs that instead, and sends the response to the LLM.
--   If you explicitly pass `None`, then any tool call errors will be re-raised for you to handle. This could be a `ModelBehaviorError` if the model produced invalid JSON, or a `UserError` if your code crashed, etc.
+- By default (i.e. if you don't pass anything), it runs a `default_tool_error_function` which tells the LLM an error occurred.
+- If you pass your own error function, it runs that instead, and sends the response to the LLM.
+- If you explicitly pass `None`, then any tool call errors will be re-raised for you to handle. This could be a `ModelBehaviorError` if the model produced invalid JSON, or a `UserError` if your code crashed, etc.
 
 ```python
 from agents import function_tool, RunContextWrapper

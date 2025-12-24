@@ -1,4 +1,4 @@
-name: "Update Translated Docs"
+name: 'Update Translated Docs'
 
 # This GitHub Actions job automates the process of updating all translated document pages. Please note the following:
 # 1. The translation results may vary each time; some differences in detail are expected.
@@ -65,8 +65,8 @@ jobs:
         if: steps.commit.outputs.committed == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
-          commit-message: "Update all translated document pages"
-          title: "Update all translated document pages"
+          commit-message: 'Update all translated document pages'
+          title: 'Update all translated document pages'
           body: |
             Automated update of translated documentation.
 

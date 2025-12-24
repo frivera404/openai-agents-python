@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 快速开始
 
 ## 创建项目和虚拟环境

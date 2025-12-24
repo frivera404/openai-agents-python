@@ -18,15 +18,16 @@ A VS Code extension for managing Model Context Protocol (MCP) servers through an
 1. Open the MCP Servers view in the Explorer panel
 2. Click the "+" button or use the "MCP: Add Server" command
 3. Fill in the server details:
-   - **Name**: Unique identifier for the server
-   - **Transport**: stdio, http, or websocket
-   - **Command/URL**: Command to run (stdio) or URL (http/websocket)
-   - **Arguments**: Command-line arguments (stdio only)
-   - **Scope**: Workspace or global configuration
+    - **Name**: Unique identifier for the server
+    - **Transport**: stdio, http, or websocket
+    - **Command/URL**: Command to run (stdio) or URL (http/websocket)
+    - **Arguments**: Command-line arguments (stdio only)
+    - **Scope**: Workspace or global configuration
 
 ### Server Details
 
 Click on any server in the tree view to see detailed information:
+
 - Transport type
 - Command or URL
 - Arguments
@@ -48,6 +49,7 @@ For servers that require authentication, you can configure OAuth2, API key, or b
 3. Follow the prompts to enter credentials or tokens
 
 Supported authentication methods:
+
 - **OAuth2**: For Google, GitHub, and custom OAuth providers
 - **API Key**: Direct token entry for API authentication
 - **Basic Auth**: Username/password authentication
@@ -62,6 +64,7 @@ Supported authentication methods:
 ### Configuration Files
 
 Server configurations are stored in:
+
 - **Workspace**: `.vscode/mcp.json`
 - **Global**: Extension storage directory
 
@@ -93,6 +96,7 @@ vsce package
 ## Contributing
 
 Contributions are welcome! Please ensure that:
+
 - Code follows TypeScript best practices
 - New features include appropriate tests
 - Documentation is updated for user-facing changes

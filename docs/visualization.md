@@ -67,7 +67,6 @@ draw_graph(triage_agent)
 
 This generates a graph that visually represents the structure of the **triage agent** and its connections to sub-agents and tools.
 
-
 ## Understanding the Visualization
 
 The generated graph includes:
@@ -77,9 +76,9 @@ The generated graph includes:
 - Tools represented as **ellipses** with green fill.
 - MCP Servers represented as **rectangles** with grey fill.
 - Directed edges indicating interactions:
-  - **Solid arrows** for agent-to-agent handoffs.
-  - **Dotted arrows** for tool invocations.
-  - **Dashed arrows** for MCP server invocations.
+    - **Solid arrows** for agent-to-agent handoffs.
+    - **Dotted arrows** for tool invocations.
+    - **Dashed arrows** for MCP server invocations.
 - An **end node** (`__end__`) indicating where execution terminates.
 
 **Note:** MCP servers are rendered in recent versions of the
@@ -89,6 +88,7 @@ in your visualization, upgrade to the latest release.
 ## Customizing the Graph
 
 ### Showing the Graph
+
 By default, `draw_graph` displays the graph inline. To show the graph in a separate window, write the following:
 
 ```python
@@ -96,6 +96,7 @@ draw_graph(triage_agent).view()
 ```
 
 ### Saving the Graph
+
 By default, `draw_graph` displays the graph inline. To save it as a file, specify a filename:
 
 ```python

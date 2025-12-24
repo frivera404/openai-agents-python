@@ -62,7 +62,7 @@ export class MCPServerManager {
             const workspaceConfig = await this.loadWorkspaceConfig();
             if (workspaceConfig?.servers) {
                 Object.entries(workspaceConfig.servers).forEach(([name, config]) => {
-                    this.servers.set(name, { ...config as MCPServerConfig, scope: 'workspace' });
+                    this.servers.set(name, { ...(config as MCPServerConfig), scope: 'workspace' });
                 });
             }
 
@@ -70,8 +70,9 @@ export class MCPServerManager {
             const globalConfig = await this.loadGlobalConfig();
             if (globalConfig?.servers) {
                 Object.entries(globalConfig.servers).forEach(([name, config]) => {
-                    if (!this.servers.has(name)) { // Workspace takes precedence
-                        this.servers.set(name, { ...config as MCPServerConfig, scope: 'global' });
+                    if (!this.servers.has(name)) {
+                        // Workspace takes precedence
+                        this.servers.set(name, { ...(config as MCPServerConfig), scope: 'global' });
                     }
                 });
             }
@@ -100,7 +101,7 @@ export class MCPServerManager {
                 command: config.command,
                 args: config.args || [],
                 env: config.env || {},
-                type: config.transport
+                type: config.transport,
             };
 
             if (config.url) {
@@ -209,13 +210,13 @@ export class MCPServerManager {
         const accessToken = await vscode.window.showInputBox({
             prompt: `Enter access token for ${serverName} (${auth.provider})`,
             password: true,
-            placeHolder: 'Access token from OAuth provider'
+            placeHolder: 'Access token from OAuth provider',
         });
 
         if (accessToken) {
             this.authTokens.set(serverName, {
                 accessToken: accessToken,
-                tokenType: 'Bearer'
+                tokenType: 'Bearer',
             });
             await this.saveAuthTokens();
             return true;
@@ -224,16 +225,16 @@ export class MCPServerManager {
         return false;
     }
 
-    private async authenticateApiKey(serverName: string, auth: AuthConfig): Promise<boolean> {
+    private async authenticateApiKey(serverName: string, _auth: AuthConfig): Promise<boolean> {
         const apiKey = await vscode.window.showInputBox({
             prompt: `Enter API key for ${serverName}`,
-            password: true
+            password: true,
         });
 
         if (apiKey) {
             this.authTokens.set(serverName, {
                 accessToken: apiKey,
-                tokenType: 'Bearer'
+                tokenType: 'Bearer',
             });
             await this.saveAuthTokens();
             return true;
@@ -242,23 +243,23 @@ export class MCPServerManager {
         return false;
     }
 
-    private async authenticateBasic(serverName: string, auth: AuthConfig): Promise<boolean> {
+    private async authenticateBasic(serverName: string, _auth: AuthConfig): Promise<boolean> {
         const username = await vscode.window.showInputBox({
-            prompt: `Enter username for ${serverName}`
+            prompt: `Enter username for ${serverName}`,
         });
 
         if (!username) return false;
 
         const password = await vscode.window.showInputBox({
             prompt: `Enter password for ${serverName}`,
-            password: true
+            password: true,
         });
 
         if (password) {
             const credentials = Buffer.from(`${username}:${password}`).toString('base64');
             this.authTokens.set(serverName, {
                 accessToken: credentials,
-                tokenType: 'Basic'
+                tokenType: 'Basic',
             });
             await this.saveAuthTokens();
             return true;
@@ -270,7 +271,7 @@ export class MCPServerManager {
     private getAuthUrl(provider: string): string | undefined {
         const urls: { [key: string]: string } = {
             google: 'https://accounts.google.com/o/oauth2/v2/auth',
-            github: 'https://github.com/login/oauth/authorize'
+            github: 'https://github.com/login/oauth/authorize',
         };
         return urls[provider];
     }
@@ -278,15 +279,18 @@ export class MCPServerManager {
     private getTokenUrl(provider: string): string | undefined {
         const urls: { [key: string]: string } = {
             google: 'https://oauth2.googleapis.com/token',
-            github: 'https://github.com/login/oauth/access_token'
+            github: 'https://github.com/login/oauth/access_token',
         };
         return urls[provider];
     }
 
     private getDefaultScopes(provider: string): string[] {
         const scopes: { [key: string]: string[] } = {
-            google: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile'],
-            github: ['user:email', 'read:user']
+            google: [
+                'https://www.googleapis.com/auth/userinfo.email',
+                'https://www.googleapis.com/auth/userinfo.profile',
+            ],
+            github: ['user:email', 'read:user'],
         };
         return scopes[provider] || [];
     }

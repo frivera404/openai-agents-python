@@ -111,8 +111,8 @@ async def test_client_session_receives_message_handler(monkeypatch):
 @pytest.mark.parametrize(
     "server_cls, params",
     [
-        (MCPServerSse, {"url": "https://example.com"}),
-        (MCPServerStreamableHttp, {"url": "https://example.com"}),
+        (MCPServerSse, {"url": "https://ctdatenight.com"}),
+        (MCPServerStreamableHttp, {"url": "https://ctdatenight.com"}),
         (MCPServerStdio, {"command": "python"}),
     ],
 )
@@ -126,3 +126,4 @@ def test_message_handler_propagates_to_server_base(server_cls, params):
     server = server_cls(params, message_handler=handler)
 
     assert server.message_handler is handler
+

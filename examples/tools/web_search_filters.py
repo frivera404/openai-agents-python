@@ -4,7 +4,6 @@ from datetime import datetime
 
 from agents import Agent, ModelSettings, Runner, WebSearchTool, trace
 from openai.types.responses.web_search_tool import Filters
-from openai.types.shared.reasoning import Reasoning
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +14,7 @@ logger = logging.getLogger(__name__)
 async def main():
     agent = Agent(
         name="WebOAI website searcher",
-        model="gpt-4o-mini",
+        model="gpt-4.1",
         instructions="You are a helpful agent that can search openai.com resources.",
         tools=[
             WebSearchTool(
@@ -32,8 +31,7 @@ async def main():
             )
         ],
         model_settings=ModelSettings(
-            reasoning=Reasoning(effort="low"),
-            verbosity="low",
+            verbosity="medium",
             # https://platform.openai.com/docs/guides/tools-web-search?api-mode=responses#sources
             response_include=["web_search_call.action.sources"],
         ),

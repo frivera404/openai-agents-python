@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 配置 SDK
 
 ## API 密钥与客户端

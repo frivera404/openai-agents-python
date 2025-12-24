@@ -194,6 +194,6 @@ To review what happened during your agent run, navigate to the [Trace viewer in 
 
 Learn how to build more complex agentic flows:
 
--   Learn about how to configure [Agents](agents.md).
--   Learn about [running agents](running_agents.md).
--   Learn about [tools](tools.md), [guardrails](guardrails.md) and [models](models/index.md).
+- Learn about how to configure [Agents](agents.md).
+- Learn about [running agents](running_agents.md).
+- Learn about [tools](tools.md), [guardrails](guardrails.md) and [models](models/index.md).

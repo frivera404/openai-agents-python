@@ -17,7 +17,9 @@ from openai.types.responses import (
     ToolParam,
     response_create_params,
 )
-from openai.types.responses.response_prompt_param import ResponsePromptParam
+
+# from openai.types.responses.response_prompt_param import ResponsePromptParam
+ResponsePromptParam = Any
 
 from .. import _debug
 from ..agent_output import AgentOutputSchemaBase
@@ -248,6 +250,26 @@ class OpenAIResponsesModel(Model):
     ) -> Response | AsyncStream[ResponseStreamEvent]:
         list_input = ItemHelpers.input_to_new_input_list(input)
         list_input = _to_dump_compatible(list_input)
+
+        # The Responses API requires that each input item have a unique ``id``.
+        # When reusing items across turns, it is possible to accidentally send
+        # duplicates, which results in a 400 "Duplicate item found with id".
+        # To be robust, strip the ``id`` field from any duplicated items so the
+        # server can assign fresh identifiers.
+        seen_ids: set[str] = set()
+        deduped_input: list[TResponseInputItem] = []
+        for item in list_input:
+            if isinstance(item, dict):
+                item_id = item.get("id")
+                if isinstance(item_id, str):
+                    if item_id in seen_ids:
+                        # Create a shallow copy without the duplicate id.
+                        item = {k: v for k, v in item.items() if k != "id"}
+                    else:
+                        seen_ids.add(item_id)
+            deduped_input.append(item)
+
+        list_input = deduped_input
 
         if model_settings.parallel_tool_calls and tools:
             parallel_tool_calls: bool | Omit = True

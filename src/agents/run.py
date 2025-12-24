@@ -6,17 +6,24 @@ import inspect
 import os
 import warnings
 from dataclasses import dataclass, field
-from typing import Any, Callable, Generic, cast, get_args
+from typing import Any, Callable, Generic, cast
 
 from typing_extensions import NotRequired, TypedDict, Unpack
 
 from openai.types.responses import (
     ResponseCompletedEvent,
+    ResponseComputerToolCall,
+    ResponseFileSearchToolCall,
+    ResponseFunctionToolCall,
+    ResponseFunctionWebSearch,
     ResponseOutputItemDoneEvent,
 )
-from openai.types.responses.response_prompt_param import (
-    ResponsePromptParam,
-)
+
+# from openai.types.responses.response_prompt_param import (
+# 	ResponsePromptParam,
+# )
+from typing import Any as _AnyAlias
+ResponsePromptParam = _AnyAlias
 from openai.types.responses.response_reasoning_item import ResponseReasoningItem
 
 from ._run_impl import (
@@ -1887,7 +1894,12 @@ class AgentRunner:
 
 
 DEFAULT_AGENT_RUNNER = AgentRunner()
-_TOOL_CALL_TYPES: tuple[type, ...] = get_args(ToolCallItemTypes)
+_TOOL_CALL_TYPES: tuple[type, ...] = (
+    ResponseFunctionToolCall,
+    ResponseComputerToolCall,
+    ResponseFileSearchToolCall,
+    ResponseFunctionWebSearch,
+)
 
 
 def _copy_str_or_list(input: str | list[TResponseInputItem]) -> str | list[TResponseInputItem]:

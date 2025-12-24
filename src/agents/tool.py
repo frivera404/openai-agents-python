@@ -9,14 +9,12 @@ from typing import TYPE_CHECKING, Any, Callable, Literal, Union, overload
 from typing_extensions import Concatenate, NotRequired, ParamSpec, TypedDict
 
 from openai.types.responses.file_search_tool_param import Filters, RankingOptions
-from openai.types.responses.response_computer_tool_call import (
-    PendingSafetyCheck,
-    ResponseComputerToolCall,
-)
-from openai.types.responses.response_output_item import LocalShellCall, McpApprovalRequest
-from openai.types.responses.tool_param import CodeInterpreter, ImageGeneration, Mcp
-from openai.types.responses.web_search_tool import Filters as WebSearchToolFilters
-from openai.types.responses.web_search_tool_param import UserLocation
+from typing import Any as PendingSafetyCheck
+from openai.types.responses import ResponseComputerToolCall
+from typing import Any as LocalShellCall, Any as McpApprovalRequest
+from typing import Any as CodeInterpreter, Any as ImageGeneration, Any as Mcp
+from typing import Any as WebSearchToolFilters
+from typing import Any as UserLocation
 from pydantic import (  # type: ignore[attr-defined]
     BaseModel,
     TypeAdapter,

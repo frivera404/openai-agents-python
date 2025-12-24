@@ -10,7 +10,7 @@ Usage::
     # Create underlying session (e.g. SQLAlchemySession)
     underlying_session = SQLAlchemySession.from_url(
         session_id="user-123",
-        url="postgresql+asyncpg://app:secret@db.example.com/agents",
+        url="postgresql+asyncpg://app:secret@db.ctdatenight.com/agents",
         create_tables=True,
     )
 
@@ -183,3 +183,4 @@ class EncryptedSession(SessionABC):
 
     async def clear_session(self) -> None:
         await self.underlying_session.clear_session()
+

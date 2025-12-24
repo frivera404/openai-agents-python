@@ -20,7 +20,7 @@ python -m examples.voice.static.main
 
 Some suggested examples to try:
 
--   Tell me a joke (_the assistant tells you a joke_)
--   What's the weather in Tokyo? (_will call the `get_weather` tool and then speak_)
--   Hola, como estas? (_will handoff to the spanish agent_)
--   Tell me about dogs. (_will respond with the hardcoded "you guessed the secret word" message_)
+- Tell me a joke (_the assistant tells you a joke_)
+- What's the weather in Tokyo? (_will call the `get_weather` tool and then speak_)
+- Hola, como estas? (_will handoff to the spanish agent_)
+- Tell me about dogs. (_will respond with the hardcoded "you guessed the secret word" message_)

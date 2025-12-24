@@ -32,17 +32,15 @@ class PCMPlaybackProcessor extends AudioWorkletProcessor {
                 if (!this.hasPendingAudio()) {
                     const fadeSamples = Math.min(this.fadeSamples, floatData.length);
                     for (let i = 0; i < fadeSamples; i++) {
-                        const gain = fadeSamples <= 1 ? 1 : (i / fadeSamples);
+                        const gain = fadeSamples <= 1 ? 1 : i / fadeSamples;
                         floatData[i] *= gain;
                     }
                 }
 
                 this.buffers.push(floatData);
-
             } else if (message.type === 'stop') {
                 this.reset();
                 this.port.postMessage({ type: 'drained' });
-
             } else if (message.type === 'config') {
                 const fadeSamples = message.fadeSamples;
                 if (Number.isFinite(fadeSamples) && fadeSamples >= 0) {

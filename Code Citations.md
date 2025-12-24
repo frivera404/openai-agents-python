@@ -1,6 +1,7 @@
 # Code Citations
 
 ## License: unknown
+
 https://github.com/sophio-japharidze-sonarsource/vscode-onboarding/blob/de6fb71d7e586ec5d276101513462ba4d4e2fefd/client/test/suite/extension.test.ts
 
 ```
@@ -21,8 +22,8 @@ suite('Extension Test Suite', () => {
 })
 ```
 
-
 ## License: unknown
+
 https://github.com/liferay/liferay-portal/blob/3c4993e6808b10f5b3ab48cb2bcc3b0576a3376d/modules/test/poshi/poshi-vscode/src/test/suite/extension.test.ts
 
 ```
@@ -43,8 +44,8 @@ suite('Extension Test Suite', () => {
 })
 ```
 
-
 ## License: unknown
+
 https://github.com/Weltraumschaf/cay-the/blob/c5a78119995f9c36391981b9bb28ff61e8e24315/scribbles/caythe-vscode-extension/test/extension.test.ts
 
 ```
@@ -65,8 +66,8 @@ suite('Extension Test Suite', () => {
 })
 ```
 
-
 ## License: unknown
+
 https://github.com/microsoft/vscode-docs/blob/187bd8a364abd055471b55ac91b4a00b32e91640/api/working-with-extensions/testing-extension.md
 
 ```
@@ -86,4 +87,3 @@ suite('Extension Test Suite', () => {
     });
 })
 ```
-

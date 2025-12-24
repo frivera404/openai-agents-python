@@ -24,32 +24,32 @@ This example shows how to handle OpenAI Realtime SIP calls with the Agents SDK. 
 ## Setup
 
 1. Install dependencies:
-   ```bash
-   uv pip install -r examples/realtime/twilio-sip/requirements.txt
-   ```
+    ```bash
+    uv pip install -r examples/realtime/twilio-sip/requirements.txt
+    ```
 2. Export required environment variables:
-   ```bash
-   export OPENAI_API_KEY="sk-..."
-   export OPENAI_WEBHOOK_SECRET="whsec_..."
-   ```
+    ```bash
+    export OPENAI_API_KEY="sk-..."
+    export OPENAI_WEBHOOK_SECRET="whsec_..."
+    ```
 3. (Optional) Adjust the multi-agent logic in `examples/realtime/twilio_sip/agents.py` if you want
    to change the specialist agents or tools.
 4. Run the FastAPI server:
-   ```bash
-   uv run uvicorn examples.realtime.twilio_sip.server:app --host 0.0.0.0 --port 8000
-   ```
+    ```bash
+    uv run uvicorn examples.realtime.twilio_sip.server:app --host 0.0.0.0 --port 8000
+    ```
 5. Expose the server publicly (example with ngrok):
-   ```bash
-   ngrok http 8000
-   ```
+    ```bash
+    ngrok http 8000
+    ```
 
 ## Test a Call
 
 1. Place a call to the Twilio number attached to the SIP trunk.
 2. Twilio sends the call to `sip.api.openai.com`; OpenAI fires `realtime.call.incoming`, which this example accepts.
 3. The triage agent greets the caller, then either keeps the conversation or hands off to:
-   - **FAQ Agent** – answers common questions via `faq_lookup_tool`.
-   - **Records Agent** – writes short notes using `update_customer_record`.
+    - **FAQ Agent** – answers common questions via `faq_lookup_tool`.
+    - **Records Agent** – writes short notes using `update_customer_record`.
 4. The background task attaches to the call and logs transcripts plus basic events in the console.
 
 You can edit `server.py` to change instructions, add tools, or integrate with internal systems once the SIP session is active.

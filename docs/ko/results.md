@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 결과
 
 `Runner.run` 메서드를 호출하면 다음 중 하나를 받습니다:

@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 结果
 
 当你调用 `Runner.run` 方法时，你会得到：

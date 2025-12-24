@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 模型
 
 Agents SDK 开箱即用地支持两种 OpenAI 模型形态：

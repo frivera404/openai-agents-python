@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 运行智能体
 
 你可以通过 [`Runner`][agents.run.Runner] 类来运行智能体。你有 3 个选项：
@@ -144,7 +145,7 @@ client = AsyncOpenAI()
 async def main():
     # Create a server-managed conversation
     conversation = await client.conversations.create()
-    conv_id = conversation.id    
+    conv_id = conversation.id
 
     agent = Agent(name="Assistant", instructions="Reply very concisely.")
 
@@ -187,7 +188,6 @@ async def main():
     print(result2.final_output)
     # California
 ```
-
 
 ## 长运行智能体与人类参与
 

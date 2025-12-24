@@ -26,11 +26,14 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('mcpServers.removeServer', async (server: MCPServerItem) => {
-            if (server) {
-                await removeServer(server);
+        vscode.commands.registerCommand(
+            'mcpServers.removeServer',
+            async (server: MCPServerItem) => {
+                if (server) {
+                    await removeServer(server);
+                }
             }
-        })
+        )
     );
 
     context.subscriptions.push(
@@ -42,11 +45,14 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('mcpServers.authenticateServer', async (server: MCPServerItem) => {
-            if (server) {
-                await authenticateServer(server);
+        vscode.commands.registerCommand(
+            'mcpServers.authenticateServer',
+            async (server: MCPServerItem) => {
+                if (server) {
+                    await authenticateServer(server);
+                }
             }
-        })
+        )
     );
 }
 
@@ -66,19 +72,16 @@ async function addServer() {
                     return 'Server name already exists';
                 }
                 return null;
-            }
+            },
         });
 
         if (!name) return;
 
         // Get transport type
-        const transport = await vscode.window.showQuickPick(
-            ['stdio', 'http', 'websocket'],
-            {
-                placeHolder: 'Select transport type',
-                canPickMany: false
-            }
-        );
+        const transport = await vscode.window.showQuickPick(['stdio', 'http', 'websocket'], {
+            placeHolder: 'Select transport type',
+            canPickMany: false,
+        });
 
         if (!transport) return;
 
@@ -89,7 +92,7 @@ async function addServer() {
             // Get command
             commandOrUrl = await vscode.window.showInputBox({
                 prompt: 'Enter command to run the MCP server',
-                placeHolder: 'npx my-mcp-server'
+                placeHolder: 'npx my-mcp-server',
             });
 
             if (!commandOrUrl) return;
@@ -97,35 +100,34 @@ async function addServer() {
             // Get arguments (optional)
             const argsInput = await vscode.window.showInputBox({
                 prompt: 'Enter command arguments (optional, space-separated)',
-                placeHolder: '--port 3000'
+                placeHolder: '--port 3000',
             });
 
             if (argsInput) {
-                args = argsInput.split(' ').filter(arg => arg.trim().length > 0);
+                args = argsInput.split(' ').filter((arg) => arg.trim().length > 0);
             }
         } else {
             // Get URL for http/websocket
             commandOrUrl = await vscode.window.showInputBox({
                 prompt: `Enter ${transport} URL`,
-                placeHolder: transport === 'http' ? 'http://localhost:3000' : 'ws://localhost:3000'
+                placeHolder: transport === 'http' ? 'http://localhost:3000' : 'ws://localhost:3000',
             });
 
             if (!commandOrUrl) return;
         }
 
         // Get scope
-        const scope = await vscode.window.showQuickPick(
-            ['workspace', 'global'],
-            {
-                placeHolder: 'Select configuration scope',
-                canPickMany: false
-            }
-        );
+        const scope = await vscode.window.showQuickPick(['workspace', 'global'], {
+            placeHolder: 'Select configuration scope',
+            canPickMany: false,
+        });
 
         if (!scope) return;
 
         // Trust confirmation
-        const trustUnknownServers = vscode.workspace.getConfiguration('mcpServers').get('trustUnknownServers', false);
+        const trustUnknownServers = vscode.workspace
+            .getConfiguration('mcpServers')
+            .get('trustUnknownServers', false);
         if (!trustUnknownServers) {
             const trust = await vscode.window.showWarningMessage(
                 `Do you trust this MCP server: ${name}?`,
@@ -137,18 +139,37 @@ async function addServer() {
             if (trust !== 'Trust') return;
         }
 
-        // Handle secrets (placeholders for now)
+        // Handle per-server environment variables.
+        // These are persisted via MCPServerManager and used when launching the server.
         const envVars: { [key: string]: string } = {};
-        const addEnvVar = await vscode.window.showQuickPick(
-            ['Yes', 'No'],
-            {
-                placeHolder: 'Add environment variables?'
-            }
-        );
 
-        if (addEnvVar === 'Yes') {
-            // For now, just show a placeholder message
-            vscode.window.showInformationMessage('Environment variable management will be implemented in a future update');
+        const wantsEnvVars = await vscode.window.showQuickPick(['Yes', 'No'], {
+            placeHolder: 'Add environment variables?',
+        });
+
+        if (wantsEnvVars === 'Yes') {
+            // Allow the user to add one or more KEY=VALUE pairs.
+            // The user can stop by leaving the key empty or cancelling.
+            // We deliberately do not remove or overwrite any existing
+            // environment variable support in the configuration.
+            while (true) {
+                const key = await vscode.window.showInputBox({
+                    prompt: 'Enter environment variable name (or leave empty to finish)',
+                });
+
+                if (!key || !key.trim()) {
+                    break;
+                }
+
+                const value = await vscode.window.showInputBox({
+                    prompt: `Enter value for ${key}`,
+                    password: true,
+                });
+
+                if (value !== undefined) {
+                    envVars[key.trim()] = value;
+                }
+            }
         }
 
         // Add server
@@ -159,12 +180,11 @@ async function addServer() {
             url: transport !== 'stdio' ? commandOrUrl : undefined,
             args,
             env: envVars,
-            scope: scope as 'workspace' | 'global'
+            scope: scope as 'workspace' | 'global',
         });
 
         treeProvider.refresh();
         vscode.window.showInformationMessage(`MCP server "${name}" added successfully`);
-
     } catch (error) {
         vscode.window.showErrorMessage(`Failed to add MCP server: ${error}`);
     }
@@ -189,8 +209,10 @@ async function removeServer(server: MCPServerItem) {
     }
 }
 
-async function editServer(server: MCPServerItem) {
-    vscode.window.showInformationMessage('Edit server functionality will be implemented in a future update');
+async function editServer(_server: MCPServerItem) {
+    vscode.window.showInformationMessage(
+        'Edit server functionality will be implemented in a future update'
+    );
 }
 
 async function authenticateServer(server: MCPServerItem) {

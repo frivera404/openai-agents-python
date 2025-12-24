@@ -3,7 +3,7 @@ import os
 from typing import Optional
 
 from agents.model_settings import ModelSettings
-from openai.types.shared.reasoning import Reasoning
+from openai.types.shared import Reasoning
 
 OPENAI_DEFAULT_MODEL_ENV_VARIABLE_NAME = "OPENAI_DEFAULT_MODEL"
 
@@ -13,7 +13,7 @@ _GPT_5_DEFAULT_MODEL_SETTINGS: ModelSettings = ModelSettings(
     # We chose "low" instead of "minimal" because some of the built-in tools
     # (e.g., file search, image generation, etc.) do not support "minimal"
     # If you want to use "minimal" reasoning effort, you can pass your own model settings
-    reasoning=Reasoning(effort="low"),
+    reasoning={"effort": "low"},
     verbosity="low",
 )
 
@@ -42,6 +42,8 @@ def get_default_model() -> str:
     """
     Returns the default model name.
     """
+    # Prefer gpt-4.1 by default for agent workflows.
+    # Can be overridden via the OPENAI_DEFAULT_MODEL environment variable.
     return os.getenv(OPENAI_DEFAULT_MODEL_ENV_VARIABLE_NAME, "gpt-4.1").lower()
 
 

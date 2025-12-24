@@ -50,22 +50,22 @@ When selecting a beginner surfboard, several key dimensions and features drastic
 
 ### Length and Width
 
--   **Length**: Starting with an 8 to 9-foot board is ideal. Longer boards offer enhanced stability and improved paddling capabilities. Gradual downsizing is recommended if you plan to move from an 11-foot board.
--   **Width**: A board with a width over 20 inches provides greater stability and facilitates balance, especially vital for beginners.
+- **Length**: Starting with an 8 to 9-foot board is ideal. Longer boards offer enhanced stability and improved paddling capabilities. Gradual downsizing is recommended if you plan to move from an 11-foot board.
+- **Width**: A board with a width over 20 inches provides greater stability and facilitates balance, especially vital for beginners.
 
 ### Thickness and Volume
 
--   **Thickness**: Typically around 2.5 to 3 inches. Thicker decks increase buoyancy, allowing the surfer to paddle easier while catching waves.
--   **Volume**: Measured in liters, volume is critical in understanding a board's flotation capacity. Higher volumes (e.g., 60-100 liters) are essential for beginners as they make the board more forgiving and stable. Suitable volumes might vary according to the surfer’s weight and experience level.
+- **Thickness**: Typically around 2.5 to 3 inches. Thicker decks increase buoyancy, allowing the surfer to paddle easier while catching waves.
+- **Volume**: Measured in liters, volume is critical in understanding a board's flotation capacity. Higher volumes (e.g., 60-100 liters) are essential for beginners as they make the board more forgiving and stable. Suitable volumes might vary according to the surfer’s weight and experience level.
 
 ### Nose and Tail Shape
 
--   **Nose Shape**: A wide, rounded nose expands the board’s planing surface, which can help in catching waves sooner and maintaining stability as you ride.
--   **Tail Design**: Square or rounded tails are generally recommended as they enhance stability and allow for controlled turns, essential during the learning phase.
+- **Nose Shape**: A wide, rounded nose expands the board’s planing surface, which can help in catching waves sooner and maintaining stability as you ride.
+- **Tail Design**: Square or rounded tails are generally recommended as they enhance stability and allow for controlled turns, essential during the learning phase.
 
 ### Rocker
 
--   **Rocker**: This is the curvature of the board from nose to tail. For beginners, a minimal or relaxed rocker provides better stability and ease during paddling. A steeper rocker might be introduced progressively as the surfer’s skills improve.
+- **Rocker**: This is the curvature of the board from nose to tail. For beginners, a minimal or relaxed rocker provides better stability and ease during paddling. A steeper rocker might be introduced progressively as the surfer’s skills improve.
 
 ---
 
@@ -77,9 +77,9 @@ The material composition of a surfboard is a crucial factor in determining its p
 
 Soft-top boards are constructed almost entirely from foam. Their attributes include:
 
--   **Safety and Forgiveness**: The foam construction minimizes injury upon impact which is advantageous for beginners who might fall frequently.
--   **Stability and Buoyancy**: These boards typically offer greater buoyancy due to their softer material and thicker construction, easing the initial learning process.
--   **Maintenance**: They often require less maintenance—there is typically no need for waxing and they are more resistant to dings and scratches.
+- **Safety and Forgiveness**: The foam construction minimizes injury upon impact which is advantageous for beginners who might fall frequently.
+- **Stability and Buoyancy**: These boards typically offer greater buoyancy due to their softer material and thicker construction, easing the initial learning process.
+- **Maintenance**: They often require less maintenance—there is typically no need for waxing and they are more resistant to dings and scratches.
 
 However, as a surfer’s skills progress, a soft-top might limit maneuverability and overall performance.
 
@@ -87,8 +87,8 @@ However, as a surfer’s skills progress, a soft-top might limit maneuverability
 
 Hard-tops, in contrast, offer a more traditional surfboard feel. They generally rely on a foam core encased in resin, with two prevalent combinations:
 
--   **PU (Polyurethane) Core with Polyester Resin**: This combination gives a classic feel and is relatively economical; however, these boards can be heavier and, as they age, more prone to damage.
--   **EPS (Expanded Polystyrene) Core with Epoxy Resin**: Lightweight and durable, EPS boards are often more buoyant and resistant to damage, although they usually carry a higher price tag and may be less forgiving.
+- **PU (Polyurethane) Core with Polyester Resin**: This combination gives a classic feel and is relatively economical; however, these boards can be heavier and, as they age, more prone to damage.
+- **EPS (Expanded Polystyrene) Core with Epoxy Resin**: Lightweight and durable, EPS boards are often more buoyant and resistant to damage, although they usually carry a higher price tag and may be less forgiving.
 
 Deciding between soft-top and hard-top boards often depends on a beginner’s progression goals, overall comfort, and budget constraints.
 
@@ -106,8 +106,8 @@ Experts recommend reducing the board length gradually—by about a foot at a tim
 
 Before transitioning, make sure your surfing fundamentals are solid. Focus on practicing:
 
--   **Steep Take-offs**: Ensure that your pop-up is swift and robust to keep pace with shorter boards that demand a rapid transition from paddling to standing.
--   **Angling and Paddling Techniques**: Learn to angle your takeoffs properly to compensate for the lower buoyancy and increased maneuverability of shorter boards.
+- **Steep Take-offs**: Ensure that your pop-up is swift and robust to keep pace with shorter boards that demand a rapid transition from paddling to standing.
+- **Angling and Paddling Techniques**: Learn to angle your takeoffs properly to compensate for the lower buoyancy and increased maneuverability of shorter boards.
 
 ### Experimenting with Rentals or Borrowed Boards
 
@@ -123,8 +123,8 @@ Surfboards are available across a range of prices to match different budgets. Wh
 
 For those on a tight budget, several entry-level models offer excellent value. Examples include:
 
--   **Wavestorm 8' Classic Pinline Surfboard**: Priced affordably, this board is popular for its ease of use, ample volume, and forgiving nature. Despite its low cost, it delivers the stability needed to get started.
--   **Liquid Shredder EZ Slider Foamie**: A smaller board catering to younger or lighter surfers, this budget option provides easy paddling and a minimal risk of injury due to its soft construction.
+- **Wavestorm 8' Classic Pinline Surfboard**: Priced affordably, this board is popular for its ease of use, ample volume, and forgiving nature. Despite its low cost, it delivers the stability needed to get started.
+- **Liquid Shredder EZ Slider Foamie**: A smaller board catering to younger or lighter surfers, this budget option provides easy paddling and a minimal risk of injury due to its soft construction.
 
 ### Moderate Price Range
 
@@ -142,16 +142,16 @@ Based on extensive research and community recommendations, here are some standou
 
 ### Recommended Models
 
--   **South Bay Board Co. 8'8" Heritage**: Combining foam and resin construction, this board is ideal for beginners who need stability and a forgiving surface. Its 86-liter volume suits both lightweight and somewhat heavier surfers.
--   **Rock-It 8' Big Softy**: With a high volume and an easy paddling profile, this board is designed for beginners, offering ample buoyancy to smooth out the learning curve.
--   **Wave Bandit EZ Rider Series**: Available in multiple lengths (7', 8', 9'), these boards offer versatility, with construction features that balance the stability of longboards and the agility required for shorter boards.
--   **Hybrid/Funboards Like the Poacher Funboard**: Perfect for transitioning surfers, these boards blend the ease of catching waves with the capability for more dynamic maneuvers.
+- **South Bay Board Co. 8'8" Heritage**: Combining foam and resin construction, this board is ideal for beginners who need stability and a forgiving surface. Its 86-liter volume suits both lightweight and somewhat heavier surfers.
+- **Rock-It 8' Big Softy**: With a high volume and an easy paddling profile, this board is designed for beginners, offering ample buoyancy to smooth out the learning curve.
+- **Wave Bandit EZ Rider Series**: Available in multiple lengths (7', 8', 9'), these boards offer versatility, with construction features that balance the stability of longboards and the agility required for shorter boards.
+- **Hybrid/Funboards Like the Poacher Funboard**: Perfect for transitioning surfers, these boards blend the ease of catching waves with the capability for more dynamic maneuvers.
 
 ### Buying Options
 
--   **Surf Shops and Local Retailers**: Traditional surf shops allow you to test different boards, which is ideal for assessing the board feel and condition—especially if you are considering a used board.
--   **Online Retailers and Marketplaces**: Websites like Evo, Surfboards Direct, and even local online marketplaces like Craigslist and Facebook Marketplace provide options that range from new to gently used boards. Always inspect reviews and verify seller policies before purchase.
--   **Package Deals and Bundles**: Many retailers offer bundled packages that include not just the board, but also essentials like a leash, wax, fins, and board bags. These packages can be more cost-effective and are great for beginners who need a complete surf kit.
+- **Surf Shops and Local Retailers**: Traditional surf shops allow you to test different boards, which is ideal for assessing the board feel and condition—especially if you are considering a used board.
+- **Online Retailers and Marketplaces**: Websites like Evo, Surfboards Direct, and even local online marketplaces like Craigslist and Facebook Marketplace provide options that range from new to gently used boards. Always inspect reviews and verify seller policies before purchase.
+- **Package Deals and Bundles**: Many retailers offer bundled packages that include not just the board, but also essentials like a leash, wax, fins, and board bags. These packages can be more cost-effective and are great for beginners who need a complete surf kit.
 
 ---
 

@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 会话
 
 Agents SDK 提供内置会话记忆，用于在多个智能体运行之间自动维护对话历史，无需在轮次之间手动处理 `.to_input_list()`。

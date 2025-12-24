@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 사용량
 
 Agents SDK는 실행마다 토큰 사용량을 자동으로 추적합니다. 실행 컨텍스트에서 접근하여 비용 모니터링, 한도 적용, 분석 기록에 사용할 수 있습니다.
@@ -13,8 +14,8 @@ Agents SDK는 실행마다 토큰 사용량을 자동으로 추적합니다. 실
 - **output_tokens**: 수신된 출력 토큰 총합
 - **total_tokens**: input + output
 - **details**:
-  - `input_tokens_details.cached_tokens`
-  - `output_tokens_details.reasoning_tokens`
+    - `input_tokens_details.cached_tokens`
+    - `output_tokens_details.reasoning_tokens`
 
 ## 실행에서 사용량 접근
 
@@ -81,6 +82,6 @@ class MyHooks(RunHooks):
 
 자세한 API 문서는 다음을 참조하세요:
 
--   [`Usage`][agents.usage.Usage] - 사용량 추적 데이터 구조
--   [`RunContextWrapper`][agents.run.RunContextWrapper] - 실행 컨텍스트에서 사용량 접근
--   [`RunHooks`][agents.run.RunHooks] - 사용량 트래킹 수명 주기에 훅 연결
+- [`Usage`][agents.usage.Usage] - 사용량 추적 데이터 구조
+- [`RunContextWrapper`][agents.run.RunContextWrapper] - 실행 컨텍스트에서 사용량 접근
+- [`RunHooks`][agents.run.RunHooks] - 사용량 트래킹 수명 주기에 훅 연결

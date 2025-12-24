@@ -7,9 +7,9 @@ Realtime agents are in beta. Expect some breaking changes as we improve the impl
 
 ## Prerequisites
 
--   Python 3.9 or higher
--   OpenAI API key
--   Basic familiarity with the OpenAI Agents SDK
+- Python 3.9 or higher
+- OpenAI API key
+- Basic familiarity with the OpenAI Agents SDK
 
 ## Installation
 
@@ -188,30 +188,30 @@ if __name__ == "__main__":
 
 ### Model settings
 
--   `model_name`: Choose from available realtime models (e.g., `gpt-realtime`)
--   `voice`: Select voice (`alloy`, `echo`, `fable`, `onyx`, `nova`, `shimmer`)
--   `modalities`: Enable text or audio (`["text"]` or `["audio"]`)
+- `model_name`: Choose from available realtime models (e.g., `gpt-realtime`)
+- `voice`: Select voice (`alloy`, `echo`, `fable`, `onyx`, `nova`, `shimmer`)
+- `modalities`: Enable text or audio (`["text"]` or `["audio"]`)
 
 ### Audio settings
 
--   `input_audio_format`: Format for input audio (`pcm16`, `g711_ulaw`, `g711_alaw`)
--   `output_audio_format`: Format for output audio
--   `input_audio_transcription`: Transcription configuration
+- `input_audio_format`: Format for input audio (`pcm16`, `g711_ulaw`, `g711_alaw`)
+- `output_audio_format`: Format for output audio
+- `input_audio_transcription`: Transcription configuration
 
 ### Turn detection
 
--   `type`: Detection method (`server_vad`, `semantic_vad`)
--   `threshold`: Voice activity threshold (0.0-1.0)
--   `silence_duration_ms`: Silence duration to detect turn end
--   `prefix_padding_ms`: Audio padding before speech
+- `type`: Detection method (`server_vad`, `semantic_vad`)
+- `threshold`: Voice activity threshold (0.0-1.0)
+- `silence_duration_ms`: Silence duration to detect turn end
+- `prefix_padding_ms`: Audio padding before speech
 
 ## Next steps
 
--   [Learn more about realtime agents](guide.md)
--   Check out working examples in the [examples/realtime](https://github.com/openai/openai-agents-python/tree/main/examples/realtime) folder
--   Add tools to your agent
--   Implement handoffs between agents
--   Set up guardrails for safety
+- [Learn more about realtime agents](guide.md)
+- Check out working examples in the [examples/realtime](https://github.com/openai/openai-agents-python/tree/main/examples/realtime) folder
+- Add tools to your agent
+- Implement handoffs between agents
+- Set up guardrails for safety
 
 ## Authentication
 

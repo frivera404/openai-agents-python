@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # SQLAlchemy 세션
 
 `SQLAlchemySession`은 SQLAlchemy를 사용해 프로덕션급 세션 구현을 제공합니다. 이를 통해 세션 저장소로 SQLAlchemy가 지원하는 모든 데이터베이스(PostgreSQL, MySQL, SQLite 등)를 사용할 수 있습니다.
@@ -27,14 +28,14 @@ from agents.extensions.memory import SQLAlchemySession
 
 async def main():
     agent = Agent("Assistant")
-    
+
     # Create session using database URL
     session = SQLAlchemySession.from_url(
         "user-123",
         url="sqlite+aiosqlite:///:memory:",
         create_tables=True
     )
-    
+
     result = await Runner.run(agent, "Hello", session=session)
     print(result.final_output)
 
@@ -55,24 +56,23 @@ from sqlalchemy.ext.asyncio import create_async_engine
 async def main():
     # Create your database engine
     engine = create_async_engine("postgresql+asyncpg://user:pass@localhost/db")
-    
+
     agent = Agent("Assistant")
     session = SQLAlchemySession(
         "user-456",
         engine=engine,
         create_tables=True
     )
-    
+
     result = await Runner.run(agent, "Hello", session=session)
     print(result.final_output)
-    
+
     # Clean up
     await engine.dispose()
 
 if __name__ == "__main__":
     asyncio.run(main())
 ```
-
 
 ## API 참고
 

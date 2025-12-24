@@ -2,7 +2,6 @@
 
 The SDK provides `run_demo_loop` for quick, interactive testing of an agent's behavior directly in your terminal.
 
-
 ```python
 import asyncio
 from agents import Agent, run_demo_loop

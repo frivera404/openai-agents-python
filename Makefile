@@ -21,7 +21,8 @@ mypy:
 
 .PHONY: tests
 tests: 
-	uv run pytest 
+	# Use the Python module runner for pytest to avoid relying on pytest being on PATH.
+	uv run python -m pytest -q tests
 
 .PHONY: coverage
 coverage:

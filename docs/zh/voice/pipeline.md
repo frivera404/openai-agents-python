@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 流水线与工作流
 
 [`VoicePipeline`][agents.voice.pipeline.VoicePipeline] 是一个类，可轻松将你的智能体工作流变成语音应用。你传入一个要运行的工作流，流水线会负责转写输入音频、检测音频结束时间、在正确时机调用你的工作流，并将工作流输出重新转换为音频。

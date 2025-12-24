@@ -9,8 +9,8 @@ The Agents SDK automatically tracks token usage for every run. You can access it
 - **output_tokens**: total output tokens received
 - **total_tokens**: input + output
 - **details**:
-  - `input_tokens_details.cached_tokens`
-  - `output_tokens_details.reasoning_tokens`
+    - `input_tokens_details.cached_tokens`
+    - `output_tokens_details.reasoning_tokens`
 
 ## Accessing usage from a run
 
@@ -77,6 +77,6 @@ class MyHooks(RunHooks):
 
 For detailed API documentation, see:
 
--   [`Usage`][agents.usage.Usage] - Usage tracking data structure
--   [`RunContextWrapper`][agents.run.RunContextWrapper] - Access usage from run context
--   [`RunHooks`][agents.run.RunHooks] - Hook into usage tracking lifecycle
+- [`Usage`][agents.usage.Usage] - Usage tracking data structure
+- [`RunContextWrapper`][agents.run.RunContextWrapper] - Access usage from run context
+- [`RunHooks`][agents.run.RunHooks] - Hook into usage tracking lifecycle

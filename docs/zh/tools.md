@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 工具
 
 工具让智能体能够采取行动：如获取数据、运行代码、调用外部 API，甚至进行计算机操作。在 Agents SDK 中有三类工具：

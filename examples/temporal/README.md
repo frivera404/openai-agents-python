@@ -5,21 +5,23 @@ This example demonstrates how to integrate OpenAI Agents SDK with Temporal workf
 ## Prerequisites
 
 1. Start the Temporal dev server:
-   ```bash
-   temporal server start-dev
-   ```
+
+    ```bash
+    temporal server start-dev
+    ```
 
 2. Install dependencies with Temporal support:
-   ```bash
-   uv sync --extra temporal
-   ```
+    ```bash
+    uv sync --extra temporal
+    ```
 
 ## Running the Example
 
 1. In one terminal, start the Temporal worker:
-   ```bash
-   python examples/temporal/agent_workflow.py
-   ```
+
+    ```bash
+    python examples/temporal/agent_workflow.py
+    ```
 
 2. The worker will execute a sample workflow and print the result.
 
@@ -47,6 +49,7 @@ The Temporal Web UI provides comprehensive monitoring and debugging capabilities
 ### Workflow Actions
 
 From the UI, you can:
+
 - Cancel workflow executions
 - Send signals or updates
 - Reset or terminate workflows

@@ -4,7 +4,6 @@ about: Questions about the SDK
 title: ''
 labels: question
 assignees: ''
-
 ---
 
 ### Please read this first
@@ -13,4 +12,5 @@ assignees: ''
 - **Have you searched for related issues?** Others may have had similar requests
 
 ### Question
+
 Describe your question. Provide details if available.

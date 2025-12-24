@@ -2,8 +2,8 @@
 
 The Agents SDK comes with out-of-the-box support for OpenAI models in two flavors:
 
--   **Recommended**: the [`OpenAIResponsesModel`][agents.models.openai_responses.OpenAIResponsesModel], which calls OpenAI APIs using the new [Responses API](https://platform.openai.com/docs/api-reference/responses).
--   The [`OpenAIChatCompletionsModel`][agents.models.openai_chatcompletions.OpenAIChatCompletionsModel], which calls OpenAI APIs using the [Chat Completions API](https://platform.openai.com/docs/api-reference/chat).
+- **Recommended**: the [`OpenAIResponsesModel`][agents.models.openai_responses.OpenAIResponsesModel], which calls OpenAI APIs using the new [Responses API](https://platform.openai.com/docs/api-reference/responses).
+- The [`OpenAIChatCompletionsModel`][agents.models.openai_chatcompletions.OpenAIChatCompletionsModel], which calls OpenAI APIs using the [Chat Completions API](https://platform.openai.com/docs/api-reference/chat).
 
 ## OpenAI models
 
@@ -183,6 +183,6 @@ This is a shortcoming of some model providers - they support JSON outputs, but d
 
 You need to be aware of feature differences between model providers, or you may run into errors. For example, OpenAI supports structured outputs, multimodal input, and hosted file search and web search, but many other providers don't support these features. Be aware of these limitations:
 
--   Don't send unsupported `tools` to providers that don't understand them
--   Filter out multimodal inputs before calling models that are text-only
--   Be aware that providers that don't support structured JSON outputs will occasionally produce invalid JSON.
+- Don't send unsupported `tools` to providers that don't understand them
+- Filter out multimodal inputs before calling models that are text-only
+- Be aware that providers that don't support structured JSON outputs will occasionally produce invalid JSON.

@@ -229,8 +229,8 @@ You must return **only** the translated markdown. Do not include any commentary,
 - Bad:  ##Heading
 - Good: - Item
 - Bad:  -Item
-- Good: [Label](https://example.com)
-- Bad:  [ Label ](https://example.com)
+- Good: [Label](https://ctdatenight.com)
+- Bad:  [ Label ](https://ctdatenight.com)
 
 #########################
 ##  LANGUAGE‑SPECIFIC  ##
@@ -428,3 +428,4 @@ def main():
 if __name__ == "__main__":
     # translate_single_source_file("docs/index.md")
     main()
+

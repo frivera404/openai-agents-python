@@ -7,7 +7,7 @@ Usage::
     # Create from SQLAlchemy URL (uses asyncpg driver under the hood for Postgres)
     session = SQLAlchemySession.from_url(
         session_id="user-123",
-        url="postgresql+asyncpg://app:secret@db.example.com/agents",
+        url="postgresql+asyncpg://app:secret@db.ctdatenight.com/agents",
         create_tables=True, # If you want to auto-create tables, set to True.
     )
 
@@ -332,3 +332,4 @@ class SQLAlchemySession(SessionABC):
             AsyncEngine: The SQLAlchemy async engine instance.
         """
         return self._engine
+

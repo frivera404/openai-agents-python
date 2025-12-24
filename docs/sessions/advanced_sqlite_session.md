@@ -150,13 +150,13 @@ print(f"Created branch: {branch_id}")
 
 # Create a branch with custom name
 branch_id = await session.create_branch_from_turn(
-    2, 
+    2,
     branch_name="alternative_path"
 )
 
 # Create branch by searching for content
 branch_id = await session.create_branch_from_content(
-    "weather", 
+    "weather",
     branch_name="weather_focus"
 )
 ```
@@ -193,8 +193,8 @@ branch_id = await session.create_branch_from_turn(2, "weather_focus")
 
 # Continue in new branch with different question
 result = await Runner.run(
-    agent, 
-    "What are the main tourist attractions in Paris?", 
+    agent,
+    "What are the main tourist attractions in Paris?",
     session=session
 )
 await session.store_run_usage(result)
@@ -204,8 +204,8 @@ await session.switch_to_branch("main")
 
 # Continue original conversation
 result = await Runner.run(
-    agent, 
-    "How expensive is it to visit?", 
+    agent,
+    "How expensive is it to visit?",
     session=session
 )
 await session.store_run_usage(result)
@@ -295,7 +295,6 @@ CREATE TABLE turn_usage (
 ## Complete example
 
 Check out the [complete example](https://github.com/openai/openai-agents-python/tree/main/examples/memory/advanced_sqlite_session_example.py) for a comprehensive demonstration of all features.
-
 
 ## API Reference
 

@@ -3,9 +3,10 @@ from __future__ import annotations
 import abc
 import enum
 from collections.abc import AsyncIterator
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from openai.types.responses.response_prompt_param import ResponsePromptParam
+# from openai.types.responses.response_prompt_param import ResponsePromptParam
+ResponsePromptParam = Any
 
 from ..agent_output import AgentOutputSchemaBase
 from ..handoffs import Handoff

@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 使用状況
 
 Agents SDK は、すべての run の token 使用状況を自動的に追跡します。run コンテキストからアクセスでき、コストの監視、制限の適用、分析の記録に利用できます。
@@ -13,8 +14,8 @@ Agents SDK は、すべての run の token 使用状況を自動的に追跡し
 - **output_tokens**: 受信した出力 token の合計
 - **total_tokens**: 入力 + 出力
 - **details**:
-  - `input_tokens_details.cached_tokens`
-  - `output_tokens_details.reasoning_tokens`
+    - `input_tokens_details.cached_tokens`
+    - `output_tokens_details.reasoning_tokens`
 
 ## 実行からの使用状況の取得
 

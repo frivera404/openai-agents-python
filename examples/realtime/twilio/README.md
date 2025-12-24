@@ -4,10 +4,10 @@ This example demonstrates how to connect the OpenAI Realtime API to a phone call
 
 ## Prerequisites
 
--   Python 3.9+
--   OpenAI API key with [Realtime API](https://platform.openai.com/docs/guides/realtime) access
--   [Twilio](https://www.twilio.com/docs/voice) account with a phone number
--   A tunneling service like [ngrok](https://ngrok.com/) to expose your local server
+- Python 3.9+
+- OpenAI API key with [Realtime API](https://platform.openai.com/docs/guides/realtime) access
+- [Twilio](https://www.twilio.com/docs/voice) account with a phone number
+- A tunneling service like [ngrok](https://ngrok.com/) to expose your local server
 
 ## Setup
 
@@ -61,17 +61,17 @@ This example demonstrates how to connect the OpenAI Realtime API to a phone call
 
 ## Configuration
 
--   **Port**: Set `PORT` environment variable (default: 8000)
--   **OpenAI API Key**: Set `OPENAI_API_KEY` environment variable
--   **Agent Instructions**: Modify the `RealtimeAgent` configuration in `server.py`
--   **Tools**: Add or modify function tools in `server.py`
+- **Port**: Set `PORT` environment variable (default: 8000)
+- **OpenAI API Key**: Set `OPENAI_API_KEY` environment variable
+- **Agent Instructions**: Modify the `RealtimeAgent` configuration in `server.py`
+- **Tools**: Add or modify function tools in `server.py`
 
 ## Troubleshooting
 
--   **WebSocket connection issues**: Ensure your ngrok URL is correct and publicly accessible
--   **Audio quality**: Twilio streams audio in mulaw format at 8kHz, which may affect quality
--   **Latency**: Network latency between Twilio, your server, and OpenAI affects response time
--   **Logs**: Check the console output for detailed connection and error logs
+- **WebSocket connection issues**: Ensure your ngrok URL is correct and publicly accessible
+- **Audio quality**: Twilio streams audio in mulaw format at 8kHz, which may affect quality
+- **Latency**: Network latency between Twilio, your server, and OpenAI affects response time
+- **Logs**: Check the console output for detailed connection and error logs
 
 ## Architecture
 

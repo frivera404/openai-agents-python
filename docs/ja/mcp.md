@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # Model context protocol (MCP)
 
 The [Model context protocol](https://modelcontextprotocol.io/introduction) (MCP) は、アプリケーションがツールやコンテキストを言語モデルに公開する方法を標準化します。公式ドキュメントより:
@@ -14,12 +15,12 @@ Agents Python SDK は複数の MCP トランスポートを理解します。こ
 
 MCP サーバーを エージェント に接続する前に、ツール呼び出しをどこで実行するか、および到達可能なトランスポートを決めます。以下のマトリクスは、Python SDK がサポートするオプションをまとめたものです。
 
-| What you need                                                                        | Recommended option                                    |
-| ------------------------------------------------------------------------------------ | ----------------------------------------------------- |
-| Let OpenAI's Responses API call a publicly reachable MCP server on the model's behalf| **Hosted MCP server tools** via [`HostedMCPTool`][agents.tool.HostedMCPTool] |
-| Connect to Streamable HTTP servers that you run locally or remotely                  | **Streamable HTTP MCP servers** via [`MCPServerStreamableHttp`][agents.mcp.server.MCPServerStreamableHttp] |
-| Talk to servers that implement HTTP with Server-Sent Events                          | **HTTP with SSE MCP servers** via [`MCPServerSse`][agents.mcp.server.MCPServerSse] |
-| Launch a local process and communicate over stdin/stdout                             | **stdio MCP servers** via [`MCPServerStdio`][agents.mcp.server.MCPServerStdio] |
+| What you need                                                                         | Recommended option                                                                                         |
+| ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Let OpenAI's Responses API call a publicly reachable MCP server on the model's behalf | **Hosted MCP server tools** via [`HostedMCPTool`][agents.tool.HostedMCPTool]                               |
+| Connect to Streamable HTTP servers that you run locally or remotely                   | **Streamable HTTP MCP servers** via [`MCPServerStreamableHttp`][agents.mcp.server.MCPServerStreamableHttp] |
+| Talk to servers that implement HTTP with Server-Sent Events                           | **HTTP with SSE MCP servers** via [`MCPServerSse`][agents.mcp.server.MCPServerSse]                         |
+| Launch a local process and communicate over stdin/stdout                              | **stdio MCP servers** via [`MCPServerStdio`][agents.mcp.server.MCPServerStdio]                             |
 
 以下のセクションでは、それぞれのオプションについて、設定方法や、どのトランスポートを選ぶべきかを説明します。
 

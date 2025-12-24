@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # Model context protocol (MCP)
 
 [Model context protocol](https://modelcontextprotocol.io/introduction)（MCP）标准化了应用如何向语言模型暴露工具和上下文。来自官方文档：
@@ -16,12 +17,12 @@ Agents Python SDK 支持多种 MCP 传输方式。这让你可以复用现有的
 
 在将 MCP 服务接入智能体之前，先决定工具调用应在何处执行，以及你能使用哪些传输方式。下表总结了 Python SDK 支持的选项。
 
-| 你的需求                                                                            | 推荐选项                                              |
-| ------------------------------------------------------------------------------------ | ----------------------------------------------------- |
-| 让 OpenAI 的 Responses API 代表模型调用一个可公开访问的 MCP 服务                     | **Hosted MCP server tools**，通过 [`HostedMCPTool`][agents.tool.HostedMCPTool] |
-| 连接你本地或远程运行的可流式 HTTP 服务                                               | **Streamable HTTP MCP servers**，通过 [`MCPServerStreamableHttp`][agents.mcp.server.MCPServerStreamableHttp] |
-| 与实现了带 Server-Sent Events 的 HTTP 的服务通信                                     | **HTTP with SSE MCP servers**，通过 [`MCPServerSse`][agents.mcp.server.MCPServerSse] |
-| 启动本地进程并通过 stdin/stdout 通信                                                 | **stdio MCP servers**，通过 [`MCPServerStdio`][agents.mcp.server.MCPServerStdio] |
+| 你的需求                                                         | 推荐选项                                                                                                     |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| 让 OpenAI 的 Responses API 代表模型调用一个可公开访问的 MCP 服务 | **Hosted MCP server tools**，通过 [`HostedMCPTool`][agents.tool.HostedMCPTool]                               |
+| 连接你本地或远程运行的可流式 HTTP 服务                           | **Streamable HTTP MCP servers**，通过 [`MCPServerStreamableHttp`][agents.mcp.server.MCPServerStreamableHttp] |
+| 与实现了带 Server-Sent Events 的 HTTP 的服务通信                 | **HTTP with SSE MCP servers**，通过 [`MCPServerSse`][agents.mcp.server.MCPServerSse]                         |
+| 启动本地进程并通过 stdin/stdout 通信                             | **stdio MCP servers**，通过 [`MCPServerStdio`][agents.mcp.server.MCPServerStdio]                             |
 
 下文将依次介绍每个选项、如何配置，以及在何种情况下更倾向于使用哪种传输方式。
 

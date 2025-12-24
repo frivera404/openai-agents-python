@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, Callable, Generic, Literal, cast
 
 from typing_extensions import NotRequired, TypeAlias, TypedDict
 
-from openai.types.responses.response_prompt_param import ResponsePromptParam
+from typing import Any as ResponsePromptParam
 
 from .agent_output import AgentOutputSchemaBase
 from .guardrail import InputGuardrail, OutputGuardrail

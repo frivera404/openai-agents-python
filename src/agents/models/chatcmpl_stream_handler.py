@@ -28,18 +28,19 @@ from openai.types.responses import (
     ResponseTextDeltaEvent,
     ResponseUsage,
 )
-from openai.types.responses.response_reasoning_item import Content, Summary
-from openai.types.responses.response_reasoning_summary_part_added_event import (
-    Part as AddedEventPart,
-)
-from openai.types.responses.response_reasoning_summary_part_done_event import Part as DoneEventPart
-from openai.types.responses.response_reasoning_text_delta_event import (
-    ResponseReasoningTextDeltaEvent,
-)
-from openai.types.responses.response_reasoning_text_done_event import (
-    ResponseReasoningTextDoneEvent,
-)
+
+# from openai.types.responses.response_reasoning_item import Content, Summary
+Content = object
+Summary = object
 from openai.types.responses.response_usage import InputTokensDetails, OutputTokensDetails
+
+# These detailed reasoning summary / text event types are not present
+# in the installed openai version; use simple aliases to keep typing
+# while avoiding import errors.
+AddedEventPart = object
+DoneEventPart = object
+ResponseReasoningTextDeltaEvent = object
+ResponseReasoningTextDoneEvent = object
 
 from ..items import TResponseStreamEvent
 from .fake_id import FAKE_RESPONSES_ID

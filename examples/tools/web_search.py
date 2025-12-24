@@ -11,6 +11,9 @@ async def main():
         name="Web searcher",
         instructions="You are a helpful agent.",
         tools=[WebSearchTool(user_location={"type": "approximate", "city": "New York"})],
+        # Override the default model (which may be gpt-4o-mini) with a
+        # generally available Responses model.
+        model="gpt-4.1",
     )
 
     with trace("Web search example"):

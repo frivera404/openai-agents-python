@@ -35,10 +35,10 @@ The agent is pre-configured with the following credentials:
 
 ```json
 {
-  "assistant_id": "asst_70Xrb6BnK0CtVx3qm89J6nEQ",
-  "vector_store_id": "vs_1BREGwaFlfMYaIIOlzW7xCuC",
-  "api_key": "sk-proj-...",
-  "model": "gpt-4o"
+    "assistant_id": "asst_XZqf46Wxz4XL9pI7VHraZQEi",
+    "vector_store_id": "vs_1BREGwaFlfMYaIIOlzW7xCuC",
+    "api_key": "sk-proj-...",
+    "model": "gpt-4o"
 }
 ```
 
@@ -48,11 +48,11 @@ Default MCP server configuration:
 
 ```json
 {
-  "meta-api-mcp-server": {
-    "command": "npx",
-    "args": ["-y", "meta-api-mcp-server"],
-    "type": "stdio"
-  }
+    "meta-api-mcp-server": {
+        "command": "npx",
+        "args": ["-y", "meta-api-mcp-server"],
+        "type": "stdio"
+    }
 }
 ```
 
@@ -65,6 +65,7 @@ python openai_assistant_cli.py init
 ```
 
 This will:
+
 - Connect to the OpenAI Assistant
 - Initialize the vector store
 - Set up MCP server connections
@@ -99,6 +100,7 @@ python openai_assistant_cli.py demo
 ## CLI Commands
 
 ### `init`
+
 Initialize the OpenAI Assistant Agent with MCP servers.
 
 ```bash
@@ -106,9 +108,11 @@ python openai_assistant_cli.py init [--servers SERVER1 SERVER2]
 ```
 
 Options:
+
 - `--servers`: Specify which MCP servers to initialize (default: all)
 
 ### `query`
+
 Run a query using the assistant.
 
 ```bash
@@ -116,10 +120,12 @@ python openai_assistant_cli.py query "Your question here" [OPTIONS]
 ```
 
 Options:
+
 - `--thread-id`: OpenAI thread ID for conversation continuity
 - `--output-file`: Save response to JSON file
 
 ### `tools`
+
 List available tools from connected MCP servers.
 
 ```bash
@@ -127,6 +133,7 @@ python openai_assistant_cli.py tools
 ```
 
 ### `info`
+
 Display information about the assistant and connections.
 
 ```bash
@@ -134,6 +141,7 @@ python openai_assistant_cli.py info
 ```
 
 ### `demo`
+
 Run an interactive demonstration.
 
 ```bash
@@ -141,6 +149,7 @@ python openai_assistant_cli.py demo
 ```
 
 ### `cleanup`
+
 Clean up MCP server connections.
 
 ```bash
@@ -210,12 +219,15 @@ This will show all available tools from connected MCP servers.
 ## Vector Store Features
 
 ### File Search
+
 The assistant can search through uploaded documents and knowledge base files.
 
 ### Knowledge Retrieval
+
 Access stored information and context for enhanced responses.
 
 ### Document Analysis
+
 Process and analyze various file types for insights.
 
 ## Best Practices
@@ -250,19 +262,19 @@ except Exception as e:
 ### Common Issues
 
 1. **Connection Failed**
-   - Check OpenAI API key validity
-   - Verify assistant and vector store IDs
-   - Ensure network connectivity
+    - Check OpenAI API key validity
+    - Verify assistant and vector store IDs
+    - Ensure network connectivity
 
 2. **MCP Server Issues**
-   - Run `npx --version` to check Node.js
-   - Verify MCP router URL accessibility
-   - Check server logs for errors
+    - Run `npx --version` to check Node.js
+    - Verify MCP router URL accessibility
+    - Check server logs for errors
 
 3. **Tool Execution Errors**
-   - Some tools may require specific permissions
-   - Check MCP server configuration
-   - Verify external service credentials
+    - Some tools may require specific permissions
+    - Check MCP server configuration
+    - Verify external service credentials
 
 ### Debug Mode
 
@@ -320,6 +332,7 @@ When extending the OpenAI Assistant integration:
 ## Support
 
 For issues related to:
+
 - **OpenAI Assistant**: Check OpenAI platform documentation
 - **MCP Integration**: Refer to Model Context Protocol specs
 - **Agents SDK**: See main project documentation

@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 빠른 시작
 
 실시간 에이전트는 OpenAI의 Realtime API를 사용하여 AI 에이전트와의 음성 대화를 가능하게 합니다. 이 가이드는 첫 실시간 음성 에이전트를 만드는 방법을 안내합니다.

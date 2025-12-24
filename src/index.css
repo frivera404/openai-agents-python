@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom animations and styles for a manly, tech-focused design */
+
+@keyframes glow {
+    0%,
+    100% {
+        box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+    }
+    50% {
+        box-shadow:
+            0 0 20px rgba(59, 130, 246, 0.8),
+            0 0 30px rgba(59, 130, 246, 0.4);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.animate-glow {
+    animation: glow 2s ease-in-out infinite;
+}
+
+.animate-slide-in {
+    animation: slideIn 0.5s ease-out;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1f2937;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #3b82f6;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #2563eb;
+}
+
+/* Tech-inspired gradients */
+.bg-tech-gradient {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #1e293b 100%);
+}
+
+.bg-card-gradient {
+    background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+}
+
+.text-tech-accent {
+    color: #3b82f6;
+}
+
+/* Loading skeleton */
+.skeleton {
+    background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Enhanced button styles */
+.btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 hover:shadow-lg;
+}
+
+.btn-secondary {
+    @apply bg-gray-700 hover:bg-gray-600 text-gray-200 font-semibold py-2 px-4 rounded-lg border border-gray-600 transition-all duration-200;
+}
+
+/* Status banner improvements */
+.status-banner {
+    @apply border-l-4 shadow-lg backdrop-blur-sm;
+}
+
+/* Agent card enhancements */
+.agent-card {
+    @apply transition-all duration-300 hover:transform hover:scale-105 hover:shadow-2xl border border-gray-700;
+}
+
+.agent-card:hover {
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(59, 130, 246, 0.1);
+}

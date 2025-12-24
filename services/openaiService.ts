@@ -27,7 +27,7 @@ const buildApiUrl = (path: string) => (API_BASE_URL ? `${API_BASE_URL}${path}` :
 
 const handleResponse = async (response: Response) => {
     if (!response.ok) {
-        const errorData = await response.json().catch(() => ({} as Record<string, string>));
+        const errorData = await response.json().catch(() => ({}) as Record<string, string>);
         throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
     }
 
@@ -61,8 +61,19 @@ export const getDeployedAgents = async () => {
     return data.agents as Record<string, string>;
 };
 
-export const sendAgentCommand = async ({ assistantId, prompt, model, temperature, systemInstruction }:
-    { assistantId: string; prompt: string; model?: string; temperature?: number; systemInstruction?: string }) => {
+export const sendAgentCommand = async ({
+    assistantId,
+    prompt,
+    model,
+    temperature,
+    systemInstruction,
+}: {
+    assistantId: string;
+    prompt: string;
+    model?: string;
+    temperature?: number;
+    systemInstruction?: string;
+}) => {
     const response = await fetch(buildApiUrl('/api/agent/command'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -100,8 +111,16 @@ export const deleteTool = async (toolId: string): Promise<{ message: string }> =
     return data;
 };
 
-// Placeholder for future API calls
+// Fetch basic status information for a deployed agent by ID.
+// This uses the existing backend endpoints instead of a static placeholder.
 export const getAgentStatus = async (agentId: string) => {
-    console.log(`Checking status for agent ${agentId}`);
-    return Promise.resolve({ status: 'running', endpoint: `https://api.example.com/agents/${agentId}` });
+    // Reuse the deployed agents listing endpoint.
+    const deployed = await getDeployedAgents();
+    const isDeployed = Object.prototype.hasOwnProperty.call(deployed, agentId);
+
+    return {
+        status: isDeployed ? 'running' : 'unknown',
+        // Expose the command endpoint on our own backend, not an external placeholder URL.
+        endpoint: buildApiUrl('/api/agent/command'),
+    };
 };

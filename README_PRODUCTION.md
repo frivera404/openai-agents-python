@@ -22,23 +22,25 @@ A production-ready MCP (Model Context Protocol) client application built with th
 ## 🛠️ Installation
 
 1. **Clone and setup**:
-   ```bash
-   git clone <repository-url>
-   cd openai-agents-python
-   ```
+
+    ```bash
+    git clone <repository-url>
+    cd openai-agents-python
+    ```
 
 2. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   # OR using uv (recommended)
-   uv pip install -r requirements.txt
-   ```
+
+    ```bash
+    pip install -r requirements.txt
+    # OR using uv (recommended)
+    uv pip install -r requirements.txt
+    ```
 
 3. **Configure environment**:
-   ```bash
-   cp .env.example .env
-   # Edit .env with your API keys and tokens
-   ```
+    ```bash
+    cp .env.example .env
+    # Edit .env with your API keys and tokens
+    ```
 
 ## ⚙️ Configuration
 
@@ -55,14 +57,19 @@ WIKIPEDIA_TOKEN=your_wikipedia_token_here
 
 ```json
 {
-  "servers": {
-    "wikipedia-mcp": {
-      "command": "npx",
-      "args": ["mcp-remote", "--header", "Authorization:Bearer ${WIKIPEDIA_TOKEN}", "https://wiki-1763000517527.server.mcp-cloud.ai/sse"],
-      "env": {"WIKIPEDIA_TOKEN": "${WIKIPEDIA_TOKEN}"},
-      "type": "stdio"
+    "servers": {
+        "wikipedia-mcp": {
+            "command": "npx",
+            "args": [
+                "mcp-remote",
+                "--header",
+                "Authorization:Bearer ${WIKIPEDIA_TOKEN}",
+                "https://wiki-1763000517527.server.mcp-cloud.ai/sse"
+            ],
+            "env": { "WIKIPEDIA_TOKEN": "${WIKIPEDIA_TOKEN}" },
+            "type": "stdio"
+        }
     }
-  }
 }
 ```
 
@@ -71,49 +78,57 @@ WIKIPEDIA_TOKEN=your_wikipedia_token_here
 ### Basic Workflow
 
 1. **List available servers**:
-   ```bash
-   python mcp_client.py list-servers
-   ```
+
+    ```bash
+    python mcp_client.py list-servers
+    ```
 
 2. **Initialize MCP servers**:
-   ```bash
-   python mcp_client.py init
-   ```
+
+    ```bash
+    python mcp_client.py init
+    ```
 
 3. **Create an agent**:
-   ```bash
-   python mcp_client.py create-agent --model gpt-4o
-   ```
+
+    ```bash
+    python mcp_client.py create-agent --model gpt-4o
+    ```
 
 4. **Run queries**:
-   ```bash
-   python mcp_client.py query "What tools are available?"
-   python mcp_client.py query "Search for information about artificial intelligence"
-   ```
+
+    ```bash
+    python mcp_client.py query "What tools are available?"
+    python mcp_client.py query "Search for information about artificial intelligence"
+    ```
 
 5. **List available tools**:
-   ```bash
-   python mcp_client.py tools
-   ```
+
+    ```bash
+    python mcp_client.py tools
+    ```
 
 6. **Clean up**:
-   ```bash
-   python mcp_client.py cleanup
-   ```
+    ```bash
+    python mcp_client.py cleanup
+    ```
 
 ### Advanced Usage
 
 **Use verbose logging**:
+
 ```bash
 python mcp_client.py --verbose query "Your question here"
 ```
 
 **Custom configuration file**:
+
 ```bash
 python mcp_client.py --config custom_config.json init
 ```
 
 **Query with custom timeout**:
+
 ```bash
 python mcp_client.py query --timeout 600 "Complex analysis request"
 ```
@@ -190,21 +205,25 @@ CMD ["python", "mcp_client.py", "init"]
 ### Common Issues
 
 **"Failed to initialize MCP servers"**
+
 - Check network connectivity
 - Verify authentication tokens
 - Ensure MCP servers are running
 
 **"OpenAI API key not configured"**
+
 - Set `OPENAI_API_KEY` in `.env`
 - Verify API key is valid
 
 **"Command not found: npx"**
+
 - Install Node.js and npm
 - Ensure npx is in PATH
 
 ### Debug Mode
 
 Enable verbose logging for detailed troubleshooting:
+
 ```bash
 python mcp_client.py --verbose [command]
 ```
@@ -224,6 +243,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 📞 Support
 
 For issues and questions:
+
 - Check the logs in `mcp_client.log`
 - Review the troubleshooting section
 - Open an issue on GitHub

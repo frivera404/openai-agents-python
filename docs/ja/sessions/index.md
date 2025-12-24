@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # セッション
 
 Agents SDK は、複数のエージェント実行にわたって会話履歴を自動的に維持する組み込みのセッションメモリを提供し、ターン間で手動で `.to_input_list()` を扱う必要をなくします。
@@ -257,18 +258,18 @@ result = await Runner.run(agent, "Hello", session=session)
 
 会話を整理しやすい意味のあるセッション ID を使用します:
 
--   ユーザー単位: `"user_12345"`
--   スレッド単位: `"thread_abc123"`
--   コンテキスト単位: `"support_ticket_456"`
+- ユーザー単位: `"user_12345"`
+- スレッド単位: `"thread_abc123"`
+- コンテキスト単位: `"support_ticket_456"`
 
 ### メモリ永続化
 
--   一時的な会話にはインメモリ SQLite（`SQLiteSession("session_id")`）を使用します
--   永続的な会話にはファイルベースの SQLite（`SQLiteSession("session_id", "path/to/db.sqlite")`）を使用します
--   既存のデータベースを SQLAlchemy がサポートする本番システムには SQLAlchemy 対応のセッション（`SQLAlchemySession("session_id", engine=engine, create_tables=True)`）を使用します
--   履歴を OpenAI Conversations API に保存したい場合は OpenAI ホストのストレージ（`OpenAIConversationsSession()`）を使用します
--   あらゆるセッションを透過的な暗号化と TTL ベースの有効期限でラップするには暗号化セッション（`EncryptedSession(session_id, underlying_session, encryption_key)`）を使用します
--   より高度なユースケースには、他の本番システム（Redis、Django など）向けのカスタムセッションバックエンドの実装を検討してください
+- 一時的な会話にはインメモリ SQLite（`SQLiteSession("session_id")`）を使用します
+- 永続的な会話にはファイルベースの SQLite（`SQLiteSession("session_id", "path/to/db.sqlite")`）を使用します
+- 既存のデータベースを SQLAlchemy がサポートする本番システムには SQLAlchemy 対応のセッション（`SQLAlchemySession("session_id", engine=engine, create_tables=True)`）を使用します
+- 履歴を OpenAI Conversations API に保存したい場合は OpenAI ホストのストレージ（`OpenAIConversationsSession()`）を使用します
+- あらゆるセッションを透過的な暗号化と TTL ベースの有効期限でラップするには暗号化セッション（`EncryptedSession(session_id, underlying_session, encryption_key)`）を使用します
+- より高度なユースケースには、他の本番システム（Redis、Django など）向けのカスタムセッションバックエンドの実装を検討してください
 
 ### 複数セッション
 
@@ -427,9 +428,9 @@ result = await Runner.run(
 
 詳細な API ドキュメントは以下を参照してください:
 
--   [`Session`][agents.memory.session.Session] - プロトコルインターフェース
--   [`OpenAIConversationsSession`][agents.memory.OpenAIConversationsSession] - OpenAI Conversations API 実装
--   [`SQLiteSession`][agents.memory.sqlite_session.SQLiteSession] - 基本的な SQLite 実装
--   [`SQLAlchemySession`][agents.extensions.memory.sqlalchemy_session.SQLAlchemySession] - SQLAlchemy 対応実装
--   [`AdvancedSQLiteSession`][agents.extensions.memory.advanced_sqlite_session.AdvancedSQLiteSession] - 分岐と分析を備えた強化版 SQLite
--   [`EncryptedSession`][agents.extensions.memory.encrypt_session.EncryptedSession] - 任意のセッション向けの暗号化ラッパー
+- [`Session`][agents.memory.session.Session] - プロトコルインターフェース
+- [`OpenAIConversationsSession`][agents.memory.OpenAIConversationsSession] - OpenAI Conversations API 実装
+- [`SQLiteSession`][agents.memory.sqlite_session.SQLiteSession] - 基本的な SQLite 実装
+- [`SQLAlchemySession`][agents.extensions.memory.sqlalchemy_session.SQLAlchemySession] - SQLAlchemy 対応実装
+- [`AdvancedSQLiteSession`][agents.extensions.memory.advanced_sqlite_session.AdvancedSQLiteSession] - 分岐と分析を備えた強化版 SQLite
+- [`EncryptedSession`][agents.extensions.memory.encrypt_session.EncryptedSession] - 任意のセッション向けの暗号化ラッパー

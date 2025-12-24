@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # LiteLLM 를 통한 임의 모델 사용
 
 !!! note

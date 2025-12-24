@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 追踪
 
 与[智能体的追踪方式](../tracing.md)相同，语音流水线也会被自动追踪。

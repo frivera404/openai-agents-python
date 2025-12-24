@@ -1,0 +1,298 @@
+# ===============================
+# GPT BASIC FUNCTIONS
+# ===============================
+
+function gpt {
+    param([Parameter(Mandatory=$true)][string]$msg)
+
+    openai api chat.completions.create `
+        -m gpt-4.1 `
+        -g user "$msg"
+}
+
+function gptstream {
+    param([string]$msg)
+
+    openai api chat.completions.create `
+        -m gpt-4.1 `
+        --stream `
+        -g user "$msg"
+}
+
+function gptfile {
+    param([Parameter(Mandatory=$true)][string]$Path)
+
+    if (-not (Test-Path $Path)) { Write-Error "File not found: $Path"; return }
+
+    $content = Get-Content $Path -Raw
+
+    openai api chat.completions.create `
+        -m gpt-4.1 `
+        -g user "$content"
+}
+
+function gptask {
+    param(
+        [Parameter(Mandatory=$true)][string]$Path,
+        [Parameter(Mandatory=$true)][string]$Question
+    )
+
+    if (-not (Test-Path $Path)) { Write-Error "File not found: $Path"; return }
+
+    $content = Get-Content $Path -Raw
+
+    openai api chat.completions.create `
+        -m gpt-4.1 `
+        -g user "File content:`n`n$content" `
+        -g user "Question: $Question"
+}
+
+# ===============================
+# EMBEDDINGS + INDEXING
+# ===============================
+
+function gpt-embed {
+    param([string]$Text)
+
+    openai api embeddings.create `
+        -m text-embedding-3-small `
+        -g input "$Text"
+}
+
+function gpt-index-folder {
+    param([string]$Path)
+
+    $files = Get-ChildItem $Path -Recurse -File
+    $index = @()
+
+    foreach ($file in $files) {
+        $content = Get-Content $file.FullName -Raw
+        $embedding = gpt-embed $content
+        $index += @{
+            file      = $file.FullName
+            embedding = $embedding.data[0].embedding
+        }
+    }
+
+    $index | ConvertTo-Json -Depth 6 | Set-Content "vector_index.json"
+    Write-Host "Indexed $($files.Count) files → vector_index.json"
+}
+
+# ===============================
+# ADVANCED: CHUNK PROCESSING
+# ===============================
+
+function gpt-chunkfile {
+    param(
+        [Parameter(Mandatory=$true)][string]$Path,
+        [int]$ChunkSizeKB = 60
+    )
+
+    if (-not (Test-Path $Path)) { Write-Error "File not found: $Path"; return }
+
+    $content = Get-Content $Path -Raw
+    $bytes   = [System.Text.Encoding]::UTF8.GetBytes($content)
+    $chunkSize = $ChunkSizeKB * 1024
+    $chunks = @()
+
+    for ($i = 0; $i -lt $bytes.Length; $i += $chunkSize) {
+        $end   = [Math]::Min($chunkSize, $bytes.Length - $i)
+        $text  = [System.Text.Encoding]::UTF8.GetString($bytes[$i..($i+$end-1)])
+        $chunks += $text
+    }
+
+    Write-Host "Processing $($chunks.Count) chunks..."
+
+    $partialResults = @()
+
+    foreach ($chunk in $chunks) {
+        $resp = openai api chat.completions.create `
+            -m gpt-4.1 `
+            -g user "Here is a chunk of a large file. Analyze or summarize it:`n`n$chunk"
+
+        $partialResults += $resp
+    }
+
+    $combined = ($partialResults -join "`n`n")
+
+    $final = openai api chat.completions.create `
+        -m gpt-4.1 `
+        -g user "Here are multiple chunk summaries:`n`n$combined`n`nCombine these into one unified analysis."
+
+    Write-Host "`n=============================="
+    Write-Host "FINAL SUMMARY"
+    Write-Host "==============================`n"
+    Write-Host $final
+}
+
+# ===============================
+# OTHER ADVANCED TOOLS
+# ===============================
+
+function gpt-search {
+    param(
+        [Parameter(Mandatory=$true)][string]$Path,
+        [Parameter(Mandatory=$true)][string]$Query
+    )
+
+    $files = Get-ChildItem $Path -Recurse -File
+
+    foreach ($file in $files) {
+        $content = Get-Content $file.FullName -Raw
+
+        $score = openai api chat.completions.create `
+            -m gpt-4.1-mini `
+            -g user "Rate relevance (0–10) to '$Query':`n`n$content"
+
+        Write-Host "$($file.FullName): $score`n"
+    }
+}
+
+function gpt-review {
+    param([string]$Path)
+
+    if (-not (Test-Path $Path)) { Write-Error "File not found."; return }
+
+    $content = Get-Content $Path -Raw
+
+    openai api chat.completions.create `
+        -m gpt-4.1 `
+        -g system "You are a senior code reviewer. Provide inline improvements." `
+        -g user "$content"
+}
+
+function gpt-agent {
+    param([string]$Path)
+
+    $files = Get-ChildItem $Path -File | Select-Object -ExpandProperty FullName
+    $fileList = ($files -join "`n")
+
+    $decision = openai api chat.completions.create `
+        -m gpt-4.1 `
+        -g system "Choose the most relevant file to inspect." `
+        -g user "$fileList"
+
+    Write-Host "GPT selected:`n$decision"
+}
+
+function gpt-summarize-folder {
+    param([string]$Path)
+
+    $files = Get-ChildItem $Path -Recurse -File
+    $summary = ""
+
+    foreach ($file in $files) {
+        $content = Get-Content $file.FullName -Raw
+
+        $partial = openai api chat.completions.create `
+            -m gpt-4.1-mini `
+            -g user "Summarize this file:`n`n$content"
+
+        $summary += "`nFile: $($file.FullName)`n$partial`n"
+    }
+
+    openai api chat.completions.create `
+        -m gpt-4.1 `
+        -g user "Summaries:`n`n$summary"
+}
+
+# ===============================
+# PERSISTENT MEMORY AGENT
+# ===============================
+
+$global:GptMemoryFile = Join-Path $HOME "gpt_memory.json"
+
+function gpt-reset-memory {
+    if (Test-Path $global:GptMemoryFile) {
+        Remove-Item $global:GptMemoryFile
+        Write-Host "Memory cleared."
+    }
+    else {
+        Write-Host "No memory file found."
+    }
+}
+
+function gptmem {
+    param([Parameter(Mandatory=$true)][string]$msg)
+
+    if (Test-Path $global:GptMemoryFile) {
+        $messages = Get-Content $global:GptMemoryFile -Raw | ConvertFrom-Json
+    } else {
+        $messages = @(
+            @{ role="system"; content="You are an assistant with persistent memory." }
+        )
+    }
+
+    $messages += @{ role="user"; content=$msg }
+
+    $args = @("api","chat.completions.create","-m","gpt-4.1")
+
+    foreach ($m in $messages) {
+        $args += @("-g",$m.role,$m.content)
+    }
+
+    $resp = openai @args | Out-String
+
+    try {
+        $json = $resp | ConvertFrom-Json
+        $assistant = $json.choices[0].message.content
+    }
+    catch {
+        Write-Host "Raw output:"
+        Write-Host $resp
+        return
+    }
+
+    Write-Host "`nAssistant:`n$assistant`n"
+
+    $messages += @{ role="assistant"; content=$assistant }
+
+    $messages | ConvertTo-Json -Depth 8 | Set-Content $global:GptMemoryFile
+}
+
+# ===============================
+# IMAGE SHORTCUT
+# ===============================
+
+function gimg {
+    param(
+        [Parameter(Mandatory=$true)][string]$Prompt,
+        [string]$Model = "dall-e-2",
+        [string]$Size = "512x512",
+        [int]$Num = 1
+    )
+
+    openai api images.generate `
+        -m $Model `
+        -p "$Prompt" `
+        -n $Num `
+        -s $Size
+}
+
+# ===============================
+# SINGLE, CLEAN MCP FUNCTION
+# ===============================
+
+function mcp {
+    param(
+        [Parameter(Mandatory=$true)][string]$Type,
+        [Parameter()][hashtable]$Data = @{}
+    )
+
+    if (-not $env:MCP_URL)   { Write-Error "Missing MCP_URL"; return }
+    if (-not $env:MCP_TOKEN) { Write-Error "Missing MCP_TOKEN"; return }
+
+    $body = @{
+        type = $Type
+        data = $Data
+    } | ConvertTo-Json -Depth 10
+
+    Invoke-RestMethod `
+        -Method POST `
+        -Uri $env:MCP_URL `
+        -Headers @{
+            "Authorization" = "Bearer $env:MCP_TOKEN"
+            "Content-Type"  = "application/json"
+        } `
+        -Body $body
+}

@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 # OpenAI client setup
 client = OpenAI()
 
-ASSISTANT_ID = "asst_70Xrb6BnK0CtVx3qm89J6nEQ"
+ASSISTANT_ID = "asst_XZqf46Wxz4XL9pI7VHraZQEi"
 VECTOR_STORE_ID = "vs_1BREGwaFlfMYaIIOlzW7xCuC"
 
 

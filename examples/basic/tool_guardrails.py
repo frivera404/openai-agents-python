@@ -30,7 +30,7 @@ def get_user_data(user_id: str) -> dict[str, str]:
     return {
         "user_id": user_id,
         "name": "John Doe",
-        "email": "john@example.com",
+        "email": "john@ctdatenight.com",
         "ssn": "123-45-6789",  # Sensitive data that should be blocked!
         "phone": "555-1234",
     }
@@ -42,7 +42,7 @@ def get_contact_info(user_id: str) -> dict[str, str]:
     return {
         "user_id": user_id,
         "name": "Jane Smith",
-        "email": "jane@example.com",
+        "email": "jane@ctdatenight.com",
         "phone": "555-1234",
     }
 
@@ -121,13 +121,13 @@ async def main():
     try:
         # Example 1: Normal operation - should work fine
         logger.info("1. Normal email sending:")
-        result = await Runner.run(agent, "Send a welcome email to john@example.com")
+        result = await Runner.run(agent, "Send a welcome email to john@ctdatenight.com")
         logger.info("✅ Successful tool execution: %s\n", result.final_output)
 
         # Example 2: Input guardrail triggers - function tool call is rejected but execution continues
         logger.info("2. Attempting to send email with suspicious content:")
         result = await Runner.run(
-            agent, "Send an email to john@example.com introducing the company ACME corp."
+            agent, "Send an email to john@ctdatenight.com introducing the company ACME corp."
         )
         logger.info("❌ Guardrail rejected function tool call: %s\n", result.final_output)
     except Exception as e:
@@ -161,7 +161,7 @@ Example output:
 === Tool Guardrails Example ===
 
 1. Normal email sending:
-✅ Successful tool execution: I've sent a welcome email to john@example.com with an appropriate subject and greeting message.
+✅ Successful tool execution: I've sent a welcome email to john@ctdatenight.com with an appropriate subject and greeting message.
 
 2. Attempting to send email with suspicious content:
 ❌ Guardrail rejected function tool call: I'm unable to send the email as mentioning ACME Corp. is restricted.
@@ -173,3 +173,4 @@ Example output:
 4. Rejecting function tool output containing sensitive data:
 ❌ Guardrail rejected function tool output: I'm unable to retrieve the contact info for user456 because it contains restricted information.
 """
+

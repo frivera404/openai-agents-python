@@ -27,7 +27,7 @@ plugins:
   - mkdocstrings:
       handlers:
         python:
-          paths: ["src/agents"]
+          paths: ['src/agents']
           selection:
             docstring_style: google
           options:
@@ -317,4 +317,4 @@ extra_css:
   - stylesheets/extra.css
 
 watch:
-  - "src/agents"
+  - 'src/agents'

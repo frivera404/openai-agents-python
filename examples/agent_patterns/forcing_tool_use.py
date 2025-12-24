@@ -73,6 +73,7 @@ async def main(tool_use_behavior: Literal["default", "first_tool", "custom"] = "
         instructions="You are a helpful agent.",
         tools=[get_weather],
         tool_use_behavior=behavior,
+        model="gpt-4.1",
         model_settings=ModelSettings(
             tool_choice="required" if tool_use_behavior != "default" else None
         ),
@@ -88,6 +89,8 @@ if __name__ == "__main__":
 
     import logging as _logging
     _logging.basicConfig(level=_logging.INFO)
+    # Reduce noise from underlying HTTP client (httpx) used by OpenAI/tracing.
+    _logging.getLogger("httpx").setLevel(_logging.WARNING)
 
     parser = argparse.ArgumentParser()
     parser.add_argument(

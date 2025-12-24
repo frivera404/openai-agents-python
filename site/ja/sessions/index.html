@@ -1,2028 +1,1378 @@
-
 <!doctype html>
 <html lang="ja" class="no-js">
-  <head>
-    
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width,initial-scale=1">
-      
-      
-      
-      
-        <link rel="prev" href="../running_agents/">
-      
-      
-        <link rel="next" href="sqlalchemy_session/">
-      
-      
-        
-          <link rel="alternate" href="../../sessions/" hreflang="en">
-        
-          <link rel="alternate" href="./" hreflang="ja">
-        
-          <link rel="alternate" href="../../ko/sessions/" hreflang="ko">
-        
-          <link rel="alternate" href="../../zh/sessions/" hreflang="zh">
-        
-      
-      
-      <link rel="icon" href="../../images/favicon-platform.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
-    
-    
-      
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+        <link rel="prev" href="../running_agents/" />
+
+        <link rel="next" href="sqlalchemy_session/" />
+
+        <link rel="alternate" href="../../sessions/" hreflang="en" />
+
+        <link rel="alternate" href="./" hreflang="ja" />
+
+        <link rel="alternate" href="../../ko/sessions/" hreflang="ko" />
+
+        <link rel="alternate" href="../../zh/sessions/" hreflang="zh" />
+
+        <link rel="icon" href="../../images/favicon-platform.svg" />
+        <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0" />
+
         <title>セッション - OpenAI Agents SDK</title>
-      
-    
-    
-      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
-      
-        
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
-      
-      
 
+        <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css" />
 
-    
-    
-      
-    
-    
-      
-        
-        
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
-      
-    
-    
-      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
-    
-      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
-    
-      <link rel="stylesheet" href="../../stylesheets/extra.css">
-    
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
-    
-      
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css" />
 
-    
-    
-  </head>
-  
-  
-    
-    
-    
-    
-    
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="indigo">
-  
-    
-    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
-    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" for="__drawer"></label>
-    <div data-md-component="skip">
-      
-        
-        <a href="#_1" class="md-skip">
-          コンテンツにスキップ
-        </a>
-      
-    </div>
-    <div data-md-component="announce">
-      
-    </div>
-    
-    
-      
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback"
+        />
+        <style>
+            :root {
+                --md-text-font: 'Roboto';
+                --md-code-font: 'Roboto Mono';
+            }
+        </style>
 
-  
+        <link rel="stylesheet" href="../../assets/_mkdocstrings.css" />
 
-<header class="md-header md-header--shadow" data-md-component="header">
-  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
-    <a href="../" title="OpenAI Agents SDK" class="md-header__button md-logo" aria-label="OpenAI Agents SDK" data-md-component="logo">
-      
-  <img src="../../assets/logo.svg" alt="logo">
+        <link rel="stylesheet" href="../../assets/_mkdocstrings.css" />
 
-    </a>
-    <label class="md-header__button md-icon" for="__drawer">
-      
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
-    </label>
-    <div class="md-header__title" data-md-component="header-title">
-      <div class="md-header__ellipsis">
-        <div class="md-header__topic">
-          <span class="md-ellipsis">
-            OpenAI Agents SDK
-          </span>
+        <link rel="stylesheet" href="../../stylesheets/extra.css" />
+
+        <script>
+            ((__md_scope = new URL('../..', location)),
+                (__md_hash = (e) => [...e].reduce((e, _) => (e << 5) - e + _.charCodeAt(0), 0)),
+                (__md_get = (e, _ = localStorage, t = __md_scope) =>
+                    JSON.parse(_.getItem(t.pathname + '.' + e))),
+                (__md_set = (e, _, t = localStorage, a = __md_scope) => {
+                    try {
+                        t.setItem(a.pathname + '.' + e, JSON.stringify(_));
+                    } catch (e) {}
+                }));
+        </script>
+    </head>
+
+    <body
+        dir="ltr"
+        data-md-color-scheme="default"
+        data-md-color-primary="black"
+        data-md-color-accent="indigo"
+    >
+        <input
+            class="md-toggle"
+            data-md-toggle="drawer"
+            type="checkbox"
+            id="__drawer"
+            autocomplete="off"
+        />
+        <input
+            class="md-toggle"
+            data-md-toggle="search"
+            type="checkbox"
+            id="__search"
+            autocomplete="off"
+        />
+        <label class="md-overlay" for="__drawer"></label>
+        <div data-md-component="skip">
+            <a href="#_1" class="md-skip"> コンテンツにスキップ </a>
         </div>
-        <div class="md-header__topic" data-md-component="header-topic">
-          <span class="md-ellipsis">
-            
-              セッション
-            
-          </span>
-        </div>
-      </div>
-    </div>
-    
-      
-    
-    
-    
-      <div class="md-header__option">
-  <div class="md-select">
-    
-    <button class="md-header__button md-icon" aria-label="言語切り替え">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
-    </button>
-    <div class="md-select__inner">
-      <ul class="md-select__list">
-        
-          <li class="md-select__item">
-            <a href="../../sessions/" hreflang="en" class="md-select__link">
-              English
-            </a>
-          </li>
-        
-          <li class="md-select__item">
-            <a href="./" hreflang="ja" class="md-select__link">
-              日本語
-            </a>
-          </li>
-        
-          <li class="md-select__item">
-            <a href="../../ko/sessions/" hreflang="ko" class="md-select__link">
-              한국어
-            </a>
-          </li>
-        
-          <li class="md-select__item">
-            <a href="../../zh/sessions/" hreflang="zh" class="md-select__link">
-              简体中文
-            </a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-</div>
-    
-    
-      
-      
-        <label class="md-header__button md-icon" for="__search">
-          
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
-        </label>
-        <div class="md-search" data-md-component="search" role="dialog">
-  <label class="md-search__overlay" for="__search"></label>
-  <div class="md-search__inner" role="search">
-    <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="検索" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
-      <label class="md-search__icon md-icon" for="__search">
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
-      </label>
-      <nav class="md-search__options" aria-label="検索">
-        
-        <button type="reset" class="md-search__icon md-icon" title="クリア" aria-label="クリア" tabindex="-1">
-          
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-        </button>
-      </nav>
-      
-    </form>
-    <div class="md-search__output">
-      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
-        <div class="md-search-result" data-md-component="search-result">
-          <div class="md-search-result__meta">
-            検索を初期化
-          </div>
-          <ol class="md-search-result__list" role="presentation"></ol>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-      
-    
-    
-      <div class="md-header__source">
-        <a href="https://github.com/openai/openai-agents-python" title="リポジトリへ" class="md-source" data-md-component="source">
-  <div class="md-source__icon md-icon">
-    
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
-  </div>
-  <div class="md-source__repository">
-    openai-agents-python
-  </div>
-</a>
-      </div>
-    
-  </nav>
-  
-</header>
-    
-    <div class="md-container" data-md-component="container">
-      
-      
-        
-          
-        
-      
-      <main class="md-main" data-md-component="main">
-        <div class="md-main__inner md-grid">
-          
-            
-              
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-
-
-<nav class="md-nav md-nav--primary" aria-label="ナビゲーション" data-md-level="0">
-  <label class="md-nav__title" for="__drawer">
-    <a href="../" title="OpenAI Agents SDK" class="md-nav__button md-logo" aria-label="OpenAI Agents SDK" data-md-component="logo">
-      
-  <img src="../../assets/logo.svg" alt="logo">
-
-    </a>
-    OpenAI Agents SDK
-  </label>
-  
-    <div class="md-nav__source">
-      <a href="https://github.com/openai/openai-agents-python" title="リポジトリへ" class="md-source" data-md-component="source">
-  <div class="md-source__icon md-icon">
-    
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
-  </div>
-  <div class="md-source__repository">
-    openai-agents-python
-  </div>
-</a>
-    </div>
-  
-  <ul class="md-nav__list" data-md-scrollfix>
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    はじめに
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../quickstart/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    クイックスタート
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../examples/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    コード例
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-    
-  
-  
-  
-    
-    
-    
-    
-      
-        
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
-        
-          
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ドキュメント
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_4">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    ドキュメント
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../agents/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    エージェント
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../running_agents/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    エージェントの実行
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-    
-  
-  
-  
-    
-    
-    
-    
-      
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" checked>
-        
-          
-          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    セッション
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_4_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    セッション
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-    
-  
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    セッション
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    セッション
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        クイックスタート
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        仕組み
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        メモリ操作
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="メモリ操作">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        基本操作
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pop_item" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        修正のための pop_item の使用
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        セッションタイプ
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="セッションタイプ">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#openai-conversations-api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        OpenAI Conversations API セッション
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sqlite" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SQLite セッション
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sqlalchemy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SQLAlchemy セッション
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sqlite_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        高度な SQLite セッション
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        暗号化セッション
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        セッション管理
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="セッション管理">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#id" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        セッション ID の命名
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        メモリ永続化
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        複数セッション
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        セッション共有
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        完全な例
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        カスタムセッション実装
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        API リファレンス
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="sqlalchemy_session/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SQLAlchemy セッション
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="advanced_sqlite_session/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    高度な SQLite セッション
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="encrypted_session/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    暗号化セッション
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../results/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    結果
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../streaming/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ストリーミング
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../repl/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    REPL ユーティリティ
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../tools/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ツール
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../mcp/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Model context protocol (MCP)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../handoffs/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ハンドオフ
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../tracing/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    トレーシング
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../context/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    コンテキスト管理
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../guardrails/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ガードレール
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../multi_agent/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    複数のエージェントのオーケストレーション
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../usage/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    使用状況
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_15" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_15" id="__nav_4_15_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    モデル
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_15_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_15">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    モデル
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../models/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    モデル
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../models/litellm/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    LiteLLM 経由での任意モデルの利用
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../config/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SDK の設定
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../visualization/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    エージェントの可視化
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../release/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    リリースプロセス/変更履歴
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_19" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_19" id="__nav_4_19_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    音声エージェント
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_19_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_19">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    音声エージェント
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../voice/quickstart/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    クイックスタート
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../voice/pipeline/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    パイプラインとワークフロー
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../voice/tracing/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    トレーシング
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_20" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_20" id="__nav_4_20_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    リアルタイムエージェント
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_20_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_20">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    リアルタイムエージェント
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../realtime/quickstart/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    クイックスタート
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../realtime/guide/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    ガイド
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-  </ul>
-</nav>
-                  </div>
+        <div data-md-component="announce"></div>
+
+        <header class="md-header md-header--shadow" data-md-component="header">
+            <nav class="md-header__inner md-grid" aria-label="ヘッダー">
+                <a
+                    href="../"
+                    title="OpenAI Agents SDK"
+                    class="md-header__button md-logo"
+                    aria-label="OpenAI Agents SDK"
+                    data-md-component="logo"
+                >
+                    <img src="../../assets/logo.svg" alt="logo" />
+                </a>
+                <label class="md-header__button md-icon" for="__drawer">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z" />
+                    </svg>
+                </label>
+                <div class="md-header__title" data-md-component="header-title">
+                    <div class="md-header__ellipsis">
+                        <div class="md-header__topic">
+                            <span class="md-ellipsis"> OpenAI Agents SDK </span>
+                        </div>
+                        <div class="md-header__topic" data-md-component="header-topic">
+                            <span class="md-ellipsis"> セッション </span>
+                        </div>
+                    </div>
                 </div>
-              </div>
-            
-            
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
 
-<nav class="md-nav md-nav--secondary" aria-label="目次">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目次
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        クイックスタート
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        仕組み
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        メモリ操作
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="メモリ操作">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        基本操作
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pop_item" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        修正のための pop_item の使用
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        セッションタイプ
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="セッションタイプ">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#openai-conversations-api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        OpenAI Conversations API セッション
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sqlite" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SQLite セッション
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sqlalchemy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SQLAlchemy セッション
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sqlite_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        高度な SQLite セッション
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        暗号化セッション
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        セッション管理
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="セッション管理">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#id" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        セッション ID の命名
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        メモリ永続化
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        複数セッション
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        セッション共有
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        完全な例
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        カスタムセッション実装
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        API リファレンス
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-                  </div>
+                <div class="md-header__option">
+                    <div class="md-select">
+                        <button class="md-header__button md-icon" aria-label="言語切り替え">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path
+                                    d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"
+                                />
+                            </svg>
+                        </button>
+                        <div class="md-select__inner">
+                            <ul class="md-select__list">
+                                <li class="md-select__item">
+                                    <a href="../../sessions/" hreflang="en" class="md-select__link">
+                                        English
+                                    </a>
+                                </li>
+
+                                <li class="md-select__item">
+                                    <a href="./" hreflang="ja" class="md-select__link"> 日本語 </a>
+                                </li>
+
+                                <li class="md-select__item">
+                                    <a
+                                        href="../../ko/sessions/"
+                                        hreflang="ko"
+                                        class="md-select__link"
+                                    >
+                                        한국어
+                                    </a>
+                                </li>
+
+                                <li class="md-select__item">
+                                    <a
+                                        href="../../zh/sessions/"
+                                        hreflang="zh"
+                                        class="md-select__link"
+                                    >
+                                        简体中文
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-              </div>
-            
-          
-          
-            <div class="md-content" data-md-component="content">
-              
-                
 
+                <label class="md-header__button md-icon" for="__search">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path
+                            d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"
+                        />
+                    </svg>
+                </label>
+                <div class="md-search" data-md-component="search" role="dialog">
+                    <label class="md-search__overlay" for="__search"></label>
+                    <div class="md-search__inner" role="search">
+                        <form class="md-search__form" name="search">
+                            <input
+                                type="text"
+                                class="md-search__input"
+                                name="query"
+                                aria-label="検索"
+                                placeholder="検索"
+                                autocapitalize="off"
+                                autocorrect="off"
+                                autocomplete="off"
+                                spellcheck="false"
+                                data-md-component="search-query"
+                                required
+                            />
+                            <label class="md-search__icon md-icon" for="__search">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path
+                                        d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"
+                                    />
+                                </svg>
 
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path
+                                        d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"
+                                    />
+                                </svg>
+                            </label>
+                            <nav class="md-search__options" aria-label="検索">
+                                <button
+                                    type="reset"
+                                    class="md-search__icon md-icon"
+                                    title="クリア"
+                                    aria-label="クリア"
+                                    tabindex="-1"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path
+                                            d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                                        />
+                                    </svg>
+                                </button>
+                            </nav>
+                        </form>
+                        <div class="md-search__output">
+                            <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+                                <div class="md-search-result" data-md-component="search-result">
+                                    <div class="md-search-result__meta">検索を初期化</div>
+                                    <ol class="md-search-result__list" role="presentation"></ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-  
+                <div class="md-header__source">
+                    <a
+                        href="https://github.com/openai/openai-agents-python"
+                        title="リポジトリへ"
+                        class="md-source"
+                        data-md-component="source"
+                    >
+                        <div class="md-source__icon md-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                                <!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.-->
+                                <path
+                                    d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"
+                                />
+                            </svg>
+                        </div>
+                        <div class="md-source__repository">openai-agents-python</div>
+                    </a>
+                </div>
+            </nav>
+        </header>
 
+        <div class="md-container" data-md-component="container">
+            <main class="md-main" data-md-component="main">
+                <div class="md-main__inner md-grid">
+                    <div
+                        class="md-sidebar md-sidebar--primary"
+                        data-md-component="sidebar"
+                        data-md-type="navigation"
+                    >
+                        <div class="md-sidebar__scrollwrap">
+                            <div class="md-sidebar__inner">
+                                <nav
+                                    class="md-nav md-nav--primary"
+                                    aria-label="ナビゲーション"
+                                    data-md-level="0"
+                                >
+                                    <label class="md-nav__title" for="__drawer">
+                                        <a
+                                            href="../"
+                                            title="OpenAI Agents SDK"
+                                            class="md-nav__button md-logo"
+                                            aria-label="OpenAI Agents SDK"
+                                            data-md-component="logo"
+                                        >
+                                            <img src="../../assets/logo.svg" alt="logo" />
+                                        </a>
+                                        OpenAI Agents SDK
+                                    </label>
 
-  <nav class="md-path" aria-label="ナビゲーション" >
-    <ol class="md-path__list">
-      
-        
-  
-  
-    <li class="md-path__item">
-      <a href="../" class="md-path__link">
-        
-  <span class="md-ellipsis">
-    はじめに
-  </span>
+                                    <div class="md-nav__source">
+                                        <a
+                                            href="https://github.com/openai/openai-agents-python"
+                                            title="リポジトリへ"
+                                            class="md-source"
+                                            data-md-component="source"
+                                        >
+                                            <div class="md-source__icon md-icon">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    viewBox="0 0 448 512"
+                                                >
+                                                    <!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.-->
+                                                    <path
+                                                        d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"
+                                                    />
+                                                </svg>
+                                            </div>
+                                            <div class="md-source__repository">
+                                                openai-agents-python
+                                            </div>
+                                        </a>
+                                    </div>
 
-      </a>
-    </li>
-  
+                                    <ul class="md-nav__list" data-md-scrollfix>
+                                        <li class="md-nav__item">
+                                            <a href="../" class="md-nav__link">
+                                                <span class="md-ellipsis"> はじめに </span>
+                                            </a>
+                                        </li>
 
-      
-      
-        
-  
-  
-    
-    
-      <li class="md-path__item">
-        <a href="../agents/" class="md-path__link">
-          
-  <span class="md-ellipsis">
-    ドキュメント
-  </span>
+                                        <li class="md-nav__item">
+                                            <a href="../quickstart/" class="md-nav__link">
+                                                <span class="md-ellipsis"> クイックスタート </span>
+                                            </a>
+                                        </li>
 
-        </a>
-      </li>
-    
-  
+                                        <li class="md-nav__item">
+                                            <a href="../examples/" class="md-nav__link">
+                                                <span class="md-ellipsis"> コード例 </span>
+                                            </a>
+                                        </li>
 
-      
-        
-  
-  
-    
-    
-      <li class="md-path__item">
-        <a href="./" class="md-path__link">
-          
-  <span class="md-ellipsis">
-    セッション
-  </span>
+                                        <li
+                                            class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested"
+                                        >
+                                            <input
+                                                class="md-nav__toggle md-toggle"
+                                                type="checkbox"
+                                                id="__nav_4"
+                                                checked
+                                            />
 
-        </a>
-      </li>
-    
-  
+                                            <label
+                                                class="md-nav__link"
+                                                for="__nav_4"
+                                                id="__nav_4_label"
+                                                tabindex=""
+                                            >
+                                                <span class="md-ellipsis"> ドキュメント </span>
 
-      
-    </ol>
-  </nav>
+                                                <span class="md-nav__icon md-icon"></span>
+                                            </label>
 
-              
-              <article class="md-content__inner md-typeset">
-                
-                  
+                                            <nav
+                                                class="md-nav"
+                                                data-md-level="1"
+                                                aria-labelledby="__nav_4_label"
+                                                aria-expanded="true"
+                                            >
+                                                <label class="md-nav__title" for="__nav_4">
+                                                    <span class="md-nav__icon md-icon"></span>
 
+                                                    ドキュメント
+                                                </label>
+                                                <ul class="md-nav__list" data-md-scrollfix>
+                                                    <li class="md-nav__item">
+                                                        <a href="../agents/" class="md-nav__link">
+                                                            <span class="md-ellipsis">
+                                                                エージェント
+                                                            </span>
+                                                        </a>
+                                                    </li>
 
-  
-  
+                                                    <li class="md-nav__item">
+                                                        <a
+                                                            href="../running_agents/"
+                                                            class="md-nav__link"
+                                                        >
+                                                            <span class="md-ellipsis">
+                                                                エージェントの実行
+                                                            </span>
+                                                        </a>
+                                                    </li>
 
+                                                    <li
+                                                        class="md-nav__item md-nav__item--active md-nav__item--nested"
+                                                    >
+                                                        <input
+                                                            class="md-nav__toggle md-toggle"
+                                                            type="checkbox"
+                                                            id="__nav_4_3"
+                                                            checked
+                                                        />
 
-<h1 id="_1">セッション</h1>
-<p>Agents SDK は、複数のエージェント実行にわたって会話履歴を自動的に維持する組み込みのセッションメモリを提供し、ターン間で手動で <code>.to_input_list()</code> を扱う必要をなくします。</p>
-<p>セッションは特定のセッションの会話履歴を保存し、明示的な手動メモリ管理なしでエージェントがコンテキストを維持できるようにします。これは、エージェントに以前のやり取りを記憶させたいチャットアプリケーションやマルチターンの会話を構築する際に特に有用です。</p>
-<h2 id="_2">クイックスタート</h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">Agent</span><span class="p">,</span> <span class="n">Runner</span><span class="p">,</span> <span class="n">SQLiteSession</span>
+                                                        <label
+                                                            class="md-nav__link"
+                                                            for="__nav_4_3"
+                                                            id="__nav_4_3_label"
+                                                            tabindex="0"
+                                                        >
+                                                            <span class="md-ellipsis">
+                                                                セッション
+                                                            </span>
+
+                                                            <span
+                                                                class="md-nav__icon md-icon"
+                                                            ></span>
+                                                        </label>
+
+                                                        <nav
+                                                            class="md-nav"
+                                                            data-md-level="2"
+                                                            aria-labelledby="__nav_4_3_label"
+                                                            aria-expanded="true"
+                                                        >
+                                                            <label
+                                                                class="md-nav__title"
+                                                                for="__nav_4_3"
+                                                            >
+                                                                <span
+                                                                    class="md-nav__icon md-icon"
+                                                                ></span>
+
+                                                                セッション
+                                                            </label>
+                                                            <ul
+                                                                class="md-nav__list"
+                                                                data-md-scrollfix
+                                                            >
+                                                                <li
+                                                                    class="md-nav__item md-nav__item--active"
+                                                                >
+                                                                    <input
+                                                                        class="md-nav__toggle md-toggle"
+                                                                        type="checkbox"
+                                                                        id="__toc"
+                                                                    />
+
+                                                                    <label
+                                                                        class="md-nav__link md-nav__link--active"
+                                                                        for="__toc"
+                                                                    >
+                                                                        <span class="md-ellipsis">
+                                                                            セッション
+                                                                        </span>
+
+                                                                        <span
+                                                                            class="md-nav__icon md-icon"
+                                                                        ></span>
+                                                                    </label>
+
+                                                                    <a
+                                                                        href="./"
+                                                                        class="md-nav__link md-nav__link--active"
+                                                                    >
+                                                                        <span class="md-ellipsis">
+                                                                            セッション
+                                                                        </span>
+                                                                    </a>
+
+                                                                    <nav
+                                                                        class="md-nav md-nav--secondary"
+                                                                        aria-label="目次"
+                                                                    >
+                                                                        <label
+                                                                            class="md-nav__title"
+                                                                            for="__toc"
+                                                                        >
+                                                                            <span
+                                                                                class="md-nav__icon md-icon"
+                                                                            ></span>
+                                                                            目次
+                                                                        </label>
+                                                                        <ul
+                                                                            class="md-nav__list"
+                                                                            data-md-component="toc"
+                                                                            data-md-scrollfix
+                                                                        >
+                                                                            <li
+                                                                                class="md-nav__item"
+                                                                            >
+                                                                                <a
+                                                                                    href="#_2"
+                                                                                    class="md-nav__link"
+                                                                                >
+                                                                                    <span
+                                                                                        class="md-ellipsis"
+                                                                                    >
+                                                                                        クイックスタート
+                                                                                    </span>
+                                                                                </a>
+                                                                            </li>
+
+                                                                            <li
+                                                                                class="md-nav__item"
+                                                                            >
+                                                                                <a
+                                                                                    href="#_3"
+                                                                                    class="md-nav__link"
+                                                                                >
+                                                                                    <span
+                                                                                        class="md-ellipsis"
+                                                                                    >
+                                                                                        仕組み
+                                                                                    </span>
+                                                                                </a>
+                                                                            </li>
+
+                                                                            <li
+                                                                                class="md-nav__item"
+                                                                            >
+                                                                                <a
+                                                                                    href="#_4"
+                                                                                    class="md-nav__link"
+                                                                                >
+                                                                                    <span
+                                                                                        class="md-ellipsis"
+                                                                                    >
+                                                                                        メモリ操作
+                                                                                    </span>
+                                                                                </a>
+
+                                                                                <nav
+                                                                                    class="md-nav"
+                                                                                    aria-label="メモリ操作"
+                                                                                >
+                                                                                    <ul
+                                                                                        class="md-nav__list"
+                                                                                    >
+                                                                                        <li
+                                                                                            class="md-nav__item"
+                                                                                        >
+                                                                                            <a
+                                                                                                href="#_5"
+                                                                                                class="md-nav__link"
+                                                                                            >
+                                                                                                <span
+                                                                                                    class="md-ellipsis"
+                                                                                                >
+                                                                                                    基本操作
+                                                                                                </span>
+                                                                                            </a>
+                                                                                        </li>
+
+                                                                                        <li
+                                                                                            class="md-nav__item"
+                                                                                        >
+                                                                                            <a
+                                                                                                href="#pop_item"
+                                                                                                class="md-nav__link"
+                                                                                            >
+                                                                                                <span
+                                                                                                    class="md-ellipsis"
+                                                                                                >
+                                                                                                    修正のための
+                                                                                                    pop_item
+                                                                                                    の使用
+                                                                                                </span>
+                                                                                            </a>
+                                                                                        </li>
+                                                                                    </ul>
+                                                                                </nav>
+                                                                            </li>
+
+                                                                            <li
+                                                                                class="md-nav__item"
+                                                                            >
+                                                                                <a
+                                                                                    href="#_6"
+                                                                                    class="md-nav__link"
+                                                                                >
+                                                                                    <span
+                                                                                        class="md-ellipsis"
+                                                                                    >
+                                                                                        セッションタイプ
+                                                                                    </span>
+                                                                                </a>
+
+                                                                                <nav
+                                                                                    class="md-nav"
+                                                                                    aria-label="セッションタイプ"
+                                                                                >
+                                                                                    <ul
+                                                                                        class="md-nav__list"
+                                                                                    >
+                                                                                        <li
+                                                                                            class="md-nav__item"
+                                                                                        >
+                                                                                            <a
+                                                                                                href="#openai-conversations-api"
+                                                                                                class="md-nav__link"
+                                                                                            >
+                                                                                                <span
+                                                                                                    class="md-ellipsis"
+                                                                                                >
+                                                                                                    OpenAI
+                                                                                                    Conversations
+                                                                                                    API
+                                                                                                    セッション
+                                                                                                </span>
+                                                                                            </a>
+                                                                                        </li>
+
+                                                                                        <li
+                                                                                            class="md-nav__item"
+                                                                                        >
+                                                                                            <a
+                                                                                                href="#sqlite"
+                                                                                                class="md-nav__link"
+                                                                                            >
+                                                                                                <span
+                                                                                                    class="md-ellipsis"
+                                                                                                >
+                                                                                                    SQLite
+                                                                                                    セッション
+                                                                                                </span>
+                                                                                            </a>
+                                                                                        </li>
+
+                                                                                        <li
+                                                                                            class="md-nav__item"
+                                                                                        >
+                                                                                            <a
+                                                                                                href="#sqlalchemy"
+                                                                                                class="md-nav__link"
+                                                                                            >
+                                                                                                <span
+                                                                                                    class="md-ellipsis"
+                                                                                                >
+                                                                                                    SQLAlchemy
+                                                                                                    セッション
+                                                                                                </span>
+                                                                                            </a>
+                                                                                        </li>
+
+                                                                                        <li
+                                                                                            class="md-nav__item"
+                                                                                        >
+                                                                                            <a
+                                                                                                href="#sqlite_1"
+                                                                                                class="md-nav__link"
+                                                                                            >
+                                                                                                <span
+                                                                                                    class="md-ellipsis"
+                                                                                                >
+                                                                                                    高度な
+                                                                                                    SQLite
+                                                                                                    セッション
+                                                                                                </span>
+                                                                                            </a>
+                                                                                        </li>
+
+                                                                                        <li
+                                                                                            class="md-nav__item"
+                                                                                        >
+                                                                                            <a
+                                                                                                href="#_7"
+                                                                                                class="md-nav__link"
+                                                                                            >
+                                                                                                <span
+                                                                                                    class="md-ellipsis"
+                                                                                                >
+                                                                                                    暗号化セッション
+                                                                                                </span>
+                                                                                            </a>
+                                                                                        </li>
+                                                                                    </ul>
+                                                                                </nav>
+                                                                            </li>
+
+                                                                            <li
+                                                                                class="md-nav__item"
+                                                                            >
+                                                                                <a
+                                                                                    href="#_8"
+                                                                                    class="md-nav__link"
+                                                                                >
+                                                                                    <span
+                                                                                        class="md-ellipsis"
+                                                                                    >
+                                                                                        セッション管理
+                                                                                    </span>
+                                                                                </a>
+
+                                                                                <nav
+                                                                                    class="md-nav"
+                                                                                    aria-label="セッション管理"
+                                                                                >
+                                                                                    <ul
+                                                                                        class="md-nav__list"
+                                                                                    >
+                                                                                        <li
+                                                                                            class="md-nav__item"
+                                                                                        >
+                                                                                            <a
+                                                                                                href="#id"
+                                                                                                class="md-nav__link"
+                                                                                            >
+                                                                                                <span
+                                                                                                    class="md-ellipsis"
+                                                                                                >
+                                                                                                    セッション
+                                                                                                    ID
+                                                                                                    の命名
+                                                                                                </span>
+                                                                                            </a>
+                                                                                        </li>
+
+                                                                                        <li
+                                                                                            class="md-nav__item"
+                                                                                        >
+                                                                                            <a
+                                                                                                href="#_9"
+                                                                                                class="md-nav__link"
+                                                                                            >
+                                                                                                <span
+                                                                                                    class="md-ellipsis"
+                                                                                                >
+                                                                                                    メモリ永続化
+                                                                                                </span>
+                                                                                            </a>
+                                                                                        </li>
+
+                                                                                        <li
+                                                                                            class="md-nav__item"
+                                                                                        >
+                                                                                            <a
+                                                                                                href="#_10"
+                                                                                                class="md-nav__link"
+                                                                                            >
+                                                                                                <span
+                                                                                                    class="md-ellipsis"
+                                                                                                >
+                                                                                                    複数セッション
+                                                                                                </span>
+                                                                                            </a>
+                                                                                        </li>
+
+                                                                                        <li
+                                                                                            class="md-nav__item"
+                                                                                        >
+                                                                                            <a
+                                                                                                href="#_11"
+                                                                                                class="md-nav__link"
+                                                                                            >
+                                                                                                <span
+                                                                                                    class="md-ellipsis"
+                                                                                                >
+                                                                                                    セッション共有
+                                                                                                </span>
+                                                                                            </a>
+                                                                                        </li>
+                                                                                    </ul>
+                                                                                </nav>
+                                                                            </li>
+
+                                                                            <li
+                                                                                class="md-nav__item"
+                                                                            >
+                                                                                <a
+                                                                                    href="#_12"
+                                                                                    class="md-nav__link"
+                                                                                >
+                                                                                    <span
+                                                                                        class="md-ellipsis"
+                                                                                    >
+                                                                                        完全な例
+                                                                                    </span>
+                                                                                </a>
+                                                                            </li>
+
+                                                                            <li
+                                                                                class="md-nav__item"
+                                                                            >
+                                                                                <a
+                                                                                    href="#_13"
+                                                                                    class="md-nav__link"
+                                                                                >
+                                                                                    <span
+                                                                                        class="md-ellipsis"
+                                                                                    >
+                                                                                        カスタムセッション実装
+                                                                                    </span>
+                                                                                </a>
+                                                                            </li>
+
+                                                                            <li
+                                                                                class="md-nav__item"
+                                                                            >
+                                                                                <a
+                                                                                    href="#api"
+                                                                                    class="md-nav__link"
+                                                                                >
+                                                                                    <span
+                                                                                        class="md-ellipsis"
+                                                                                    >
+                                                                                        API
+                                                                                        リファレンス
+                                                                                    </span>
+                                                                                </a>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </nav>
+                                                                </li>
+
+                                                                <li class="md-nav__item">
+                                                                    <a
+                                                                        href="sqlalchemy_session/"
+                                                                        class="md-nav__link"
+                                                                    >
+                                                                        <span class="md-ellipsis">
+                                                                            SQLAlchemy セッション
+                                                                        </span>
+                                                                    </a>
+                                                                </li>
+
+                                                                <li class="md-nav__item">
+                                                                    <a
+                                                                        href="advanced_sqlite_session/"
+                                                                        class="md-nav__link"
+                                                                    >
+                                                                        <span class="md-ellipsis">
+                                                                            高度な SQLite セッション
+                                                                        </span>
+                                                                    </a>
+                                                                </li>
+
+                                                                <li class="md-nav__item">
+                                                                    <a
+                                                                        href="encrypted_session/"
+                                                                        class="md-nav__link"
+                                                                    >
+                                                                        <span class="md-ellipsis">
+                                                                            暗号化セッション
+                                                                        </span>
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </nav>
+                                                    </li>
+
+                                                    <li class="md-nav__item">
+                                                        <a href="../results/" class="md-nav__link">
+                                                            <span class="md-ellipsis"> 結果 </span>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="md-nav__item">
+                                                        <a
+                                                            href="../streaming/"
+                                                            class="md-nav__link"
+                                                        >
+                                                            <span class="md-ellipsis">
+                                                                ストリーミング
+                                                            </span>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="md-nav__item">
+                                                        <a href="../repl/" class="md-nav__link">
+                                                            <span class="md-ellipsis">
+                                                                REPL ユーティリティ
+                                                            </span>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="md-nav__item">
+                                                        <a href="../tools/" class="md-nav__link">
+                                                            <span class="md-ellipsis">
+                                                                ツール
+                                                            </span>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="md-nav__item">
+                                                        <a href="../mcp/" class="md-nav__link">
+                                                            <span class="md-ellipsis">
+                                                                Model context protocol (MCP)
+                                                            </span>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="md-nav__item">
+                                                        <a href="../handoffs/" class="md-nav__link">
+                                                            <span class="md-ellipsis">
+                                                                ハンドオフ
+                                                            </span>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="md-nav__item">
+                                                        <a href="../tracing/" class="md-nav__link">
+                                                            <span class="md-ellipsis">
+                                                                トレーシング
+                                                            </span>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="md-nav__item">
+                                                        <a href="../context/" class="md-nav__link">
+                                                            <span class="md-ellipsis">
+                                                                コンテキスト管理
+                                                            </span>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="md-nav__item">
+                                                        <a
+                                                            href="../guardrails/"
+                                                            class="md-nav__link"
+                                                        >
+                                                            <span class="md-ellipsis">
+                                                                ガードレール
+                                                            </span>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="md-nav__item">
+                                                        <a
+                                                            href="../multi_agent/"
+                                                            class="md-nav__link"
+                                                        >
+                                                            <span class="md-ellipsis">
+                                                                複数のエージェントのオーケストレーション
+                                                            </span>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="md-nav__item">
+                                                        <a href="../usage/" class="md-nav__link">
+                                                            <span class="md-ellipsis">
+                                                                使用状況
+                                                            </span>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="md-nav__item md-nav__item--nested">
+                                                        <input
+                                                            class="md-nav__toggle md-toggle md-toggle--indeterminate"
+                                                            type="checkbox"
+                                                            id="__nav_4_15"
+                                                        />
+
+                                                        <label
+                                                            class="md-nav__link"
+                                                            for="__nav_4_15"
+                                                            id="__nav_4_15_label"
+                                                            tabindex="0"
+                                                        >
+                                                            <span class="md-ellipsis">
+                                                                モデル
+                                                            </span>
+
+                                                            <span
+                                                                class="md-nav__icon md-icon"
+                                                            ></span>
+                                                        </label>
+
+                                                        <nav
+                                                            class="md-nav"
+                                                            data-md-level="2"
+                                                            aria-labelledby="__nav_4_15_label"
+                                                            aria-expanded="false"
+                                                        >
+                                                            <label
+                                                                class="md-nav__title"
+                                                                for="__nav_4_15"
+                                                            >
+                                                                <span
+                                                                    class="md-nav__icon md-icon"
+                                                                ></span>
+
+                                                                モデル
+                                                            </label>
+                                                            <ul
+                                                                class="md-nav__list"
+                                                                data-md-scrollfix
+                                                            >
+                                                                <li class="md-nav__item">
+                                                                    <a
+                                                                        href="../models/"
+                                                                        class="md-nav__link"
+                                                                    >
+                                                                        <span class="md-ellipsis">
+                                                                            モデル
+                                                                        </span>
+                                                                    </a>
+                                                                </li>
+
+                                                                <li class="md-nav__item">
+                                                                    <a
+                                                                        href="../models/litellm/"
+                                                                        class="md-nav__link"
+                                                                    >
+                                                                        <span class="md-ellipsis">
+                                                                            LiteLLM
+                                                                            経由での任意モデルの利用
+                                                                        </span>
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </nav>
+                                                    </li>
+
+                                                    <li class="md-nav__item">
+                                                        <a href="../config/" class="md-nav__link">
+                                                            <span class="md-ellipsis">
+                                                                SDK の設定
+                                                            </span>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="md-nav__item">
+                                                        <a
+                                                            href="../visualization/"
+                                                            class="md-nav__link"
+                                                        >
+                                                            <span class="md-ellipsis">
+                                                                エージェントの可視化
+                                                            </span>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="md-nav__item">
+                                                        <a href="../release/" class="md-nav__link">
+                                                            <span class="md-ellipsis">
+                                                                リリースプロセス/変更履歴
+                                                            </span>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="md-nav__item md-nav__item--nested">
+                                                        <input
+                                                            class="md-nav__toggle md-toggle md-toggle--indeterminate"
+                                                            type="checkbox"
+                                                            id="__nav_4_19"
+                                                        />
+
+                                                        <label
+                                                            class="md-nav__link"
+                                                            for="__nav_4_19"
+                                                            id="__nav_4_19_label"
+                                                            tabindex="0"
+                                                        >
+                                                            <span class="md-ellipsis">
+                                                                音声エージェント
+                                                            </span>
+
+                                                            <span
+                                                                class="md-nav__icon md-icon"
+                                                            ></span>
+                                                        </label>
+
+                                                        <nav
+                                                            class="md-nav"
+                                                            data-md-level="2"
+                                                            aria-labelledby="__nav_4_19_label"
+                                                            aria-expanded="false"
+                                                        >
+                                                            <label
+                                                                class="md-nav__title"
+                                                                for="__nav_4_19"
+                                                            >
+                                                                <span
+                                                                    class="md-nav__icon md-icon"
+                                                                ></span>
+
+                                                                音声エージェント
+                                                            </label>
+                                                            <ul
+                                                                class="md-nav__list"
+                                                                data-md-scrollfix
+                                                            >
+                                                                <li class="md-nav__item">
+                                                                    <a
+                                                                        href="../voice/quickstart/"
+                                                                        class="md-nav__link"
+                                                                    >
+                                                                        <span class="md-ellipsis">
+                                                                            クイックスタート
+                                                                        </span>
+                                                                    </a>
+                                                                </li>
+
+                                                                <li class="md-nav__item">
+                                                                    <a
+                                                                        href="../voice/pipeline/"
+                                                                        class="md-nav__link"
+                                                                    >
+                                                                        <span class="md-ellipsis">
+                                                                            パイプラインとワークフロー
+                                                                        </span>
+                                                                    </a>
+                                                                </li>
+
+                                                                <li class="md-nav__item">
+                                                                    <a
+                                                                        href="../voice/tracing/"
+                                                                        class="md-nav__link"
+                                                                    >
+                                                                        <span class="md-ellipsis">
+                                                                            トレーシング
+                                                                        </span>
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </nav>
+                                                    </li>
+
+                                                    <li class="md-nav__item md-nav__item--nested">
+                                                        <input
+                                                            class="md-nav__toggle md-toggle md-toggle--indeterminate"
+                                                            type="checkbox"
+                                                            id="__nav_4_20"
+                                                        />
+
+                                                        <label
+                                                            class="md-nav__link"
+                                                            for="__nav_4_20"
+                                                            id="__nav_4_20_label"
+                                                            tabindex="0"
+                                                        >
+                                                            <span class="md-ellipsis">
+                                                                リアルタイムエージェント
+                                                            </span>
+
+                                                            <span
+                                                                class="md-nav__icon md-icon"
+                                                            ></span>
+                                                        </label>
+
+                                                        <nav
+                                                            class="md-nav"
+                                                            data-md-level="2"
+                                                            aria-labelledby="__nav_4_20_label"
+                                                            aria-expanded="false"
+                                                        >
+                                                            <label
+                                                                class="md-nav__title"
+                                                                for="__nav_4_20"
+                                                            >
+                                                                <span
+                                                                    class="md-nav__icon md-icon"
+                                                                ></span>
+
+                                                                リアルタイムエージェント
+                                                            </label>
+                                                            <ul
+                                                                class="md-nav__list"
+                                                                data-md-scrollfix
+                                                            >
+                                                                <li class="md-nav__item">
+                                                                    <a
+                                                                        href="../realtime/quickstart/"
+                                                                        class="md-nav__link"
+                                                                    >
+                                                                        <span class="md-ellipsis">
+                                                                            クイックスタート
+                                                                        </span>
+                                                                    </a>
+                                                                </li>
+
+                                                                <li class="md-nav__item">
+                                                                    <a
+                                                                        href="../realtime/guide/"
+                                                                        class="md-nav__link"
+                                                                    >
+                                                                        <span class="md-ellipsis">
+                                                                            ガイド
+                                                                        </span>
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </nav>
+                                                    </li>
+                                                </ul>
+                                            </nav>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="md-sidebar md-sidebar--secondary"
+                        data-md-component="sidebar"
+                        data-md-type="toc"
+                    >
+                        <div class="md-sidebar__scrollwrap">
+                            <div class="md-sidebar__inner">
+                                <nav class="md-nav md-nav--secondary" aria-label="目次">
+                                    <label class="md-nav__title" for="__toc">
+                                        <span class="md-nav__icon md-icon"></span>
+                                        目次
+                                    </label>
+                                    <ul
+                                        class="md-nav__list"
+                                        data-md-component="toc"
+                                        data-md-scrollfix
+                                    >
+                                        <li class="md-nav__item">
+                                            <a href="#_2" class="md-nav__link">
+                                                <span class="md-ellipsis"> クイックスタート </span>
+                                            </a>
+                                        </li>
+
+                                        <li class="md-nav__item">
+                                            <a href="#_3" class="md-nav__link">
+                                                <span class="md-ellipsis"> 仕組み </span>
+                                            </a>
+                                        </li>
+
+                                        <li class="md-nav__item">
+                                            <a href="#_4" class="md-nav__link">
+                                                <span class="md-ellipsis"> メモリ操作 </span>
+                                            </a>
+
+                                            <nav class="md-nav" aria-label="メモリ操作">
+                                                <ul class="md-nav__list">
+                                                    <li class="md-nav__item">
+                                                        <a href="#_5" class="md-nav__link">
+                                                            <span class="md-ellipsis">
+                                                                基本操作
+                                                            </span>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="md-nav__item">
+                                                        <a href="#pop_item" class="md-nav__link">
+                                                            <span class="md-ellipsis">
+                                                                修正のための pop_item の使用
+                                                            </span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </nav>
+                                        </li>
+
+                                        <li class="md-nav__item">
+                                            <a href="#_6" class="md-nav__link">
+                                                <span class="md-ellipsis"> セッションタイプ </span>
+                                            </a>
+
+                                            <nav class="md-nav" aria-label="セッションタイプ">
+                                                <ul class="md-nav__list">
+                                                    <li class="md-nav__item">
+                                                        <a
+                                                            href="#openai-conversations-api"
+                                                            class="md-nav__link"
+                                                        >
+                                                            <span class="md-ellipsis">
+                                                                OpenAI Conversations API セッション
+                                                            </span>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="md-nav__item">
+                                                        <a href="#sqlite" class="md-nav__link">
+                                                            <span class="md-ellipsis">
+                                                                SQLite セッション
+                                                            </span>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="md-nav__item">
+                                                        <a href="#sqlalchemy" class="md-nav__link">
+                                                            <span class="md-ellipsis">
+                                                                SQLAlchemy セッション
+                                                            </span>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="md-nav__item">
+                                                        <a href="#sqlite_1" class="md-nav__link">
+                                                            <span class="md-ellipsis">
+                                                                高度な SQLite セッション
+                                                            </span>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="md-nav__item">
+                                                        <a href="#_7" class="md-nav__link">
+                                                            <span class="md-ellipsis">
+                                                                暗号化セッション
+                                                            </span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </nav>
+                                        </li>
+
+                                        <li class="md-nav__item">
+                                            <a href="#_8" class="md-nav__link">
+                                                <span class="md-ellipsis"> セッション管理 </span>
+                                            </a>
+
+                                            <nav class="md-nav" aria-label="セッション管理">
+                                                <ul class="md-nav__list">
+                                                    <li class="md-nav__item">
+                                                        <a href="#id" class="md-nav__link">
+                                                            <span class="md-ellipsis">
+                                                                セッション ID の命名
+                                                            </span>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="md-nav__item">
+                                                        <a href="#_9" class="md-nav__link">
+                                                            <span class="md-ellipsis">
+                                                                メモリ永続化
+                                                            </span>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="md-nav__item">
+                                                        <a href="#_10" class="md-nav__link">
+                                                            <span class="md-ellipsis">
+                                                                複数セッション
+                                                            </span>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="md-nav__item">
+                                                        <a href="#_11" class="md-nav__link">
+                                                            <span class="md-ellipsis">
+                                                                セッション共有
+                                                            </span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </nav>
+                                        </li>
+
+                                        <li class="md-nav__item">
+                                            <a href="#_12" class="md-nav__link">
+                                                <span class="md-ellipsis"> 完全な例 </span>
+                                            </a>
+                                        </li>
+
+                                        <li class="md-nav__item">
+                                            <a href="#_13" class="md-nav__link">
+                                                <span class="md-ellipsis">
+                                                    カスタムセッション実装
+                                                </span>
+                                            </a>
+                                        </li>
+
+                                        <li class="md-nav__item">
+                                            <a href="#api" class="md-nav__link">
+                                                <span class="md-ellipsis"> API リファレンス </span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="md-content" data-md-component="content">
+                        <nav class="md-path" aria-label="ナビゲーション">
+                            <ol class="md-path__list">
+                                <li class="md-path__item">
+                                    <a href="../" class="md-path__link">
+                                        <span class="md-ellipsis"> はじめに </span>
+                                    </a>
+                                </li>
+
+                                <li class="md-path__item">
+                                    <a href="../agents/" class="md-path__link">
+                                        <span class="md-ellipsis"> ドキュメント </span>
+                                    </a>
+                                </li>
+
+                                <li class="md-path__item">
+                                    <a href="./" class="md-path__link">
+                                        <span class="md-ellipsis"> セッション </span>
+                                    </a>
+                                </li>
+                            </ol>
+                        </nav>
+
+                        <article class="md-content__inner md-typeset">
+                            <h1 id="_1">セッション</h1>
+                            <p>
+                                Agents SDK
+                                は、複数のエージェント実行にわたって会話履歴を自動的に維持する組み込みのセッションメモリを提供し、ターン間で手動で
+                                <code>.to_input_list()</code> を扱う必要をなくします。
+                            </p>
+                            <p>
+                                セッションは特定のセッションの会話履歴を保存し、明示的な手動メモリ管理なしでエージェントがコンテキストを維持できるようにします。これは、エージェントに以前のやり取りを記憶させたいチャットアプリケーションやマルチターンの会話を構築する際に特に有用です。
+                            </p>
+                            <h2 id="_2">クイックスタート</h2>
+                            <div class="language-python highlight">
+                                <pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">Agent</span><span class="p">,</span> <span class="n">Runner</span><span class="p">,</span> <span class="n">SQLiteSession</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># Create agent</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span>
@@ -2056,19 +1406,36 @@
 </span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>    <span class="n">session</span><span class="o">=</span><span class="n">session</span>
 </span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a><span class="p">)</span>
 </span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">final_output</span><span class="p">)</span>  <span class="c1"># &quot;Approximately 39 million&quot;</span>
-</span></code></pre></div>
-<h2 id="_3">仕組み</h2>
-<p>セッションメモリが有効な場合:</p>
-<ol>
-<li><strong>各実行前</strong>: ランナーはセッションの会話履歴を自動的に取得し、入力アイテムの先頭に付加します。</li>
-<li><strong>各実行後</strong>: 実行中に生成されたすべての新しいアイテム（ユーザー入力、アシスタントの応答、ツール呼び出しなど）が自動的にセッションに保存されます。</li>
-<li><strong>コンテキスト保持</strong>: 同じセッションでの後続の各実行には完全な会話履歴が含まれ、エージェントはコンテキストを維持できます。</li>
-</ol>
-<p>これにより、実行間で手動で <code>.to_input_list()</code> を呼び出して会話状態を管理する必要がなくなります。</p>
-<h2 id="_4">メモリ操作</h2>
-<h3 id="_5">基本操作</h3>
-<p>セッションは会話履歴を管理するためのいくつかの操作をサポートします:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLiteSession</span>
+</span></code></pre>
+                            </div>
+                            <h2 id="_3">仕組み</h2>
+                            <p>セッションメモリが有効な場合:</p>
+                            <ol>
+                                <li>
+                                    <strong>各実行前</strong>:
+                                    ランナーはセッションの会話履歴を自動的に取得し、入力アイテムの先頭に付加します。
+                                </li>
+                                <li>
+                                    <strong>各実行後</strong>:
+                                    実行中に生成されたすべての新しいアイテム（ユーザー入力、アシスタントの応答、ツール呼び出しなど）が自動的にセッションに保存されます。
+                                </li>
+                                <li>
+                                    <strong>コンテキスト保持</strong>:
+                                    同じセッションでの後続の各実行には完全な会話履歴が含まれ、エージェントはコンテキストを維持できます。
+                                </li>
+                            </ol>
+                            <p>
+                                これにより、実行間で手動で
+                                <code>.to_input_list()</code>
+                                を呼び出して会話状態を管理する必要がなくなります。
+                            </p>
+                            <h2 id="_4">メモリ操作</h2>
+                            <h3 id="_5">基本操作</h3>
+                            <p>
+                                セッションは会話履歴を管理するためのいくつかの操作をサポートします:
+                            </p>
+                            <div class="language-python highlight">
+                                <pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLiteSession</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">session</span> <span class="o">=</span> <span class="n">SQLiteSession</span><span class="p">(</span><span class="s2">&quot;user_123&quot;</span><span class="p">,</span> <span class="s2">&quot;conversations.db&quot;</span><span class="p">)</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
@@ -2088,10 +1455,15 @@
 </span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>
 </span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="c1"># Clear all items from a session</span>
 </span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">clear_session</span><span class="p">()</span>
-</span></code></pre></div>
-<h3 id="pop_item">修正のための pop_item の使用</h3>
-<p><code>pop_item</code> メソッドは、会話の最後のアイテムを取り消したり変更したりしたい場合に特に便利です:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">Agent</span><span class="p">,</span> <span class="n">Runner</span><span class="p">,</span> <span class="n">SQLiteSession</span>
+</span></code></pre>
+                            </div>
+                            <h3 id="pop_item">修正のための pop_item の使用</h3>
+                            <p>
+                                <code>pop_item</code>
+                                メソッドは、会話の最後のアイテムを取り消したり変更したりしたい場合に特に便利です:
+                            </p>
+                            <div class="language-python highlight">
+                                <pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">Agent</span><span class="p">,</span> <span class="n">Runner</span><span class="p">,</span> <span class="n">SQLiteSession</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Assistant&quot;</span><span class="p">)</span>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">session</span> <span class="o">=</span> <span class="n">SQLiteSession</span><span class="p">(</span><span class="s2">&quot;correction_example&quot;</span><span class="p">)</span>
@@ -2115,12 +1487,26 @@
 </span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>    <span class="n">session</span><span class="o">=</span><span class="n">session</span>
 </span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="p">)</span>
 </span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Agent: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">final_output</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span></code></pre></div>
-<h2 id="_6">セッションタイプ</h2>
-<p>SDK は、さまざまなユースケース向けにいくつかのセッション実装を提供します:</p>
-<h3 id="openai-conversations-api">OpenAI Conversations API セッション</h3>
-<p><code>OpenAIConversationsSession</code> を介して <a href="https://platform.openai.com/docs/api-reference/conversations">OpenAI の Conversations API</a> を使用します。</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">Agent</span><span class="p">,</span> <span class="n">Runner</span><span class="p">,</span> <span class="n">OpenAIConversationsSession</span>
+</span></code></pre>
+                            </div>
+                            <h2 id="_6">セッションタイプ</h2>
+                            <p>
+                                SDK
+                                は、さまざまなユースケース向けにいくつかのセッション実装を提供します:
+                            </p>
+                            <h3 id="openai-conversations-api">
+                                OpenAI Conversations API セッション
+                            </h3>
+                            <p>
+                                <code>OpenAIConversationsSession</code> を介して
+                                <a
+                                    href="https://platform.openai.com/docs/api-reference/conversations"
+                                    >OpenAI の Conversations API</a
+                                >
+                                を使用します。
+                            </p>
+                            <div class="language-python highlight">
+                                <pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">Agent</span><span class="p">,</span> <span class="n">Runner</span><span class="p">,</span> <span class="n">OpenAIConversationsSession</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># Create agent</span>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span>
@@ -2149,10 +1535,12 @@
 </span><span id="__span-3-27"><a id="__codelineno-3-27" name="__codelineno-3-27" href="#__codelineno-3-27"></a>    <span class="n">session</span><span class="o">=</span><span class="n">session</span>
 </span><span id="__span-3-28"><a id="__codelineno-3-28" name="__codelineno-3-28" href="#__codelineno-3-28"></a><span class="p">)</span>
 </span><span id="__span-3-29"><a id="__codelineno-3-29" name="__codelineno-3-29" href="#__codelineno-3-29"></a><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">final_output</span><span class="p">)</span>  <span class="c1"># &quot;California&quot;</span>
-</span></code></pre></div>
-<h3 id="sqlite">SQLite セッション</h3>
-<p>SQLite を使用したデフォルトの軽量セッション実装:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLiteSession</span>
+</span></code></pre>
+                            </div>
+                            <h3 id="sqlite">SQLite セッション</h3>
+                            <p>SQLite を使用したデフォルトの軽量セッション実装:</p>
+                            <div class="language-python highlight">
+                                <pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLiteSession</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1"># In-memory database (lost when process ends)</span>
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">session</span> <span class="o">=</span> <span class="n">SQLiteSession</span><span class="p">(</span><span class="s2">&quot;user_123&quot;</span><span class="p">)</span>
@@ -2166,10 +1554,14 @@
 </span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>    <span class="s2">&quot;Hello&quot;</span><span class="p">,</span>
 </span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>    <span class="n">session</span><span class="o">=</span><span class="n">session</span>
 </span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="p">)</span>
-</span></code></pre></div>
-<h3 id="sqlalchemy">SQLAlchemy セッション</h3>
-<p>あらゆる SQLAlchemy 対応データベースを使用する本番対応のセッション:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">agents.extensions.memory</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLAlchemySession</span>
+</span></code></pre>
+                            </div>
+                            <h3 id="sqlalchemy">SQLAlchemy セッション</h3>
+                            <p>
+                                あらゆる SQLAlchemy 対応データベースを使用する本番対応のセッション:
+                            </p>
+                            <div class="language-python highlight">
+                                <pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">agents.extensions.memory</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLAlchemySession</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># Using database URL</span>
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">session</span> <span class="o">=</span> <span class="n">SQLAlchemySession</span><span class="o">.</span><span class="n">from_url</span><span class="p">(</span>
@@ -2182,11 +1574,19 @@
 </span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.ext.asyncio</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_async_engine</span>
 </span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="n">engine</span> <span class="o">=</span> <span class="n">create_async_engine</span><span class="p">(</span><span class="s2">&quot;postgresql+asyncpg://user:pass@localhost/db&quot;</span><span class="p">)</span>
 </span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="n">session</span> <span class="o">=</span> <span class="n">SQLAlchemySession</span><span class="p">(</span><span class="s2">&quot;user_123&quot;</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">,</span> <span class="n">create_tables</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span></code></pre></div>
-<p>詳細なドキュメントは <a href="sqlalchemy_session/">SQLAlchemy セッション</a> を参照してください。</p>
-<h3 id="sqlite_1">高度な SQLite セッション</h3>
-<p>会話の分岐、利用分析、構造化クエリを備えた強化版 SQLite セッション:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">agents.extensions.memory</span><span class="w"> </span><span class="kn">import</span> <span class="n">AdvancedSQLiteSession</span>
+</span></code></pre>
+                            </div>
+                            <p>
+                                詳細なドキュメントは
+                                <a href="sqlalchemy_session/">SQLAlchemy セッション</a>
+                                を参照してください。
+                            </p>
+                            <h3 id="sqlite_1">高度な SQLite セッション</h3>
+                            <p>
+                                会話の分岐、利用分析、構造化クエリを備えた強化版 SQLite セッション:
+                            </p>
+                            <div class="language-python highlight">
+                                <pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">agents.extensions.memory</span><span class="w"> </span><span class="kn">import</span> <span class="n">AdvancedSQLiteSession</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1"># Create with advanced features</span>
 </span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">session</span> <span class="o">=</span> <span class="n">AdvancedSQLiteSession</span><span class="p">(</span>
@@ -2201,11 +1601,17 @@
 </span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>
 </span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="c1"># Conversation branching</span>
 </span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">create_branch_from_turn</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># Branch from turn 2</span>
-</span></code></pre></div>
-<p>詳細なドキュメントは <a href="advanced_sqlite_session/">高度な SQLite セッション</a> を参照してください。</p>
-<h3 id="_7">暗号化セッション</h3>
-<p>あらゆるセッション実装向けの透過的な暗号化ラッパー:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">agents.extensions.memory</span><span class="w"> </span><span class="kn">import</span> <span class="n">EncryptedSession</span><span class="p">,</span> <span class="n">SQLAlchemySession</span>
+</span></code></pre>
+                            </div>
+                            <p>
+                                詳細なドキュメントは
+                                <a href="advanced_sqlite_session/">高度な SQLite セッション</a>
+                                を参照してください。
+                            </p>
+                            <h3 id="_7">暗号化セッション</h3>
+                            <p>あらゆるセッション実装向けの透過的な暗号化ラッパー:</p>
+                            <div class="language-python highlight">
+                                <pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">agents.extensions.memory</span><span class="w"> </span><span class="kn">import</span> <span class="n">EncryptedSession</span><span class="p">,</span> <span class="n">SQLAlchemySession</span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
 </span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="c1"># Create underlying session</span>
 </span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="n">underlying_session</span> <span class="o">=</span> <span class="n">SQLAlchemySession</span><span class="o">.</span><span class="n">from_url</span><span class="p">(</span>
@@ -2223,27 +1629,58 @@
 </span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="p">)</span>
 </span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>
 </span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">Runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">)</span>
-</span></code></pre></div>
-<p>詳細なドキュメントは <a href="encrypted_session/">暗号化セッション</a> を参照してください。</p>
-<h2 id="_8">セッション管理</h2>
-<h3 id="id">セッション ID の命名</h3>
-<p>会話を整理しやすい意味のあるセッション ID を使用します:</p>
-<ul>
-<li>ユーザー単位: <code>"user_12345"</code></li>
-<li>スレッド単位: <code>"thread_abc123"</code></li>
-<li>コンテキスト単位: <code>"support_ticket_456"</code></li>
-</ul>
-<h3 id="_9">メモリ永続化</h3>
-<ul>
-<li>一時的な会話にはインメモリ SQLite（<code>SQLiteSession("session_id")</code>）を使用します</li>
-<li>永続的な会話にはファイルベースの SQLite（<code>SQLiteSession("session_id", "path/to/db.sqlite")</code>）を使用します</li>
-<li>既存のデータベースを SQLAlchemy がサポートする本番システムには SQLAlchemy 対応のセッション（<code>SQLAlchemySession("session_id", engine=engine, create_tables=True)</code>）を使用します</li>
-<li>履歴を OpenAI Conversations API に保存したい場合は OpenAI ホストのストレージ（<code>OpenAIConversationsSession()</code>）を使用します</li>
-<li>あらゆるセッションを透過的な暗号化と TTL ベースの有効期限でラップするには暗号化セッション（<code>EncryptedSession(session_id, underlying_session, encryption_key)</code>）を使用します</li>
-<li>より高度なユースケースには、他の本番システム（Redis、Django など）向けのカスタムセッションバックエンドの実装を検討してください</li>
-</ul>
-<h3 id="_10">複数セッション</h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">Agent</span><span class="p">,</span> <span class="n">Runner</span><span class="p">,</span> <span class="n">SQLiteSession</span>
+</span></code></pre>
+                            </div>
+                            <p>
+                                詳細なドキュメントは
+                                <a href="encrypted_session/">暗号化セッション</a>
+                                を参照してください。
+                            </p>
+                            <h2 id="_8">セッション管理</h2>
+                            <h3 id="id">セッション ID の命名</h3>
+                            <p>会話を整理しやすい意味のあるセッション ID を使用します:</p>
+                            <ul>
+                                <li>ユーザー単位: <code>"user_12345"</code></li>
+                                <li>スレッド単位: <code>"thread_abc123"</code></li>
+                                <li>コンテキスト単位: <code>"support_ticket_456"</code></li>
+                            </ul>
+                            <h3 id="_9">メモリ永続化</h3>
+                            <ul>
+                                <li>
+                                    一時的な会話にはインメモリ
+                                    SQLite（<code>SQLiteSession("session_id")</code>）を使用します
+                                </li>
+                                <li>
+                                    永続的な会話にはファイルベースの SQLite（<code
+                                        >SQLiteSession("session_id", "path/to/db.sqlite")</code
+                                    >）を使用します
+                                </li>
+                                <li>
+                                    既存のデータベースを SQLAlchemy がサポートする本番システムには
+                                    SQLAlchemy 対応のセッション（<code
+                                        >SQLAlchemySession("session_id", engine=engine,
+                                        create_tables=True)</code
+                                    >）を使用します
+                                </li>
+                                <li>
+                                    履歴を OpenAI Conversations API に保存したい場合は OpenAI
+                                    ホストのストレージ（<code>OpenAIConversationsSession()</code>）を使用します
+                                </li>
+                                <li>
+                                    あらゆるセッションを透過的な暗号化と TTL
+                                    ベースの有効期限でラップするには暗号化セッション（<code
+                                        >EncryptedSession(session_id, underlying_session,
+                                        encryption_key)</code
+                                    >）を使用します
+                                </li>
+                                <li>
+                                    より高度なユースケースには、他の本番システム（Redis、Django
+                                    など）向けのカスタムセッションバックエンドの実装を検討してください
+                                </li>
+                            </ul>
+                            <h3 id="_10">複数セッション</h3>
+                            <div class="language-python highlight">
+                                <pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">Agent</span><span class="p">,</span> <span class="n">Runner</span><span class="p">,</span> <span class="n">SQLiteSession</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Assistant&quot;</span><span class="p">)</span>
 </span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
@@ -2261,9 +1698,11 @@
 </span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>    <span class="s2">&quot;What are my charges?&quot;</span><span class="p">,</span>
 </span><span id="__span-8-17"><a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a>    <span class="n">session</span><span class="o">=</span><span class="n">session_2</span>
 </span><span id="__span-8-18"><a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a><span class="p">)</span>
-</span></code></pre></div>
-<h3 id="_11">セッション共有</h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Different agents can share the same session</span>
+</span></code></pre>
+                            </div>
+                            <h3 id="_11">セッション共有</h3>
+                            <div class="language-python highlight">
+                                <pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Different agents can share the same session</span>
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">support_agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Support&quot;</span><span class="p">)</span>
 </span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">billing_agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Billing&quot;</span><span class="p">)</span>
 </span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="n">session</span> <span class="o">=</span> <span class="n">SQLiteSession</span><span class="p">(</span><span class="s2">&quot;user_123&quot;</span><span class="p">)</span>
@@ -2279,10 +1718,12 @@
 </span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>    <span class="s2">&quot;What are my charges?&quot;</span><span class="p">,</span>
 </span><span id="__span-9-15"><a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>    <span class="n">session</span><span class="o">=</span><span class="n">session</span>
 </span><span id="__span-9-16"><a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a><span class="p">)</span>
-</span></code></pre></div>
-<h2 id="_12">完全な例</h2>
-<p>セッションメモリがどのように機能するかを示す完全な例です:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+</span></code></pre>
+                            </div>
+                            <h2 id="_12">完全な例</h2>
+                            <p>セッションメモリがどのように機能するかを示す完全な例です:</p>
+                            <div class="language-python highlight">
+                                <pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">Agent</span><span class="p">,</span> <span class="n">Runner</span><span class="p">,</span> <span class="n">SQLiteSession</span>
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
 </span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
@@ -2339,10 +1780,20 @@
 </span><span id="__span-10-55"><a id="__codelineno-10-55" name="__codelineno-10-55" href="#__codelineno-10-55"></a>
 </span><span id="__span-10-56"><a id="__codelineno-10-56" name="__codelineno-10-56" href="#__codelineno-10-56"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
 </span><span id="__span-10-57"><a id="__codelineno-10-57" name="__codelineno-10-57" href="#__codelineno-10-57"></a>    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
-</span></code></pre></div>
-<h2 id="_13">カスタムセッション実装</h2>
-<p><a class="autorefs autorefs-internal" title="Session" href="../../ref/memory/session/#agents.memory.session.Session"><code>Session</code></a> プロトコルに従うクラスを作成することで、独自のセッションメモリを実装できます:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">agents.memory.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">SessionABC</span>
+</span></code></pre>
+                            </div>
+                            <h2 id="_13">カスタムセッション実装</h2>
+                            <p>
+                                <a
+                                    class="autorefs autorefs-internal"
+                                    title="Session"
+                                    href="../../ref/memory/session/#agents.memory.session.Session"
+                                    ><code>Session</code></a
+                                >
+                                プロトコルに従うクラスを作成することで、独自のセッションメモリを実装できます:
+                            </p>
+                            <div class="language-python highlight">
+                                <pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">agents.memory.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">SessionABC</span>
 </span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">agents.items</span><span class="w"> </span><span class="kn">import</span> <span class="n">TResponseInputItem</span>
 </span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
 </span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>
@@ -2380,69 +1831,117 @@
 </span><span id="__span-11-36"><a id="__codelineno-11-36" name="__codelineno-11-36" href="#__codelineno-11-36"></a>    <span class="s2">&quot;Hello&quot;</span><span class="p">,</span>
 </span><span id="__span-11-37"><a id="__codelineno-11-37" name="__codelineno-11-37" href="#__codelineno-11-37"></a>    <span class="n">session</span><span class="o">=</span><span class="n">MyCustomSession</span><span class="p">(</span><span class="s2">&quot;my_session&quot;</span><span class="p">)</span>
 </span><span id="__span-11-38"><a id="__codelineno-11-38" name="__codelineno-11-38" href="#__codelineno-11-38"></a><span class="p">)</span>
-</span></code></pre></div>
-<h2 id="api">API リファレンス</h2>
-<p>詳細な API ドキュメントは以下を参照してください:</p>
-<ul>
-<li><a class="autorefs autorefs-internal" title="Session" href="../../ref/memory/session/#agents.memory.session.Session"><code>Session</code></a> - プロトコルインターフェース</li>
-<li><a class="autorefs autorefs-internal" title="OpenAIConversationsSession" href="../../ref/memory/#agents.memory.OpenAIConversationsSession"><code>OpenAIConversationsSession</code></a> - OpenAI Conversations API 実装</li>
-<li><a class="autorefs autorefs-internal" title="SQLiteSession" href="../../ref/memory/sqlite_session/#agents.memory.sqlite_session.SQLiteSession"><code>SQLiteSession</code></a> - 基本的な SQLite 実装</li>
-<li><a class="autorefs autorefs-internal" href="../../ref/extensions/memory/sqlalchemy_session/#agents.extensions.memory.sqlalchemy_session.SQLAlchemySession"><code>SQLAlchemySession</code></a> - SQLAlchemy 対応実装</li>
-<li><a class="autorefs autorefs-internal" href="../../ref/extensions/memory/advanced_sqlite_session/#agents.extensions.memory.advanced_sqlite_session.AdvancedSQLiteSession"><code>AdvancedSQLiteSession</code></a> - 分岐と分析を備えた強化版 SQLite</li>
-<li><a class="autorefs autorefs-internal" href="../../ref/extensions/memory/encrypt_session/#agents.extensions.memory.encrypt_session.EncryptedSession"><code>EncryptedSession</code></a> - 任意のセッション向けの暗号化ラッパー</li>
-</ul>
+</span></code></pre>
+                            </div>
+                            <h2 id="api">API リファレンス</h2>
+                            <p>詳細な API ドキュメントは以下を参照してください:</p>
+                            <ul>
+                                <li>
+                                    <a
+                                        class="autorefs autorefs-internal"
+                                        title="Session"
+                                        href="../../ref/memory/session/#agents.memory.session.Session"
+                                        ><code>Session</code></a
+                                    >
+                                    - プロトコルインターフェース
+                                </li>
+                                <li>
+                                    <a
+                                        class="autorefs autorefs-internal"
+                                        title="OpenAIConversationsSession"
+                                        href="../../ref/memory/#agents.memory.OpenAIConversationsSession"
+                                        ><code>OpenAIConversationsSession</code></a
+                                    >
+                                    - OpenAI Conversations API 実装
+                                </li>
+                                <li>
+                                    <a
+                                        class="autorefs autorefs-internal"
+                                        title="SQLiteSession"
+                                        href="../../ref/memory/sqlite_session/#agents.memory.sqlite_session.SQLiteSession"
+                                        ><code>SQLiteSession</code></a
+                                    >
+                                    - 基本的な SQLite 実装
+                                </li>
+                                <li>
+                                    <a
+                                        class="autorefs autorefs-internal"
+                                        href="../../ref/extensions/memory/sqlalchemy_session/#agents.extensions.memory.sqlalchemy_session.SQLAlchemySession"
+                                        ><code>SQLAlchemySession</code></a
+                                    >
+                                    - SQLAlchemy 対応実装
+                                </li>
+                                <li>
+                                    <a
+                                        class="autorefs autorefs-internal"
+                                        href="../../ref/extensions/memory/advanced_sqlite_session/#agents.extensions.memory.advanced_sqlite_session.AdvancedSQLiteSession"
+                                        ><code>AdvancedSQLiteSession</code></a
+                                    >
+                                    - 分岐と分析を備えた強化版 SQLite
+                                </li>
+                                <li>
+                                    <a
+                                        class="autorefs autorefs-internal"
+                                        href="../../ref/extensions/memory/encrypt_session/#agents.extensions.memory.encrypt_session.EncryptedSession"
+                                        ><code>EncryptedSession</code></a
+                                    >
+                                    - 任意のセッション向けの暗号化ラッパー
+                                </li>
+                            </ul>
+                        </article>
+                    </div>
 
+                    <script>
+                        var target = document.getElementById(location.hash.slice(1));
+                        target &&
+                            target.name &&
+                            (target.checked = target.name.startsWith('__tabbed_'));
+                    </script>
+                </div>
+            </main>
 
-
-
-
-
-
-  
-  
-
-
-
-
-
-
-                
-              </article>
-            </div>
-          
-          
-<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+            <footer class="md-footer">
+                <div class="md-footer-meta md-typeset">
+                    <div class="md-footer-meta__inner md-grid">
+                        <div class="md-copyright"></div>
+                    </div>
+                </div>
+            </footer>
         </div>
-        
-      </main>
-      
-        <footer class="md-footer">
-  
-  <div class="md-footer-meta md-typeset">
-    <div class="md-footer-meta__inner md-grid">
-      <div class="md-copyright">
-  
-  
-</div>
-      
-    </div>
-  </div>
-</footer>
-      
-    </div>
-    <div class="md-dialog" data-md-component="dialog">
-      <div class="md-dialog__inner md-typeset"></div>
-    </div>
-    
-    
-    
-      
-      
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "content.code.select", "navigation.path", "navigation.sections", "navigation.expand", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": null}</script>
-    
-    
-      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
-      
-    
-  </body>
+        <div class="md-dialog" data-md-component="dialog">
+            <div class="md-dialog__inner md-typeset"></div>
+        </div>
+
+        <script id="__config" type="application/json">
+            {
+                "annotate": null,
+                "base": "../..",
+                "features": [
+                    "content.code.copy",
+                    "content.code.select",
+                    "navigation.path",
+                    "navigation.sections",
+                    "navigation.expand",
+                    "content.code.annotate"
+                ],
+                "search": "../../assets/javascripts/workers/search.7a47a382.min.js",
+                "tags": null,
+                "translations": {
+                    "clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f",
+                    "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc",
+                    "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f",
+                    "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f",
+                    "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f",
+                    "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f",
+                    "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f",
+                    "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044",
+                    "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044",
+                    "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"
+                },
+                "version": null
+            }
+        </script>
+
+        <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+    </body>
 </html>

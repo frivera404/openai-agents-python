@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 智能体
 
 智能体是你应用中的核心构建块。一个智能体是一个大型语言模型（LLM），并通过 instructions 和工具进行配置。

@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 파이프라인과 워크플로우
 
 [`VoicePipeline`][agents.voice.pipeline.VoicePipeline] 클래스는 에이전트형 워크플로우를 손쉽게 음성 앱으로 전환할 수 있게 해줍니다. 실행할 워크플로우를 전달하면, 파이프라인이 입력 오디오의 음성 인식, 오디오 종료 감지, 적절한 타이밍에 워크플로우 호출, 워크플로우 출력의 오디오 변환까지 처리합니다.

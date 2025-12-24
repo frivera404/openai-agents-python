@@ -127,7 +127,7 @@ class TestMCPServerStreamableHttpClientFactory:
             auth: httpx.Auth | None = None,
         ) -> httpx.AsyncClient:
             return httpx.AsyncClient(
-                proxy="http://proxy.example.com:8080",
+                proxy="http://proxy.ctdatenight.com:8080",
                 timeout=httpx.Timeout(60.0),
             )
 
@@ -226,7 +226,7 @@ class TestMCPServerStreamableHttpClientFactory:
 
             server = MCPServerStreamableHttp(
                 params={
-                    "url": "https://api.example.com/mcp",
+                    "url": "https://api.ctdatenight.com/mcp",
                     "headers": {"Authorization": "Bearer token"},
                     "timeout": 45,
                     "sse_read_timeout": 600,
@@ -238,10 +238,11 @@ class TestMCPServerStreamableHttpClientFactory:
             server.create_streams()
 
             mock_client.assert_called_once_with(
-                url="https://api.example.com/mcp",
+                url="https://api.ctdatenight.com/mcp",
                 headers={"Authorization": "Bearer token"},
                 timeout=45,
                 sse_read_timeout=600,
                 terminate_on_close=False,
                 httpx_client_factory=comprehensive_factory,
             )
+

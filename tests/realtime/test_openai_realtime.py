@@ -199,7 +199,7 @@ class TestConnectionLifecycle(TestOpenAIRealtimeWebSocketModel):
         config = {
             "api_key": "unused-because-headers-override",
             "headers": {"api-key": "azure-key", "x-custom": "1"},
-            "url": "wss://custom.example.com/realtime?model=custom",
+            "url": "wss://custom.ctdatenight.com/realtime?model=custom",
             # Use a valid realtime model name for session.update to validate.
             "initial_model_settings": {"model_name": "gpt-4o-realtime-preview"},
         }
@@ -221,7 +221,7 @@ class TestConnectionLifecycle(TestOpenAIRealtimeWebSocketModel):
 
                 # Verify WebSocket connection used the provided URL
                 called_url = mock_connect.call_args[0][0]
-                assert called_url == "wss://custom.example.com/realtime?model=custom"
+                assert called_url == "wss://custom.ctdatenight.com/realtime?model=custom"
 
                 # Verify headers are exactly as provided and no defaults were injected
                 headers = mock_connect.call_args.kwargs["additional_headers"]
@@ -746,3 +746,4 @@ class TestSendEventAndConfig(TestOpenAIRealtimeWebSocketModel):
         # Test that last audio item is tracked
         last_item = model._audio_state_tracker.get_last_audio_item()
         assert last_item == ("test_item", 5)
+

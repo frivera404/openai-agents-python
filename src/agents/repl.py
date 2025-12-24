@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from openai.types.responses.response_text_delta_event import ResponseTextDeltaEvent
-from ..logger import logger
+from .logger import logger
 
 from .agent import Agent
 from .items import TResponseInputItem

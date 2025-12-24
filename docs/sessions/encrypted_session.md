@@ -26,14 +26,14 @@ from agents.extensions.memory import EncryptedSession, SQLAlchemySession
 
 async def main():
     agent = Agent("Assistant")
-    
+
     # Create underlying session
     underlying_session = SQLAlchemySession.from_url(
         "user-123",
         url="sqlite+aiosqlite:///:memory:",
         create_tables=True
     )
-    
+
     # Wrap with encryption
     session = EncryptedSession(
         session_id="user-123",
@@ -41,7 +41,7 @@ async def main():
         encryption_key="your-secret-key-here",
         ttl=600  # 10 minutes
     )
-    
+
     result = await Runner.run(agent, "Hello", session=session)
     print(result.final_output)
 
@@ -68,7 +68,7 @@ session = EncryptedSession(
 
 # Using a raw string (will be derived to a key)
 session = EncryptedSession(
-    session_id="user-123", 
+    session_id="user-123",
     underlying_session=underlying_session,
     encryption_key="my-secret-password",
     ttl=600
@@ -92,7 +92,7 @@ session = EncryptedSession(
 session = EncryptedSession(
     session_id="user-123",
     underlying_session=underlying_session,
-    encryption_key="secret", 
+    encryption_key="secret",
     ttl=86400  # 24 hours in seconds
 )
 ```
@@ -141,8 +141,6 @@ session = EncryptedSession(
     - Methods like `find_turns_by_content()` won't work effectively since message content is encrypted
     - Content-based searches operate on encrypted data, limiting their effectiveness
 
-
-
 ## Key derivation
 
 EncryptedSession uses HKDF (HMAC-based Key Derivation Function) to derive unique encryption keys per session:
@@ -153,6 +151,7 @@ EncryptedSession uses HKDF (HMAC-based Key Derivation Function) to derive unique
 - **Output**: 32-byte Fernet key
 
 This ensures that:
+
 - Each session has a unique encryption key
 - Keys cannot be derived without the master key
 - Session data cannot be decrypted across different sessions

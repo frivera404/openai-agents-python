@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 가이드
 
 이 가이드는 OpenAI Agents SDK의 실시간 기능을 활용해 음성 지원 AI 에이전트를 구축하는 방법을 자세히 설명합니다.
@@ -19,10 +20,10 @@ search:
 
 실시간 시스템은 다음과 같은 주요 구성 요소로 이루어집니다:
 
--   **RealtimeAgent**: instructions, tools, 핸드오프로 구성된 에이전트
--   **RealtimeRunner**: 구성을 관리합니다. `runner.run()`을 호출해 세션을 얻을 수 있습니다
--   **RealtimeSession**: 단일 상호작용 세션입니다. 보통 사용자가 대화를 시작할 때 하나를 만들고 대화가 끝날 때까지 유지합니다
--   **RealtimeModel**: 기본 모델 인터페이스(일반적으로 OpenAI의 WebSocket 구현)
+- **RealtimeAgent**: instructions, tools, 핸드오프로 구성된 에이전트
+- **RealtimeRunner**: 구성을 관리합니다. `runner.run()`을 호출해 세션을 얻을 수 있습니다
+- **RealtimeSession**: 단일 상호작용 세션입니다. 보통 사용자가 대화를 시작할 때 하나를 만들고 대화가 끝날 때까지 유지합니다
+- **RealtimeModel**: 기본 모델 인터페이스(일반적으로 OpenAI의 WebSocket 구현)
 
 ### 세션 흐름
 
@@ -43,10 +44,10 @@ RealtimeAgent는 일반 Agent 클래스와 유사하지만 몇 가지 중요한 
 
 일반 에이전트와의 주요 차이점:
 
--   모델 선택은 에이전트 수준이 아닌 세션 수준에서 구성합니다
--   structured output 지원이 없습니다(`outputType` 미지원)
--   보이스는 에이전트별로 구성할 수 있으나 첫 번째 에이전트가 말한 후에는 변경할 수 없습니다
--   tools, 핸드오프, instructions 등 다른 기능은 동일하게 동작합니다
+- 모델 선택은 에이전트 수준이 아닌 세션 수준에서 구성합니다
+- structured output 지원이 없습니다(`outputType` 미지원)
+- 보이스는 에이전트별로 구성할 수 있으나 첫 번째 에이전트가 말한 후에는 변경할 수 없습니다
+- tools, 핸드오프, instructions 등 다른 기능은 동일하게 동작합니다
 
 ## 세션 구성
 
@@ -121,12 +122,12 @@ main_agent = RealtimeAgent(
 
 세션은 세션 객체를 순회하며 수신할 수 있는 이벤트를 스트리밍합니다. 이벤트에는 오디오 출력 청크, 전사 결과, 도구 실행 시작/종료, 에이전트 핸드오프, 오류가 포함됩니다. 처리해야 할 주요 이벤트는 다음과 같습니다:
 
--   **audio**: 에이전트 응답의 원시 오디오 데이터
--   **audio_end**: 에이전트가 말하기를 완료함
--   **audio_interrupted**: 사용자가 에이전트를 가로막음
--   **tool_start/tool_end**: 도구 실행 라이프사이클
--   **handoff**: 에이전트 핸드오프 발생
--   **error**: 처리 중 오류 발생
+- **audio**: 에이전트 응답의 원시 오디오 데이터
+- **audio_end**: 에이전트가 말하기를 완료함
+- **audio_interrupted**: 사용자가 에이전트를 가로막음
+- **tool_start/tool_end**: 도구 실행 라이프사이클
+- **handoff**: 에이전트 핸드오프 발생
+- **error**: 처리 중 오류 발생
 
 완전한 이벤트 세부 정보는 [`RealtimeSessionEvent`][agents.realtime.events.RealtimeSessionEvent]를 참고하세요.
 

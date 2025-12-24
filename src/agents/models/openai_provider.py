@@ -10,7 +10,7 @@ from .openai_chatcompletions import OpenAIChatCompletionsModel
 from .openai_responses import OpenAIResponsesModel
 
 # This is kept for backward compatiblity but using get_default_model() method is recommended.
-DEFAULT_MODEL: str = "gpt-4o"
+DEFAULT_MODEL: str = "gpt-4.1"
 
 
 _http_client: httpx.AsyncClient | None = None

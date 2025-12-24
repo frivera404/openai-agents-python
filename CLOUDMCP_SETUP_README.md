@@ -5,29 +5,31 @@ This guide will help you configure authentication for your CloudMCP server and i
 ## 🚀 Quick Start
 
 1. **Get your credentials from CloudMCP dashboard:**
-   - Go to https://cloudmcp.run/dashboard
-   - Sign in with Google (riveraf30@gmail.com)
-   - Find your project and get the API key/token
+    - Go to https://cloudmcp.run/dashboard
+    - Sign in with Google (riveraf30@gmail.com)
+    - Find your project and get the API key/token
 
 2. **Set up authentication:**
-   ```powershell
-   # Run the setup helper
-   python setup_cloudmcp.py
 
-   # Or set environment variables manually
-   $env:CLOUDMCP_API_KEY = "your_api_key_here"
-   ```
+    ```powershell
+    # Run the setup helper
+    python setup_cloudmcp.py
+
+    # Or set environment variables manually
+    $env:CLOUDMCP_API_KEY = "your_api_key_here"
+    ```
 
 3. **Test the connection:**
-   ```powershell
-   python test_cloudmcp_auth.py
-   ```
+
+    ```powershell
+    python test_cloudmcp_auth.py
+    ```
 
 4. **Use in your code:**
-   ```python
-   from mcp_config import agent, mcp_server
-   # Your agent is ready with MCP tools!
-   ```
+    ```python
+    from mcp_config import agent, mcp_server
+    # Your agent is ready with MCP tools!
+    ```
 
 ## 📋 Prerequisites
 
@@ -92,6 +94,7 @@ python test_cloudmcp_auth.py
 ```
 
 This script will:
+
 1. Check your environment variables
 2. Test different header combinations
 3. Verify basic HTTP authentication
@@ -115,6 +118,7 @@ result = await Runner.run(
 ```
 
 The configuration automatically:
+
 - Detects available credentials
 - Tries different authentication methods
 - Creates MCP server and agent instances
@@ -134,20 +138,22 @@ If you get: `"The project you are requesting has been archived"`
 ### Authentication Failed
 
 1. **Check credentials:**
-   ```powershell
-   python setup_cloudmcp.py --status
-   ```
+
+    ```powershell
+    python setup_cloudmcp.py --status
+    ```
 
 2. **Test different methods:**
-   ```powershell
-   python test_cloudmcp_auth.py
-   ```
+
+    ```powershell
+    python test_cloudmcp_auth.py
+    ```
 
 3. **Manual testing:**
-   ```powershell
-   # Test with curl
-   curl -H "X-API-Key: your_key" https://18268932-0807663c6d1468.router.cloudmcp.run/mcp
-   ```
+    ```powershell
+    # Test with curl
+    curl -H "X-API-Key: your_key" https://18268932-0807663c6d1468.router.cloudmcp.run/mcp
+    ```
 
 ### Connection Issues
 

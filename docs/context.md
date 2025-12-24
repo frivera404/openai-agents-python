@@ -17,9 +17,9 @@ The **most important** thing to be aware of: every agent, tool function, lifecyc
 
 You can use the context for things like:
 
--   Contextual data for your run (e.g. things like a username/uid or other information about the user)
--   Dependencies (e.g. logger objects, data fetchers, etc)
--   Helper functions
+- Contextual data for your run (e.g. things like a username/uid or other information about the user)
+- Dependencies (e.g. logger objects, data fetchers, etc)
+- Helper functions
 
 !!! danger "Note"
 
@@ -104,9 +104,9 @@ agent = Agent(
 `ToolContext` provides the same `.context` property as `RunContextWrapper`,  
 plus additional fields specific to the current tool call:
 
-- `tool_name` – the name of the tool being invoked  
-- `tool_call_id` – a unique identifier for this tool call  
-- `tool_arguments` – the raw argument string passed to the tool  
+- `tool_name` – the name of the tool being invoked
+- `tool_call_id` – a unique identifier for this tool call
+- `tool_arguments` – the raw argument string passed to the tool
 
 Use `ToolContext` when you need tool-level metadata during execution.  
 For general context sharing between agents and tools, `RunContextWrapper` remains sufficient.

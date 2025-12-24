@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # ハンドオフ
 
 ハンドオフは、あるエージェントが別のエージェントにタスクを委任できるようにする仕組みです。これは、異なるエージェントがそれぞれ異なる分野に特化しているシナリオで特に有用です。たとえば、カスタマーサポートアプリでは、注文状況、返金、FAQ などのタスクをそれぞれ担当するエージェントがいるかもしれません。
@@ -34,13 +35,13 @@ triage_agent = Agent(name="Triage agent", handoffs=[billing_agent, handoff(refun
 
 [`handoff()`][agents.handoffs.handoff] 関数を使って、さまざまなカスタマイズができます。
 
--   `agent`: ハンドオフ先のエージェントです。
--   `tool_name_override`: 既定では `Handoff.default_tool_name()` が使用され、`transfer_to_<agent_name>` に解決されます。これを上書きできます。
--   `tool_description_override`: `Handoff.default_tool_description()` の既定のツール説明を上書きします。
--   `on_handoff`: ハンドオフが呼び出されたときに実行されるコールバック関数です。ハンドオフが呼び出されることが分かった時点でデータ取得を開始するなどに有用です。この関数はエージェントコンテキストを受け取り、オプションで LLM が生成した入力も受け取れます。入力データは `input_type` パラメーターで制御します。
--   `input_type`: ハンドオフが想定する入力の型（任意）。
--   `input_filter`: 次のエージェントが受け取る入力をフィルタリングできます。詳細は以下を参照してください。
--   `is_enabled`: ハンドオフを有効にするかどうか。真偽値または真偽値を返す関数を指定でき、実行時に動的にハンドオフを有効化・無効化できます。
+- `agent`: ハンドオフ先のエージェントです。
+- `tool_name_override`: 既定では `Handoff.default_tool_name()` が使用され、`transfer_to_<agent_name>` に解決されます。これを上書きできます。
+- `tool_description_override`: `Handoff.default_tool_description()` の既定のツール説明を上書きします。
+- `on_handoff`: ハンドオフが呼び出されたときに実行されるコールバック関数です。ハンドオフが呼び出されることが分かった時点でデータ取得を開始するなどに有用です。この関数はエージェントコンテキストを受け取り、オプションで LLM が生成した入力も受け取れます。入力データは `input_type` パラメーターで制御します。
+- `input_type`: ハンドオフが想定する入力の型（任意）。
+- `input_filter`: 次のエージェントが受け取る入力をフィルタリングできます。詳細は以下を参照してください。
+- `is_enabled`: ハンドオフを有効にするかどうか。真偽値または真偽値を返す関数を指定でき、実行時に動的にハンドオフを有効化・無効化できます。
 
 ```python
 from agents import Agent, handoff, RunContextWrapper

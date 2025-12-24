@@ -20,9 +20,9 @@ Once done, you can use [`LitellmModel`][agents.extensions.models.litellm_model.L
 
 This is a fully working example. When you run it, you'll be prompted for a model name and API key. For example, you could enter:
 
--   `openai/gpt-4.1` for the model, and your OpenAI API key
--   `anthropic/claude-3-5-sonnet-20240620` for the model, and your Anthropic API key
--   etc
+- `openai/gpt-4.1` for the model, and your OpenAI API key
+- `anthropic/claude-3-5-sonnet-20240620` for the model, and your Anthropic API key
+- etc
 
 For a full list of models supported in LiteLLM, see the [litellm providers docs](https://docs.litellm.ai/docs/providers).
 

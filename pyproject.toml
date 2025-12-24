@@ -7,7 +7,7 @@ requires-python = ">=3.9"
 license = "MIT"
 authors = [{ name = "OpenAI", email = "support@openai.com" }]
 dependencies = [
-    "openai>=2.6.1,<3",
+    "openai==2.6.1",
     "pydantic>=2.12.3, <3",
     "griffe>=1.5.6, <2",
     "typing-extensions>=4.12.2, <5",
@@ -36,6 +36,9 @@ classifiers = [
 [project.urls]
 Homepage = "https://openai.github.io/openai-agents-python/"
 Repository = "https://github.com/openai/openai-agents-python"
+
+[project.scripts]
+agent-private-i = "agents.cli:main"
 
 [project.optional-dependencies]
 voice = ["numpy>=2.2.0, <3; python_version>='3.10'", "websockets>=15.0, <16"]

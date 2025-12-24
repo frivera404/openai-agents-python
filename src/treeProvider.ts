@@ -59,12 +59,15 @@ export class MCPServerTreeProvider implements vscode.TreeDataProvider<MCPServerI
         } else {
             // Return root servers
             const servers = this.serverManager.getAllServers();
-            return servers.map((server: MCPServerConfig) => new MCPServerItem(
-                server.name,
-                server,
-                vscode.TreeItemCollapsibleState.Collapsed,
-                this.serverManager
-            ));
+            return servers.map(
+                (server: MCPServerConfig) =>
+                    new MCPServerItem(
+                        server.name,
+                        server,
+                        vscode.TreeItemCollapsibleState.Collapsed,
+                        this.serverManager
+                    )
+            );
         }
     }
 
@@ -72,51 +75,63 @@ export class MCPServerTreeProvider implements vscode.TreeDataProvider<MCPServerI
         const details: MCPServerItem[] = [];
 
         // Transport
-        details.push(new MCPServerItem(
-            `Transport: ${server.config.transport}`,
-            server.config,
-            vscode.TreeItemCollapsibleState.None
-        ));
+        details.push(
+            new MCPServerItem(
+                `Transport: ${server.config.transport}`,
+                server.config,
+                vscode.TreeItemCollapsibleState.None
+            )
+        );
 
         // Command/URL
         if (server.config.command) {
-            details.push(new MCPServerItem(
-                `Command: ${server.config.command}`,
-                server.config,
-                vscode.TreeItemCollapsibleState.None
-            ));
+            details.push(
+                new MCPServerItem(
+                    `Command: ${server.config.command}`,
+                    server.config,
+                    vscode.TreeItemCollapsibleState.None
+                )
+            );
         } else if (server.config.url) {
-            details.push(new MCPServerItem(
-                `URL: ${server.config.url}`,
-                server.config,
-                vscode.TreeItemCollapsibleState.None
-            ));
+            details.push(
+                new MCPServerItem(
+                    `URL: ${server.config.url}`,
+                    server.config,
+                    vscode.TreeItemCollapsibleState.None
+                )
+            );
         }
 
         // Arguments
         if (server.config.args && server.config.args.length > 0) {
-            details.push(new MCPServerItem(
-                `Args: ${server.config.args.join(' ')}`,
-                server.config,
-                vscode.TreeItemCollapsibleState.None
-            ));
+            details.push(
+                new MCPServerItem(
+                    `Args: ${server.config.args.join(' ')}`,
+                    server.config,
+                    vscode.TreeItemCollapsibleState.None
+                )
+            );
         }
 
         // Environment variables
         if (server.config.env && Object.keys(server.config.env).length > 0) {
-            details.push(new MCPServerItem(
-                `Environment: ${Object.keys(server.config.env).length} variables`,
-                server.config,
-                vscode.TreeItemCollapsibleState.None
-            ));
+            details.push(
+                new MCPServerItem(
+                    `Environment: ${Object.keys(server.config.env).length} variables`,
+                    server.config,
+                    vscode.TreeItemCollapsibleState.None
+                )
+            );
         }
 
         // Scope
-        details.push(new MCPServerItem(
-            `Scope: ${server.config.scope}`,
-            server.config,
-            vscode.TreeItemCollapsibleState.None
-        ));
+        details.push(
+            new MCPServerItem(
+                `Scope: ${server.config.scope}`,
+                server.config,
+                vscode.TreeItemCollapsibleState.None
+            )
+        );
 
         return details;
     }

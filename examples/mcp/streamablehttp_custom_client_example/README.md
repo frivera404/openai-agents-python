@@ -15,10 +15,10 @@ This example demonstrates how to use the new `httpx_client_factory` parameter in
 1. Make sure you have `uv` installed: https://docs.astral.sh/uv/getting-started/installation/
 
 2. Run the example:
-   ```bash
-   cd examples/mcp/streamablehttp_custom_client_example
-   uv run main.py
-   ```
+    ```bash
+    cd examples/mcp/streamablehttp_custom_client_example
+    uv run main.py
+    ```
 
 ## Code Examples
 
@@ -59,4 +59,3 @@ async with MCPServerStreamableHttp(
 - **Security**: Use custom SSL certificates and authentication methods
 - **Performance**: Optimize timeouts and connection settings for your use case
 - **Compatibility**: Work with corporate proxies and network restrictions
-

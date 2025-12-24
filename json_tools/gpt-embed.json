@@ -1,0 +1,74 @@
+function gpt-index-folder {
+    param([string]$Path)
+
+    $files = Get-ChildItem $Path -Recurse -File
+    $index = @()
+
+    foreach ($file in $files) {
+        $content = Get-Content $file.FullName -Raw
+        $embedding = gpt-embed $content
+
+        $index += @{
+            file = $file.FullName
+            embedding = $embedding.data[0].embedding
+        }
+    }
+
+    $index | ConvertTo-Json -Depth 5 | Set-Content "vector_index.json"
+
+    Write-Host "Indexed $($files.Count) files → vector_index.json"
+}
+
+function gpt-index-folder {
+    param([string]$Path)
+
+    $files = Get-ChildItem $Path -Recurse -File
+    $index = @()
+
+    foreach ($file in $files) {
+        $content = Get-Content $file.FullName -Raw
+        $embedding = gpt-embed $content
+
+        $index += @{
+            file = $file.FullName
+            embedding = $embedding.data[0].embedding
+        }
+    }
+
+    $index | ConvertTo-Json -Depth 5 | Set-Content "vector_index.json"
+
+    Write-Host "Indexed $($files.Count) files → vector_index.json"
+}
+
+function gpt-vector-search {
+    param([string]$Query)
+
+    $queryEmbedding = (gpt-embed $Query).data[0].embedding
+    $index = Get-Content "vector_index.json" -Raw | ConvertFrom-Json
+
+    function CosineSimilarity([array]$A, [array]$B) {
+        $dot = 0
+        $normA = 0
+        $normB = 0
+
+        for ($i = 0; $i -lt $A.Count; $i++) {
+            $dot += $A[$i] * $B[$i]
+            $normA += $A[$i] * $A[$i]
+            $normB += $B[$i] * $B[$i]
+        }
+
+        return $dot / ([Math]::Sqrt($normA) * [Math]::Sqrt($normB))
+    }
+
+    $results = @()
+
+    foreach ($entry in $index) {
+        $sim = CosineSimilarity $queryEmbedding $entry.embedding
+        $results += [PSCustomObject]@{
+            File = $entry.file
+            Score = $sim
+        }
+    }
+
+    $results | Sort-Object Score -Descending | Select-Object -First 10
+}

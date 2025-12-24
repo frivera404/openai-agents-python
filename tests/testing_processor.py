@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Any, Literal
 
 from agents.tracing import Span, Trace, TracingProcessor
+from api.agentApi import runSupervisorQuery
 
 TestSpanProcessorEvent = Literal["trace_start", "trace_end", "span_start", "span_end"]
 
@@ -130,3 +131,9 @@ def fetch_normalized_spans(
         nodes[(span_obj.trace_id, span_obj.span_id)] = span
         nodes[(span.pop("trace_id"), parent_id)].setdefault("children", []).append(span)
     return traces
+
+
+async def example_api_call():
+    res = await runSupervisorQuery({ "query": "research latest OpenAI tools" })
+    # res.plan => chosen sub-agent
+    # res.result.response => final answer text

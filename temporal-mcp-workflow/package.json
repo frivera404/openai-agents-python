@@ -1,0 +1,30 @@
+{
+  "name": "temporal-mcp-workflow",
+  "version": "1.0.0",
+  "description": "Temporal workflow for MCP server scaffolding and deployment",
+  "main": "dist/worker.js",
+  "scripts": {
+    "build": "tsc",
+    "start:worker": "node dist/worker.js",
+    "start:client": "node dist/client.js",
+    "dev": "ts-node src/worker.ts",
+    "query:status": "temporal workflow query --type status",
+    "query:logs": "temporal workflow query --type logs",
+    "signal:cancel": "temporal workflow signal --name cancelBuild",
+    "signal:update": "temporal workflow signal --name updateConfig --input"
+  },
+  "dependencies": {
+    "@temporalio/client": "^1",
+    "@temporalio/worker": "^1",
+    "@temporalio/workflow": "^1",
+    "zod": "^3"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "typescript": "^5",
+    "ts-node": "^10"
+  },
+  "keywords": ["temporal", "workflow", "mcp", "deployment"],
+  "author": "Agent WTClan",
+  "license": "MIT"
+}

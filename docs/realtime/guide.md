@@ -15,10 +15,10 @@ Realtime agents allow for conversational flows, processing audio and text inputs
 
 The realtime system consists of several key components:
 
--   **RealtimeAgent**: An agent, configured with instructions, tools and handoffs.
--   **RealtimeRunner**: Manages configuration. You can call `runner.run()` to get a session.
--   **RealtimeSession**: A single interaction session. You typically create one each time a user starts a conversation, and keep it alive until the conversation is done.
--   **RealtimeModel**: The underlying model interface (typically OpenAI's WebSocket implementation)
+- **RealtimeAgent**: An agent, configured with instructions, tools and handoffs.
+- **RealtimeRunner**: Manages configuration. You can call `runner.run()` to get a session.
+- **RealtimeSession**: A single interaction session. You typically create one each time a user starts a conversation, and keep it alive until the conversation is done.
+- **RealtimeModel**: The underlying model interface (typically OpenAI's WebSocket implementation)
 
 ### Session flow
 
@@ -39,10 +39,10 @@ RealtimeAgent works similarly to the regular Agent class with some key differenc
 
 Key differences from regular agents:
 
--   Model choice is configured at the session level, not the agent level.
--   No structured output support (`outputType` is not supported).
--   Voice can be configured per agent but cannot be changed after the first agent speaks.
--   All other features like tools, handoffs, and instructions work the same way.
+- Model choice is configured at the session level, not the agent level.
+- No structured output support (`outputType` is not supported).
+- Voice can be configured per agent but cannot be changed after the first agent speaks.
+- All other features like tools, handoffs, and instructions work the same way.
 
 ## Session configuration
 
@@ -117,12 +117,12 @@ main_agent = RealtimeAgent(
 
 The session streams events that you can listen to by iterating over the session object. Events include audio output chunks, transcription results, tool execution start and end, agent handoffs, and errors. Key events to handle include:
 
--   **audio**: Raw audio data from the agent's response
--   **audio_end**: Agent finished speaking
--   **audio_interrupted**: User interrupted the agent
--   **tool_start/tool_end**: Tool execution lifecycle
--   **handoff**: Agent handoff occurred
--   **error**: Error occurred during processing
+- **audio**: Raw audio data from the agent's response
+- **audio_end**: Agent finished speaking
+- **audio_interrupted**: User interrupted the agent
+- **tool_start/tool_end**: Tool execution lifecycle
+- **handoff**: Agent handoff occurred
+- **error**: Error occurred during processing
 
 For complete event details, see [`RealtimeSessionEvent`][agents.realtime.events.RealtimeSessionEvent].
 

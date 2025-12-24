@@ -108,7 +108,7 @@ def test_tool_call_output_item_file_forwards_file_id_and_filename() -> None:
 def test_tool_call_output_item_file_forwards_file_url() -> None:
     """Ensure file outputs forward provided file_url when present."""
     call = _make_tool_call()
-    out = ToolOutputFileContent(file_url="https://example.com/report.pdf")
+    out = ToolOutputFileContent(file_url="https://ctdatenight.com/report.pdf")
     payload = ItemHelpers.tool_call_output_item(call, out)
 
     assert payload["type"] == "function_call_output"
@@ -116,7 +116,7 @@ def test_tool_call_output_item_file_forwards_file_url() -> None:
     item = payload["output"][0]
     assert isinstance(item, dict)
     assert item["type"] == "input_file"
-    assert item["file_url"] == "https://example.com/report.pdf"
+    assert item["file_url"] == "https://ctdatenight.com/report.pdf"
 
 
 def test_tool_call_output_item_text_dict_variant() -> None:
@@ -138,7 +138,7 @@ def test_tool_call_output_item_text_dict_variant() -> None:
 def test_tool_call_output_item_image_dict_variant() -> None:
     """Dict with type='image' and image_url field should be treated as structured output."""
     call = _make_tool_call()
-    out = {"type": "image", "image_url": "http://example.com/img.png", "detail": "auto"}
+    out = {"type": "image", "image_url": "http://ctdatenight.com/img.png", "detail": "auto"}
     payload = ItemHelpers.tool_call_output_item(call, out)
 
     assert payload["type"] == "function_call_output"
@@ -147,7 +147,7 @@ def test_tool_call_output_item_image_dict_variant() -> None:
     item = payload["output"][0]
     assert isinstance(item, dict)
     assert item["type"] == "input_image"
-    assert item["image_url"] == "http://example.com/img.png"
+    assert item["image_url"] == "http://ctdatenight.com/img.png"
     assert item["detail"] == "auto"
 
 
@@ -185,7 +185,7 @@ def test_tool_call_output_item_file_dict_variant_with_file_data() -> None:
 def test_tool_call_output_item_file_dict_variant_with_file_url() -> None:
     """Dict with type='file' and file_url field should be treated as structured output."""
     call = _make_tool_call()
-    out = {"type": "file", "file_url": "https://example.com/report.pdf", "filename": "report.pdf"}
+    out = {"type": "file", "file_url": "https://ctdatenight.com/report.pdf", "filename": "report.pdf"}
     payload = ItemHelpers.tool_call_output_item(call, out)
 
     assert payload["type"] == "function_call_output"
@@ -194,7 +194,7 @@ def test_tool_call_output_item_file_dict_variant_with_file_url() -> None:
     item = payload["output"][0]
     assert isinstance(item, dict)
     assert item["type"] == "input_file"
-    assert item["file_url"] == "https://example.com/report.pdf"
+    assert item["file_url"] == "https://ctdatenight.com/report.pdf"
     assert item["filename"] == "report.pdf"
 
 
@@ -217,7 +217,7 @@ def test_tool_call_output_item_file_dict_variant_with_file_id() -> None:
 def test_tool_call_output_item_image_with_extra_fields() -> None:
     """Dict with type='image', image_url, and extra fields should still be converted."""
     call = _make_tool_call()
-    out = {"type": "image", "image_url": "http://example.com/img.png", "foobar": 213}
+    out = {"type": "image", "image_url": "http://ctdatenight.com/img.png", "foobar": 213}
     payload = ItemHelpers.tool_call_output_item(call, out)
 
     assert payload["type"] == "function_call_output"
@@ -226,7 +226,7 @@ def test_tool_call_output_item_image_with_extra_fields() -> None:
     item = payload["output"][0]
     assert isinstance(item, dict)
     assert item["type"] == "input_image"
-    assert item["image_url"] == "http://example.com/img.png"
+    assert item["image_url"] == "http://ctdatenight.com/img.png"
     # Extra field should be ignored by Pydantic
     assert "foobar" not in item
 
@@ -236,7 +236,7 @@ def test_tool_call_output_item_mixed_list_with_valid_dicts() -> None:
     call = _make_tool_call()
     out = [
         {"type": "text", "text": "hello"},
-        {"type": "image", "image_url": "http://example.com/img.png"},
+        {"type": "image", "image_url": "http://ctdatenight.com/img.png"},
         {"type": "file", "file_id": "file_123"},
     ]
     payload = ItemHelpers.tool_call_output_item(call, out)
@@ -248,7 +248,7 @@ def test_tool_call_output_item_mixed_list_with_valid_dicts() -> None:
     assert payload["output"][0]["type"] == "input_text"
     assert payload["output"][0]["text"] == "hello"
     assert payload["output"][1]["type"] == "input_image"
-    assert payload["output"][1]["image_url"] == "http://example.com/img.png"
+    assert payload["output"][1]["image_url"] == "http://ctdatenight.com/img.png"
     assert payload["output"][2]["type"] == "input_file"
     assert payload["output"][2]["file_id"] == "file_123"
 
@@ -369,3 +369,4 @@ def test_tool_call_output_item_mixed_list_partial_invalid_not_converted() -> Non
     # All-or-nothing: if any item is invalid, convert entire list to string
     assert isinstance(payload["output"], str)
     assert payload["output"] == "[{'type': 'text', 'text': 'hello'}, {'msg': 'foobar'}]"
+

@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # トレーシング
 
 Agents SDK には組み込みのトレーシングが含まれており、エージェントの実行中に発生するイベントの包括的な記録を収集します。LLM 生成、ツール呼び出し、ハンドオフ、ガードレール、さらにはカスタムイベントまで記録します。[Traces ダッシュボード](https://platform.openai.com/traces)を使用すると、開発中および本番環境でワークフローをデバッグ、可視化、監視できます。
@@ -13,7 +14,7 @@ Agents SDK には組み込みのトレーシングが含まれており、エー
     1. 環境変数 `OPENAI_AGENTS_DISABLE_TRACING=1` を設定して、トレーシングをグローバルに無効化できます
     2. 1 回の実行についてのみ、[`agents.run.RunConfig.tracing_disabled`][] を `True` に設定して無効化できます
 
-***OpenAI の API を使用し Zero Data Retention (ZDR) ポリシーの下で運用している組織では、トレーシングは使用できません。***
+**_OpenAI の API を使用し Zero Data Retention (ZDR) ポリシーの下で運用している組織では、トレーシングは使用できません。_**
 
 ## トレースとスパン
 
@@ -125,6 +126,7 @@ agent = Agent(
 ```
 
 ## 注意
+
 - 無料のトレースは OpenAI Traces ダッシュボードで表示できます。
 
 ## 外部トレーシング プロセッサー一覧

@@ -1,10 +1,10 @@
-
 import React, { useState, useCallback, useRef } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import AgentCatalog from './pages/AgentCatalog';
 import AgentConfig from './pages/AgentConfig';
 import PlaceholderPage from './pages/PlaceholderPage';
+import { ToolsPage } from './frontend/src/pages/ToolsPage';
 import BackendGuide from './pages/BackendGuide';
 import CommunicationCenter from './pages/CommunicationCenter';
 import { AGENTS } from './constants';
@@ -15,8 +15,8 @@ const StatusBanner: React.FC<{
     banner: { text: string; variant: 'success' | 'error' };
 }> = ({ banner }) => {
     const variantStyles: Record<'success' | 'error', string> = {
-        success: 'bg-emerald-500/90 text-white border-emerald-600',
-        error: 'bg-rose-500/90 text-white border-rose-600',
+        success: 'bg-emerald-500/90 text-white border-emerald-600 border-l-emerald-500',
+        error: 'bg-rose-500/90 text-white border-rose-600 border-l-rose-500',
     };
     const icon = banner.variant === 'success' ? '✅' : '⚠️';
 
@@ -24,7 +24,7 @@ const StatusBanner: React.FC<{
         <div
             role="status"
             aria-live="polite"
-            className={`flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-medium shadow-sm ${variantStyles[banner.variant]}`}
+            className={`status-banner flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium shadow-lg animate-slide-in ${variantStyles[banner.variant]}`}
         >
             <span className="text-base">{icon}</span>
             <span>{banner.text}</span>
@@ -34,9 +34,12 @@ const StatusBanner: React.FC<{
 
 const App: React.FC = () => {
     const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
-    const [activePage, setActivePage] = useState<string>('Agents');
+        const [activePage, setActivePage] = useState<string>('Communication Center');
     const [launchingAgentId, setLaunchingAgentId] = useState<string | null>(null);
-    const [statusBanner, setStatusBanner] = useState<{ text: string; variant: 'success' | 'error' } | null>(null);
+    const [statusBanner, setStatusBanner] = useState<{
+        text: string;
+        variant: 'success' | 'error';
+    } | null>(null);
     const statusTimeoutRef = useRef<number | null>(null);
 
     const handleSelectAgent = useCallback((agent: Agent) => {
@@ -48,7 +51,7 @@ const App: React.FC = () => {
         setSelectedAgent(null);
         setActivePage('Agents');
     }, []);
-    
+
     const handleNavClick = useCallback((page: string) => {
         setSelectedAgent(null);
         setActivePage(page);
@@ -74,6 +77,7 @@ const App: React.FC = () => {
                     temperature: 0.6,
                     systemInstruction: `You are ${agent.name} ready to help the user.`,
                     prompt: `Provide a concise summary of how the ${agent.name} helps users and why it is useful.`,
+                    tools: [],
                 });
                 showStatusBanner(`Quick launch succeeded: ${response}`, 'success');
             } catch (error) {
@@ -102,37 +106,31 @@ const App: React.FC = () => {
                     />
                 );
             case 'Tools':
-                return <PlaceholderPage title="Tools" description="Manage your custom tools and integrations here. Connect to APIs, databases, and other services." icon="tools" />;
-            case 'Integrations':
-                return <PlaceholderPage title="Integrations" description="Configure third-party integrations to extend your agents' capabilities. Connect to platforms like Salesforce, Google Drive, and more." icon="integrations" />;
-            case 'Storage':
-                return <PlaceholderPage title="Storage" description="Connect and manage your data sources. Use storage solutions for knowledge bases, logs, and other agent data." icon="storage" />;
-            case 'Backend Guide':
-                return <BackendGuide />;
+                return <ToolsPage />;
             case 'Communication Center':
                 return <CommunicationCenter />;
             default:
                 return <AgentCatalog agents={AGENTS} onSelectAgent={handleSelectAgent} />;
         }
     };
-    
+
     const getHeaderTitle = () => {
-      if (selectedAgent) return `Agents / ${selectedAgent.name} / Configure`;
-      return activePage;
-    }
+        if (selectedAgent) return `Agents / ${selectedAgent.name} / Configure`;
+        return activePage;
+    };
 
     return (
-        <div className="flex h-screen bg-gray-100 dark:bg-gray-900 font-sans">
+        <div className="flex h-screen bg-tech-gradient font-sans text-gray-100">
             <Sidebar activePage={activePage} onNavClick={handleNavClick} />
             <div className="flex-1 flex flex-col overflow-hidden">
                 <Header title={getHeaderTitle()} />
                 {statusBanner && (
-                    <div className="px-6 py-3">
+                    <div className="px-6 py-3 animate-fade-in">
                         <StatusBanner banner={statusBanner} />
                     </div>
                 )}
-                <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 dark:bg-gray-900">
-                    {renderContent()}
+                <main className="flex-1 overflow-x-hidden overflow-y-auto bg-tech-gradient">
+                    <div className="animate-fade-in">{renderContent()}</div>
                 </main>
             </div>
         </div>

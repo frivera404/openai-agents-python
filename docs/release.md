@@ -12,10 +12,10 @@ If you don't want breaking changes, we recommend pinning to `0.0.x` versions in 
 
 We will increment `Z` for non-breaking changes:
 
--   Bug fixes
--   New features
--   Changes to private interfaces
--   Updates to beta features
+- Bug fixes
+- New features
+- Changes to private interfaces
+- Updates to beta features
 
 ## Breaking change changelog
 

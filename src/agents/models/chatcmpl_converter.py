@@ -20,7 +20,10 @@ from openai.types.chat import (
     ChatCompletionToolMessageParam,
     ChatCompletionUserMessageParam,
 )
-from openai.types.chat.chat_completion_content_part_param import File, FileFile
+
+# from openai.types.chat.chat_completion_content_part_param import File, FileFile
+File = Any
+FileFile = Any
 from openai.types.chat.chat_completion_tool_param import ChatCompletionToolParam
 from openai.types.chat.completion_create_params import ResponseFormat
 from openai.types.responses import (
@@ -41,7 +44,10 @@ from openai.types.responses import (
     ResponseReasoningItemParam,
 )
 from openai.types.responses.response_input_param import FunctionCallOutput, ItemReference, Message
-from openai.types.responses.response_reasoning_item import Content, Summary
+
+# from openai.types.responses.response_reasoning_item import Content, Summary
+Content = Any
+Summary = Any
 
 from ..agent_output import AgentOutputSchemaBase
 from ..exceptions import AgentsException, UserError

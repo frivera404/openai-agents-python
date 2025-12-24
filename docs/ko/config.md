@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # SDK 구성
 
 ## API 키와 클라이언트

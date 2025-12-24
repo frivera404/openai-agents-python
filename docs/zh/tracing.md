@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 追踪
 
 Agents SDK 内置了追踪功能，会在一次智能体运行期间收集完整的事件记录：LLM 生成、工具调用、任务转移、安全防护措施，甚至自定义事件。借助 [Traces 仪表板](https://platform.openai.com/traces)，你可以在开发和生产环境中调试、可视化并监控工作流。
@@ -13,35 +14,35 @@ Agents SDK 内置了追踪功能，会在一次智能体运行期间收集完整
     1. 通过设置环境变量 `OPENAI_AGENTS_DISABLE_TRACING=1` 全局禁用追踪
     2. 通过将 [`agents.run.RunConfig.tracing_disabled`][] 设为 `True`，仅对单次运行禁用追踪
 
-***对于使用 OpenAI API 并遵循 Zero Data Retention (ZDR) 策略的组织，追踪不可用。***
+**_对于使用 OpenAI API 并遵循 Zero Data Retention (ZDR) 策略的组织，追踪不可用。_**
 
 ## 追踪与 Span
 
--   **追踪（Traces）** 表示一次“工作流”的端到端操作。Trace 由多个 Span 组成。Trace 具有以下属性：
-    -   `workflow_name`：逻辑上的工作流或应用。例如 “Code generation” 或 “Customer service”。
-    -   `trace_id`：该追踪的唯一 ID。如果未传入将自动生成。格式必须为 `trace_<32_alphanumeric>`。
-    -   `group_id`：可选的分组 ID，用于将同一次对话中的多个追踪关联起来。例如你可以使用聊天线程 ID。
-    -   `disabled`：若为 True，则不会记录该追踪。
-    -   `metadata`：该追踪的可选元数据。
--   **Span** 表示具有开始和结束时间的操作。Span 包含：
-    -   `started_at` 和 `ended_at` 时间戳。
-    -   `trace_id`，指示其所属的追踪
-    -   `parent_id`，指向该 Span 的父级 Span（如有）
-    -   `span_data`，关于该 Span 的信息。例如，`AgentSpanData` 包含关于智能体的信息，`GenerationSpanData` 包含关于 LLM 生成的信息，等等。
+- **追踪（Traces）** 表示一次“工作流”的端到端操作。Trace 由多个 Span 组成。Trace 具有以下属性：
+    - `workflow_name`：逻辑上的工作流或应用。例如 “Code generation” 或 “Customer service”。
+    - `trace_id`：该追踪的唯一 ID。如果未传入将自动生成。格式必须为 `trace_<32_alphanumeric>`。
+    - `group_id`：可选的分组 ID，用于将同一次对话中的多个追踪关联起来。例如你可以使用聊天线程 ID。
+    - `disabled`：若为 True，则不会记录该追踪。
+    - `metadata`：该追踪的可选元数据。
+- **Span** 表示具有开始和结束时间的操作。Span 包含：
+    - `started_at` 和 `ended_at` 时间戳。
+    - `trace_id`，指示其所属的追踪
+    - `parent_id`，指向该 Span 的父级 Span（如有）
+    - `span_data`，关于该 Span 的信息。例如，`AgentSpanData` 包含关于智能体的信息，`GenerationSpanData` 包含关于 LLM 生成的信息，等等。
 
 ## 默认追踪
 
 默认情况下，SDK 会追踪以下内容：
 
--   整个 `Runner.{run, run_sync, run_streamed}()` 都包裹在 `trace()` 中。
--   每次智能体运行，都会包裹在 `agent_span()` 中
--   LLM 生成会包裹在 `generation_span()` 中
--   工具调用会分别包裹在 `function_span()` 中
--   安全防护措施会包裹在 `guardrail_span()` 中
--   任务转移会包裹在 `handoff_span()` 中
--   音频输入（语音转文本）会包裹在 `transcription_span()` 中
--   音频输出（文本转语音）会包裹在 `speech_span()` 中
--   相关音频 span 可能会作为子级归于 `speech_group_span()` 下
+- 整个 `Runner.{run, run_sync, run_streamed}()` 都包裹在 `trace()` 中。
+- 每次智能体运行，都会包裹在 `agent_span()` 中
+- LLM 生成会包裹在 `generation_span()` 中
+- 工具调用会分别包裹在 `function_span()` 中
+- 安全防护措施会包裹在 `guardrail_span()` 中
+- 任务转移会包裹在 `handoff_span()` 中
+- 音频输入（语音转文本）会包裹在 `transcription_span()` 中
+- 音频输出（文本转语音）会包裹在 `speech_span()` 中
+- 相关音频 span 可能会作为子级归于 `speech_group_span()` 下
 
 默认情况下，追踪名称为 “Agent workflow”。如果你使用 `trace`，可以设置该名称；也可以通过 [`RunConfig`][agents.run.RunConfig] 配置名称和其他属性。
 
@@ -93,8 +94,8 @@ Span 会自动隶属于当前追踪，并嵌套在最近的当前 span 下，其
 
 追踪的高层架构如下：
 
--   在初始化时，我们会创建全局的 [`TraceProvider`][agents.tracing.setup.TraceProvider]，它负责创建追踪。
--   我们为 `TraceProvider` 配置 [`BatchTraceProcessor`][agents.tracing.processors.BatchTraceProcessor]，它会将追踪/span 批量发送给 [`BackendSpanExporter`][agents.tracing.processors.BackendSpanExporter]，后者会将 span 和追踪批量导出到 OpenAI 的后端。
+- 在初始化时，我们会创建全局的 [`TraceProvider`][agents.tracing.setup.TraceProvider]，它负责创建追踪。
+- 我们为 `TraceProvider` 配置 [`BatchTraceProcessor`][agents.tracing.processors.BatchTraceProcessor]，它会将追踪/span 批量发送给 [`BackendSpanExporter`][agents.tracing.processors.BackendSpanExporter]，后者会将 span 和追踪批量导出到 OpenAI 的后端。
 
 若要自定义这一默认设置，将追踪发送到替代或附加的后端，或修改导出器行为，你有两种选择：
 
@@ -125,26 +126,27 @@ agent = Agent(
 ```
 
 ## 备注
+
 - 在 Openai Traces 仪表板查看免费追踪。
 
 ## 外部追踪进程列表
 
--   [Weights & Biases](https://weave-docs.wandb.ai/guides/integrations/openai_agents)
--   [Arize-Phoenix](https://docs.arize.com/phoenix/tracing/integrations-tracing/openai-agents-sdk)
--   [Future AGI](https://docs.futureagi.com/future-agi/products/observability/auto-instrumentation/openai_agents)
-    -   [MLflow (self-hosted/OSS)](https://mlflow.org/docs/latest/tracing/integrations/openai-agent)
--   [Braintrust](https://braintrust.dev/docs/guides/traces/integrations#openai-agents-sdk)
--   [Pydantic Logfire](https://logfire.pydantic.dev/docs/integrations/llms/openai/#openai-agents)
--   [AgentOps](https://docs.agentops.ai/v1/integrations/agentssdk)
--   [Scorecard](https://docs.scorecard.io/docs/documentation/features/tracing#openai-agents-sdk-integration)
--   [Keywords AI](https://docs.keywordsai.co/integration/development-frameworks/openai-agent)
--   [LangSmith](https://docs.smith.langchain.com/observability/how_to_guides/trace_with_openai_agents_sdk)
--   [Maxim AI](https://www.getmaxim.ai/docs/observe/integrations/openai-agents-sdk)
--   [Comet Opik](https://www.comet.com/docs/opik/tracing/integrations/openai_agents)
--   [Langfuse](https://langfuse.com/docs/integrations/openaiagentssdk/openai-agents)
--   [Langtrace](https://docs.langtrace.ai/supported-integrations/llm-frameworks/openai-agents-sdk)
--   [Okahu-Monocle](https://github.com/monocle2ai/monocle)
--   [Galileo](https://v2docs.galileo.ai/integrations/openai-agent-integration#openai-agent-integration)
--   [Portkey AI](https://portkey.ai/docs/integrations/agents/openai-agents)
--   [LangDB AI](https://docs.langdb.ai/getting-started/working-with-agent-frameworks/working-with-openai-agents-sdk)
--   [Agenta](https://docs.agenta.ai/observability/integrations/openai-agents)
+- [Weights & Biases](https://weave-docs.wandb.ai/guides/integrations/openai_agents)
+- [Arize-Phoenix](https://docs.arize.com/phoenix/tracing/integrations-tracing/openai-agents-sdk)
+- [Future AGI](https://docs.futureagi.com/future-agi/products/observability/auto-instrumentation/openai_agents)
+    - [MLflow (self-hosted/OSS)](https://mlflow.org/docs/latest/tracing/integrations/openai-agent)
+- [Braintrust](https://braintrust.dev/docs/guides/traces/integrations#openai-agents-sdk)
+- [Pydantic Logfire](https://logfire.pydantic.dev/docs/integrations/llms/openai/#openai-agents)
+- [AgentOps](https://docs.agentops.ai/v1/integrations/agentssdk)
+- [Scorecard](https://docs.scorecard.io/docs/documentation/features/tracing#openai-agents-sdk-integration)
+- [Keywords AI](https://docs.keywordsai.co/integration/development-frameworks/openai-agent)
+- [LangSmith](https://docs.smith.langchain.com/observability/how_to_guides/trace_with_openai_agents_sdk)
+- [Maxim AI](https://www.getmaxim.ai/docs/observe/integrations/openai-agents-sdk)
+- [Comet Opik](https://www.comet.com/docs/opik/tracing/integrations/openai_agents)
+- [Langfuse](https://langfuse.com/docs/integrations/openaiagentssdk/openai-agents)
+- [Langtrace](https://docs.langtrace.ai/supported-integrations/llm-frameworks/openai-agents-sdk)
+- [Okahu-Monocle](https://github.com/monocle2ai/monocle)
+- [Galileo](https://v2docs.galileo.ai/integrations/openai-agent-integration#openai-agent-integration)
+- [Portkey AI](https://portkey.ai/docs/integrations/agents/openai-agents)
+- [LangDB AI](https://docs.langdb.ai/getting-started/working-with-agent-frameworks/working-with-openai-agents-sdk)
+- [Agenta](https://docs.agenta.ai/observability/integrations/openai-agents)

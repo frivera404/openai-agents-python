@@ -21,9 +21,9 @@ The example demonstrates two key functions:
 1. **`show_available_prompts`** - Lists all available prompts on the MCP server, showing users what prompts they can select from. This demonstrates the discovery aspect of MCP prompts.
 
 2. **`demo_code_review`** - Shows the complete user-controlled prompt workflow:
-   - Calls `generate_code_review_instructions` with specific parameters (focus: "security vulnerabilities", language: "python")
-   - Uses the generated instructions to create an Agent with specialized code review capabilities
-   - Runs the agent against vulnerable sample code (command injection via `os.system`)
-   - The agent analyzes the code and provides security-focused feedback using available tools
+    - Calls `generate_code_review_instructions` with specific parameters (focus: "security vulnerabilities", language: "python")
+    - Uses the generated instructions to create an Agent with specialized code review capabilities
+    - Runs the agent against vulnerable sample code (command injection via `os.system`)
+    - The agent analyzes the code and provides security-focused feedback using available tools
 
-This pattern allows users to dynamically configure agent behavior through MCP prompts rather than hardcoded instructions. 
+This pattern allows users to dynamically configure agent behavior through MCP prompts rather than hardcoded instructions.

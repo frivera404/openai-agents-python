@@ -15,12 +15,12 @@ filesystem, HTTP, or connector backed tools to an agent.
 Before wiring an MCP server into an agent decide where the tool calls should execute and which transports you can reach. The
 matrix below summarises the options that the Python SDK supports.
 
-| What you need                                                                        | Recommended option                                    |
-| ------------------------------------------------------------------------------------ | ----------------------------------------------------- |
-| Let OpenAI's Responses API call a publicly reachable MCP server on the model's behalf| **Hosted MCP server tools** via [`HostedMCPTool`][agents.tool.HostedMCPTool] |
-| Connect to Streamable HTTP servers that you run locally or remotely                  | **Streamable HTTP MCP servers** via [`MCPServerStreamableHttp`][agents.mcp.server.MCPServerStreamableHttp] |
-| Talk to servers that implement HTTP with Server-Sent Events                          | **HTTP with SSE MCP servers** via [`MCPServerSse`][agents.mcp.server.MCPServerSse] |
-| Launch a local process and communicate over stdin/stdout                             | **stdio MCP servers** via [`MCPServerStdio`][agents.mcp.server.MCPServerStdio] |
+| What you need                                                                         | Recommended option                                                                                         |
+| ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Let OpenAI's Responses API call a publicly reachable MCP server on the model's behalf | **Hosted MCP server tools** via [`HostedMCPTool`][agents.tool.HostedMCPTool]                               |
+| Connect to Streamable HTTP servers that you run locally or remotely                   | **Streamable HTTP MCP servers** via [`MCPServerStreamableHttp`][agents.mcp.server.MCPServerStreamableHttp] |
+| Talk to servers that implement HTTP with Server-Sent Events                           | **HTTP with SSE MCP servers** via [`MCPServerSse`][agents.mcp.server.MCPServerSse]                         |
+| Launch a local process and communicate over stdin/stdout                              | **stdio MCP servers** via [`MCPServerStdio`][agents.mcp.server.MCPServerStdio]                             |
 
 The sections below walk through each option, how to configure it, and when to prefer one transport over another.
 

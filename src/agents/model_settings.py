@@ -9,10 +9,12 @@ from pydantic_core import core_schema
 from typing_extensions import TypeAlias
 
 from openai import Omit as _Omit
-from openai._types import Body, Query
+from typing import Dict
+Body: TypeAlias = Dict[str, Any]
+Query: TypeAlias = Dict[str, Any]
 from openai.types.responses import ResponseIncludable
 from openai.types.shared import Reasoning
-from pydantic import BaseModel, GetCoreSchemaHandler  # type: ignore[attr-defined]
+from pydantic import BaseModel, GetCoreSchemaHandler, ConfigDict  # type: ignore[attr-defined]
 from pydantic.dataclasses import dataclass
 
 
@@ -58,14 +60,6 @@ ToolChoice: TypeAlias = Union[Literal["auto", "required", "none"], str, MCPToolC
 
 @dataclass
 class ModelSettings:
-    """Settings to use when calling an LLM.
-
-    This class holds optional model configuration parameters (e.g. temperature,
-    top_p, penalties, truncation, etc.).
-
-    Not all models/providers support all of these parameters, so please check the API documentation
-    for the specific model and provider you are using.
-    """
 
     temperature: float | None = None
     """The temperature to use when calling the model."""
@@ -124,7 +118,7 @@ class ModelSettings:
     # TODO: revisit ResponseIncludable | str if ResponseIncludable covers more cases
     # We've added str to support missing ones like
     # "web_search_call.action.sources" etc.
-    response_include: list[ResponseIncludable | str] | None = None
+    response_include: list[Any] | None = None
     """Additional output data to include in the model response.
     [include parameter](https://platform.openai.com/docs/api-reference/responses/create#responses-create-include)"""
 

@@ -49,6 +49,10 @@ class ResponseReasoningSummaryTextDeltaEvent(BaseModel):
     delta: Any | None
 
 
+class ResponseReasoningSummaryTextDoneEvent(BaseModel):
+    text: Any | None
+
+
 class ResponseOutputText(BaseModel):
     text: str | None
 
@@ -61,21 +65,32 @@ class ResponseOutputMessage(BaseModel):
     content: Any | None
 
 
-class ResponseFunctionToolCall(BaseModel):
+class ResponseOutputItem(BaseModel):
+    """Base class for all response output items.
+
+    Tests expect concrete output item types like ResponseOutputMessage to be
+    instances of ResponseOutputItem, so ResponseOutputMessage will subclass
+    this below via type aliasing.
+    """
+
+    pass
+
+
+class ResponseFunctionToolCall(ResponseOutputItem):
     name: str | None
     arguments: Any | None
     call_id: str | None
 
 
-class ResponseFunctionWebSearch(BaseModel):
+class ResponseFunctionWebSearch(ResponseOutputItem):
     pass
 
 
-class ResponseFileSearchToolCall(BaseModel):
+class ResponseFileSearchToolCall(ResponseOutputItem):
     pass
 
 
-class ResponseComputerToolCall(BaseModel):
+class ResponseComputerToolCall(ResponseOutputItem):
     call_id: str | None
     action: Any | None
     pending_safety_checks: Any | None
@@ -86,6 +101,10 @@ class ResponseCompletedEvent(BaseModel):
 
 
 class ResponseCreatedEvent(BaseModel):
+    response: Response | None
+
+
+class ResponseInProgressEvent(BaseModel):
     response: Response | None
 
 
@@ -109,6 +128,10 @@ class ResponseTextDeltaEvent(BaseModel):
     delta: Any | None
 
 
+class ResponseTextDoneEvent(BaseModel):
+    text: Any | None
+
+
 class ResponseRefusalDeltaEvent(BaseModel):
     delta: Any | None
 
@@ -117,14 +140,29 @@ class ResponseFunctionCallArgumentsDeltaEvent(BaseModel):
     arguments: Any | None
 
 
+class ResponseFunctionCallArgumentsDoneEvent(BaseModel):
+    """Stub for backwards-compat streaming event.
+
+    Tests construct this event with these fields; we only need a
+    compatible shape, not full SDK behaviour.
+    """
+
+    type: str | None = None
+    item_id: str | None = None
+    output_index: int | None = None
+    arguments: Any | None = None
+    name: str | None = None
+    sequence_number: int | None = None
+
+
 class ResponseStreamEvent(BaseModel):
     type: str | None
     response: Response | None
     delta: Any | None
 
 
-class ResponseOutputItem(BaseModel):
-    pass
+class ResponseOutputMessage(ResponseOutputItem):  # type: ignore[misc]
+    content: Any | None
 
 
 class ActionClick(BaseModel):
@@ -164,6 +202,10 @@ class ActionType(BaseModel):
 
 
 class ActionWait(BaseModel):
+    pass
+
+
+class ActionSearch(BaseModel):
     pass
 
 
@@ -215,7 +257,7 @@ class ResponseFunctionWebSearchParam(dict[str, Any]):
     pass
 
 
-class ResponseReasoningItem(BaseModel):
+class ResponseReasoningItem(ResponseOutputItem):
     content: Any | None
     summary: Any | None
     encrypted_content: Any | None
@@ -223,6 +265,13 @@ class ResponseReasoningItem(BaseModel):
 
 class ResponseReasoningItemParam(dict[str, Any]):
     pass
+
+
+class Part(BaseModel):
+    """Simple part object used in reasoning summary events."""
+
+    text: Any | None = None
+    type: Any | None = None
 
 
 class Summary(BaseModel):
@@ -296,7 +345,7 @@ _SUBMODULE_EXPORTS: dict[str, list[str]] = {
     "response_file_search_tool_call_param": ["ResponseFileSearchToolCallParam"],
     "response_function_tool_call": ["ResponseFunctionToolCall"],
     "response_function_tool_call_param": ["ResponseFunctionToolCallParam"],
-    "response_function_web_search": ["ResponseFunctionWebSearch"],
+    "response_function_web_search": ["ResponseFunctionWebSearch", "ActionSearch"],
     "response_function_web_search_param": ["ResponseFunctionWebSearchParam"],
     "response_output_message": ["ResponseOutputMessage"],
     "response_output_message_param": ["ResponseOutputMessageParam"],
@@ -304,6 +353,8 @@ _SUBMODULE_EXPORTS: dict[str, list[str]] = {
     "response_output_text": ["ResponseOutputText"],
     "response_reasoning_item": ["ResponseReasoningItem", "Summary"],
     "response_reasoning_item_param": ["ResponseReasoningItemParam"],
+    "response_reasoning_summary_part_added_event": ["Part"],
+    "response_reasoning_summary_part_done_event": ["Part"],
     "response_input_item_param": ["FunctionCallOutput", "ComputerCallOutput"],
     "response_input_param": [
         "FunctionCallOutput",
@@ -313,6 +364,8 @@ _SUBMODULE_EXPORTS: dict[str, list[str]] = {
     ],
     "response_usage": ["ResponseUsage", "InputTokensDetails", "OutputTokensDetails"],
     "response_text_delta_event": ["ResponseTextDeltaEvent"],
+    "response_text_done_event": ["ResponseTextDoneEvent"],
+    "response_reasoning_summary_text_done_event": ["ResponseReasoningSummaryTextDoneEvent"],
     "response_refusal_delta_event": ["ResponseRefusalDeltaEvent"],
     "response_output_item_added_event": ["ResponseOutputItemAddedEvent"],
     "response_content_part_added_event": ["ResponseContentPartAddedEvent"],
@@ -320,7 +373,9 @@ _SUBMODULE_EXPORTS: dict[str, list[str]] = {
     "response_output_item_done_event": ["ResponseOutputItemDoneEvent"],
     "response_completed_event": ["ResponseCompletedEvent"],
     "response_created_event": ["ResponseCreatedEvent"],
+    "response_in_progress_event": ["ResponseInProgressEvent"],
     "response_function_call_arguments_delta_event": ["ResponseFunctionCallArgumentsDeltaEvent"],
+    "response_function_call_arguments_done_event": ["ResponseFunctionCallArgumentsDoneEvent"],
     "response_output_item": ["ResponseOutputItem"],
     "response_stream_event": ["ResponseStreamEvent"],
     "response_text_config_param": ["ResponseTextConfigParam"],
@@ -360,9 +415,14 @@ __all__ = [
     "ResponseContentPartAddedEvent",
     "ResponseContentPartDoneEvent",
     "ResponseOutputItemDoneEvent",
+    "ResponseInProgressEvent",
     "ResponseTextDeltaEvent",
+    "ResponseReasoningSummaryTextDoneEvent",
+    "ResponseTextDoneEvent",
+    "ResponseReasoningSummaryTextDoneEvent",
     "ResponseRefusalDeltaEvent",
     "ResponseFunctionCallArgumentsDeltaEvent",
+    "ResponseFunctionCallArgumentsDoneEvent",
     "ResponseStreamEvent",
     "ResponseOutputItem",
     "ToolParam",

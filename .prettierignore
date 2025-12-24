@@ -1,0 +1,15 @@
+# Build artifacts
+site/
+
+# Misnamed files that aren't actually JSON
+json_tools/gpt-embed.json
+src/agents/powerallgptfunc.json
+
+# Node modules
+node_modules/
+
+# Logs
+*.log
+
+# Package files
+package-lock.json

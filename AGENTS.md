@@ -13,27 +13,27 @@ Welcome to the OpenAI Agents SDK repository. This file contains the main points 
 
 1. Format, lint and type‑check your changes:
 
-   ```bash
-   make format
-   make lint
-   make mypy
-   ```
+    ```bash
+    make format
+    make lint
+    make mypy
+    ```
 
 2. Run the tests:
 
-   ```bash
-   make tests
-   ```
+    ```bash
+    make tests
+    ```
 
-   To run a single test, use `uv run pytest -s -k <test_name>`.
+    To run a single test, use `uv run pytest -s -k <test_name>`.
 
 3. Build the documentation (optional but recommended for docs changes):
 
-   ```bash
-   make build-docs
-   ```
+    ```bash
+    make build-docs
+    ```
 
-   Coverage can be generated with `make coverage`.
+    Coverage can be generated with `make coverage`.
 
 All python commands should be run via `uv run python ...`
 

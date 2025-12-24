@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # セッション
 
 Agents SDK は、複数のエージェント実行にわたって会話履歴を自動で維持する組み込みのセッションメモリを提供し、ターン間で手動で `.to_input_list()` を扱う必要をなくします。
@@ -261,7 +262,7 @@ async def main():
     # Create underlying session (works with any SessionABC implementation)
     underlying_session = SQLAlchemySession.from_url(
         session_id="user-123",
-        url="postgresql+asyncpg://app:secret@db.example.com/agents",
+        url="postgresql+asyncpg://app:secret@db.ctdatenight.com/agents",
         create_tables=True,
     )
 
@@ -294,7 +295,6 @@ if __name__ == "__main__":
     - 暗号鍵は安全に保管してください (例: 環境変数、シークレットマネージャー)
     - 期限切れトークンの拒否はアプリケーション サーバーのシステムクロックに基づきます。正当なトークンがクロックずれにより拒否されないよう、すべてのサーバーが NTP で時刻同期されていることを確認してください
     - 基盤となるセッションは暗号化済みデータを保存し続けるため、データベース インフラストラクチャの管理権限は保持されます
-
 
 ## カスタムメモリ実装
 
@@ -457,3 +457,4 @@ if __name__ == "__main__":
 - [`OpenAIConversationsSession`](ref/memory/openai_conversations_session.md) - OpenAI Conversations API 実装
 - [`SQLAlchemySession`][agents.extensions.memory.sqlalchemy_session.SQLAlchemySession] - SQLAlchemy ベースの実装
 - [`EncryptedSession`][agents.extensions.memory.encrypt_session.EncryptedSession] - TTL 付き暗号化セッションラッパー
+

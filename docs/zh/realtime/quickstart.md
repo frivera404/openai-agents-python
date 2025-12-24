@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 快速入门
 
 实时智能体通过 OpenAI 的 Realtime API 实现与你的 AI 智能体进行语音对话。本指南将带你创建第一个实时语音智能体。

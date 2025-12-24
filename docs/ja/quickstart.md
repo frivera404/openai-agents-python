@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # クイックスタート
 
 ## プロジェクトと仮想環境の作成

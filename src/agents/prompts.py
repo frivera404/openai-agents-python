@@ -7,10 +7,7 @@ from typing import TYPE_CHECKING, Any, Callable
 from typing_extensions import NotRequired, TypedDict
 
 from agents.util._types import MaybeAwaitable
-from openai.types.responses.response_prompt_param import (
-    ResponsePromptParam,
-    Variables as ResponsesPromptVariables,
-)
+from typing import Any as ResponsePromptParam, Dict as ResponsesPromptVariables
 
 from .exceptions import UserError
 from .run_context import RunContextWrapper

@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 上下文管理
 
 上下文是一个语义较多的术语。你可能关心的上下文主要有两类：
@@ -108,9 +109,9 @@ agent = Agent(
 `ToolContext` 提供与 `RunContextWrapper` 相同的 `.context` 属性，  
 另含当前工具调用特有的字段：
 
-- `tool_name` – 被调用工具的名称  
-- `tool_call_id` – 此次工具调用的唯一标识符  
-- `tool_arguments` – 传递给工具的原始参数字符串  
+- `tool_name` – 被调用工具的名称
+- `tool_call_id` – 此次工具调用的唯一标识符
+- `tool_arguments` – 传递给工具的原始参数字符串
 
 当你在执行期间需要工具级元数据时，请使用 `ToolContext`。  
 对于智能体与工具之间的一般性上下文共享，`RunContextWrapper` 已经足够。

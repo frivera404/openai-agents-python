@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 高级 SQLite 会话
 
 `AdvancedSQLiteSession` 是基础 `SQLiteSession` 的增强版本，提供包括会话分支、详细用量分析和结构化会话查询在内的高级对话管理能力。
@@ -154,13 +155,13 @@ print(f"Created branch: {branch_id}")
 
 # Create a branch with custom name
 branch_id = await session.create_branch_from_turn(
-    2, 
+    2,
     branch_name="alternative_path"
 )
 
 # Create branch by searching for content
 branch_id = await session.create_branch_from_content(
-    "weather", 
+    "weather",
     branch_name="weather_focus"
 )
 ```
@@ -197,8 +198,8 @@ branch_id = await session.create_branch_from_turn(2, "weather_focus")
 
 # Continue in new branch with different question
 result = await Runner.run(
-    agent, 
-    "What are the main tourist attractions in Paris?", 
+    agent,
+    "What are the main tourist attractions in Paris?",
     session=session
 )
 await session.store_run_usage(result)
@@ -208,8 +209,8 @@ await session.switch_to_branch("main")
 
 # Continue original conversation
 result = await Runner.run(
-    agent, 
-    "How expensive is it to visit?", 
+    agent,
+    "How expensive is it to visit?",
     session=session
 )
 await session.store_run_usage(result)
@@ -299,7 +300,6 @@ CREATE TABLE turn_usage (
 ## 完整示例
 
 查看[完整示例](https://github.com/openai/openai-agents-python/tree/main/examples/memory/advanced_sqlite_session_example.py)，了解所有功能的综合演示。
-
 
 ## API 参考
 

@@ -123,7 +123,6 @@ class RealtimeDemo {
             this.ws.onerror = (error) => {
                 console.error('WebSocket error:', error);
             };
-
         } catch (error) {
             console.error('Failed to connect:', error);
         }
@@ -193,12 +192,13 @@ class RealtimeDemo {
 
             const maxDim = 1024;
             const maxSide = Math.max(img.width, img.height);
-            const scale = maxSide > maxDim ? (maxDim / maxSide) : 1;
+            const scale = maxSide > maxDim ? maxDim / maxSide : 1;
             const w = Math.max(1, Math.round(img.width * scale));
             const h = Math.max(1, Math.round(img.height * scale));
 
             const canvas = document.createElement('canvas');
-            canvas.width = w; canvas.height = h;
+            canvas.width = w;
+            canvas.height = h;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, w, h);
             return canvas.toDataURL('image/jpeg', 0.85);
@@ -222,13 +222,15 @@ class RealtimeDemo {
                     sampleRate: 24000,
                     channelCount: 1,
                     echoCancellation: true,
-                    noiseSuppression: true
-                }
+                    noiseSuppression: true,
+                },
             });
 
             this.audioContext = new AudioContext({ sampleRate: 24000, latencyHint: 'interactive' });
             if (this.audioContext.state === 'suspended') {
-                try { await this.audioContext.resume(); } catch {}
+                try {
+                    await this.audioContext.resume();
+                } catch {}
             }
 
             if (!this.audioContext.audioWorklet) {
@@ -244,13 +246,16 @@ class RealtimeDemo {
                 if (this.isMuted) return;
                 if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
 
-                const chunk = event.data instanceof ArrayBuffer ? new Int16Array(event.data) : event.data;
+                const chunk =
+                    event.data instanceof ArrayBuffer ? new Int16Array(event.data) : event.data;
                 if (!chunk || !(chunk instanceof Int16Array) || chunk.length === 0) return;
 
-                this.ws.send(JSON.stringify({
-                    type: 'audio',
-                    data: Array.from(chunk)
-                }));
+                this.ws.send(
+                    JSON.stringify({
+                        type: 'audio',
+                        data: Array.from(chunk),
+                    })
+                );
             };
 
             this.captureSource.connect(this.captureNode);
@@ -258,7 +263,6 @@ class RealtimeDemo {
 
             this.isCapturing = true;
             this.updateMuteUI();
-
         } catch (error) {
             console.error('Failed to start audio capture:', error);
         }
@@ -270,13 +274,17 @@ class RealtimeDemo {
         this.isCapturing = false;
 
         if (this.captureSource) {
-            try { this.captureSource.disconnect(); } catch {}
+            try {
+                this.captureSource.disconnect();
+            } catch {}
             this.captureSource = null;
         }
 
         if (this.captureNode) {
             this.captureNode.port.onmessage = null;
-            try { this.captureNode.disconnect(); } catch {}
+            try {
+                this.captureNode.disconnect();
+            } catch {}
             this.captureNode = null;
         }
 
@@ -286,7 +294,7 @@ class RealtimeDemo {
         }
 
         if (this.stream) {
-            this.stream.getTracks().forEach(track => track.stop());
+            this.stream.getTracks().forEach((track) => track.stop());
             this.stream = null;
         }
 
@@ -334,7 +342,10 @@ class RealtimeDemo {
         let last = null;
         for (let i = history.length - 1; i >= 0; i--) {
             const it = history[i];
-            if (it && it.type === 'message') { last = it; break; }
+            if (it && it.type === 'message') {
+                last = it;
+                break;
+            }
         }
         if (!last) return;
         const itemId = last.item_id;
@@ -346,7 +357,8 @@ class RealtimeDemo {
                 if (!part || typeof part !== 'object') continue;
                 if (part.type === 'text' && part.text) text += part.text;
                 else if (part.type === 'input_text' && part.text) text += part.text;
-                else if ((part.type === 'input_audio' || part.type === 'audio') && part.transcript) text += part.transcript;
+                else if ((part.type === 'input_audio' || part.type === 'audio') && part.transcript)
+                    text += part.transcript;
             }
         }
 
@@ -564,7 +576,6 @@ class RealtimeDemo {
             this.pendingPlaybackChunks.push(int16Array);
             await this.ensurePlaybackNode();
             this.flushPendingPlaybackChunks();
-
         } catch (error) {
             console.error('Failed to play audio:', error);
             this.pendingPlaybackChunks = [];
@@ -579,11 +590,16 @@ class RealtimeDemo {
         if (!this.playbackInitPromise) {
             this.playbackInitPromise = (async () => {
                 if (!this.playbackAudioContext) {
-                    this.playbackAudioContext = new AudioContext({ sampleRate: 24000, latencyHint: 'interactive' });
+                    this.playbackAudioContext = new AudioContext({
+                        sampleRate: 24000,
+                        latencyHint: 'interactive',
+                    });
                 }
 
                 if (this.playbackAudioContext.state === 'suspended') {
-                    try { await this.playbackAudioContext.resume(); } catch {}
+                    try {
+                        await this.playbackAudioContext.resume();
+                    } catch {}
                 }
 
                 if (!this.playbackAudioContext.audioWorklet) {
@@ -592,7 +608,11 @@ class RealtimeDemo {
 
                 await this.playbackAudioContext.audioWorklet.addModule('audio-playback.worklet.js');
 
-                this.playbackNode = new AudioWorkletNode(this.playbackAudioContext, 'pcm-playback', { outputChannelCount: [1] });
+                this.playbackNode = new AudioWorkletNode(
+                    this.playbackAudioContext,
+                    'pcm-playback',
+                    { outputChannelCount: [1] }
+                );
                 this.playbackNode.port.onmessage = (event) => {
                     const message = event.data;
                     if (!message || typeof message !== 'object') return;
@@ -602,7 +622,9 @@ class RealtimeDemo {
                 };
 
                 // Provide initial configuration for fades.
-                const fadeSamples = Math.floor(this.playbackAudioContext.sampleRate * this.playbackFadeSec);
+                const fadeSamples = Math.floor(
+                    this.playbackAudioContext.sampleRate * this.playbackFadeSec
+                );
                 this.playbackNode.port.postMessage({ type: 'config', fadeSamples });
 
                 this.playbackNode.connect(this.playbackAudioContext.destination);
@@ -627,10 +649,9 @@ class RealtimeDemo {
             }
 
             try {
-                this.playbackNode.port.postMessage(
-                    { type: 'chunk', payload: chunk.buffer },
-                    [chunk.buffer]
-                );
+                this.playbackNode.port.postMessage({ type: 'chunk', payload: chunk.buffer }, [
+                    chunk.buffer,
+                ]);
                 this.isPlayingAudio = true;
             } catch (error) {
                 console.error('Failed to enqueue audio chunk to worklet:', error);

@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # SDK の設定
 
 ## API キーとクライアント

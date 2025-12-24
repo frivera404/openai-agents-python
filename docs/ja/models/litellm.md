@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # LiteLLM 経由での任意モデルの利用
 
 !!! note
@@ -24,9 +25,9 @@ pip install "openai-agents[litellm]"
 
 これは完全に動作する例です。実行すると、モデル名と API キーの入力を求められます。例えば次のように入力できます。
 
--   モデルに `openai/gpt-4.1`、API キーにあなたの OpenAI API キー
--   モデルに `anthropic/claude-3-5-sonnet-20240620`、API キーにあなたの Anthropic API キー
--   など
+- モデルに `openai/gpt-4.1`、API キーにあなたの OpenAI API キー
+- モデルに `anthropic/claude-3-5-sonnet-20240620`、API キーにあなたの Anthropic API キー
+- など
 
 LiteLLM でサポートされているモデルの一覧は、[litellm のプロバイダードキュメント](https://docs.litellm.ai/docs/providers) を参照してください。
 

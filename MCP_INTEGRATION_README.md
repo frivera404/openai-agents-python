@@ -1,7 +1,8 @@
 # MCP Server Integration Guide
 
 ## Server Status
-**URL**: `https://18268932-0807663c6d1468.router.cloudmcp.run/mcp`  # Updated URL
+
+**URL**: `https://18268932-0807663c6d1468.router.cloudmcp.run/mcp` # Updated URL
 **Status**: ✅ Server is responding and requires authentication (not Bearer tokens)
 
 ## Alternative Authentication Methods
@@ -9,6 +10,7 @@
 Since CloudMCP doesn't use Bearer tokens, here are the alternative authentication methods you can try:
 
 ### 1. API Key in Custom Headers
+
 Most common alternative to Bearer tokens:
 
 ```python
@@ -20,6 +22,7 @@ headers = {"X-API-Key": "your_actual_api_key"}
 ```
 
 ### 2. Alternative Header Names
+
 Try these different header names:
 
 ```python
@@ -34,6 +37,7 @@ headers = {"X-MCP-Key": "your_key"}
 ```
 
 ### 3. Token Authentication (Non-Bearer)
+
 Some services use "Token" instead of "Bearer":
 
 ```python
@@ -41,6 +45,7 @@ headers = {"Authorization": "Token your_actual_token"}
 ```
 
 ### 4. Query Parameter Authentication
+
 Some APIs accept keys as URL parameters:
 
 ```python
@@ -49,6 +54,7 @@ url = "https://18268932-0807663c6d1468.router.cloudmcp.run/mcp?api_key=your_key"
 ```
 
 ### 5. Basic Authentication
+
 If the service requires username/password:
 
 ```python
@@ -74,6 +80,7 @@ This script will test multiple authentication methods and tell you which one wor
 ## Configuration Examples
 
 ### Option 1: API Key Header (Most Likely)
+
 ```python
 from agents.mcp import MCPServerStreamableHttp
 
@@ -93,6 +100,7 @@ mcp_server = MCPServerStreamableHttp(
 ```
 
 ### Option 2: Custom Token Header
+
 ```python
 MCP_SERVER_CONFIG = {
     "url": "https://18268932-0807663c6d1468.router.cloudmcp.run/mcp",
@@ -104,6 +112,7 @@ MCP_SERVER_CONFIG = {
 ```
 
 ### Option 3: Query Parameter
+
 ```python
 MCP_SERVER_CONFIG = {
     "url": "https://18268932-0807663c6d1468.router.cloudmcp.run/mcp?api_key=YOUR_ACTUAL_KEY",
@@ -139,16 +148,17 @@ export MCP_KEY="your_custom_key"
 ```
 
 The test script will use these environment variables when testing different methods.
-    name="MCPIntegratedAgent",
-    instructions="""
-    You are an AI assistant with access to external tools via MCP.
-    Use the available tools to help users with their requests.
-    Be helpful and provide detailed responses.
-    """,
-    model="gpt-4",  # or your preferred model
-    mcp_servers=[mcp_server],  # Include your MCP server
+name="MCPIntegratedAgent",
+instructions="""
+You are an AI assistant with access to external tools via MCP.
+Use the available tools to help users with their requests.
+Be helpful and provide detailed responses.
+""",
+model="gpt-4", # or your preferred model
+mcp_servers=[mcp_server], # Include your MCP server
 )
-```
+
+````
 
 ### Running the Agent
 
@@ -167,7 +177,7 @@ result = await Runner.run(
     agent,
     "Use MCP tools for my request"
 )
-```
+````
 
 ## Testing Files
 
@@ -191,21 +201,21 @@ uv run python mcp_integration_example.py
 
 ### MCPServerStreamableHttp Parameters
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `url` | Your MCP server endpoint | Required |
-| `headers` | HTTP headers (include Authorization) | `{}` |
-| `timeout` | HTTP request timeout (seconds) | `5` |
-| `sse_read_timeout` | SSE connection timeout (seconds) | `300` |
-| `terminate_on_close` | Terminate connection on close | `True` |
+| Parameter            | Description                          | Default  |
+| -------------------- | ------------------------------------ | -------- |
+| `url`                | Your MCP server endpoint             | Required |
+| `headers`            | HTTP headers (include Authorization) | `{}`     |
+| `timeout`            | HTTP request timeout (seconds)       | `5`      |
+| `sse_read_timeout`   | SSE connection timeout (seconds)     | `300`    |
+| `terminate_on_close` | Terminate connection on close        | `True`   |
 
 ### Agent Parameters
 
-| Parameter | Description | Recommended |
-|-----------|-------------|-------------|
-| `cache_tools_list` | Cache tool list for performance | `True` |
-| `tool_filter` | Filter available tools | `None` |
-| `use_structured_content` | Use structured tool results | `False` |
+| Parameter                | Description                     | Recommended |
+| ------------------------ | ------------------------------- | ----------- |
+| `cache_tools_list`       | Cache tool list for performance | `True`      |
+| `tool_filter`            | Filter available tools          | `None`      |
+| `use_structured_content` | Use structured tool results     | `False`     |
 
 ## Next Steps
 
@@ -219,16 +229,19 @@ uv run python mcp_integration_example.py
 ### Common Issues
 
 **401 Unauthorized**
+
 - Check your Bearer token is correct
 - Ensure token format: `Bearer YOUR_TOKEN`
 - Verify token hasn't expired
 
 **Connection Timeout**
+
 - Increase `timeout` and `sse_read_timeout` values
 - Check network connectivity
 - Verify server URL is correct
 
 **Import Errors**
+
 - Ensure you're in the correct virtual environment
 - Check that all dependencies are installed: `uv sync`
 

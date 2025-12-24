@@ -1,7 +1,8 @@
 ---
 search:
-  exclude: true
+    exclude: true
 ---
+
 # 세션
 
 Agents SDK는 여러 에이전트 실행(run) 간 대화 기록을 자동으로 유지하는 내장 세션 메모리를 제공합니다. 이를 통해 턴 사이에 `.to_input_list()`를 수동으로 처리할 필요가 없습니다.
@@ -262,7 +263,7 @@ async def main():
     # Create underlying session (works with any SessionABC implementation)
     underlying_session = SQLAlchemySession.from_url(
         session_id="user-123",
-        url="postgresql+asyncpg://app:secret@db.example.com/agents",
+        url="postgresql+asyncpg://app:secret@db.ctdatenight.com/agents",
         create_tables=True,
     )
 
@@ -284,18 +285,17 @@ if __name__ == "__main__":
 
 **주요 기능:**
 
--   **투명한 암호화**: 저장 전 모든 세션 항목을 자동으로 암호화하고, 검색 시 복호화
--   **세션별 키 유도**: 세션 ID를 솔트로 사용하는 HKDF로 고유한 암호화 키 생성
--   **TTL 기반 만료**: 구성 가능한 TTL(기본값: 10분)에 따라 오래된 메시지를 자동 만료
--   **유연한 키 입력**: Fernet 키 또는 원문 문자열을 암호화 키로 허용
--   **어떤 세션이든 래핑**: SQLite, SQLAlchemy 또는 커스텀 세션 구현과 호환
+- **투명한 암호화**: 저장 전 모든 세션 항목을 자동으로 암호화하고, 검색 시 복호화
+- **세션별 키 유도**: 세션 ID를 솔트로 사용하는 HKDF로 고유한 암호화 키 생성
+- **TTL 기반 만료**: 구성 가능한 TTL(기본값: 10분)에 따라 오래된 메시지를 자동 만료
+- **유연한 키 입력**: Fernet 키 또는 원문 문자열을 암호화 키로 허용
+- **어떤 세션이든 래핑**: SQLite, SQLAlchemy 또는 커스텀 세션 구현과 호환
 
 !!! warning "중요한 보안 참고"
 
     -   암호화 키를 안전하게 저장하세요(예: 환경 변수, 시크릿 매니저)
     -   만료된 토큰은 애플리케이션 서버의 시스템 시계를 기준으로 거부됩니다 - 유효한 토큰이 시계 드리프트로 인해 거부되지 않도록 모든 서버가 NTP로 시간 동기화되어 있는지 확인하세요
     -   기본 세션은 여전히 암호화된 데이터를 저장하므로 데이터베이스 인프라에 대한 제어권을 유지합니다
-
 
 ## 커스텀 메모리 구현
 
@@ -348,18 +348,18 @@ result = await Runner.run(
 
 대화를 체계적으로 구성할 수 있는 의미 있는 세션 ID를 사용하세요:
 
--   사용자 기반: `"user_12345"`
--   스레드 기반: `"thread_abc123"`
--   컨텍스트 기반: `"support_ticket_456"`
+- 사용자 기반: `"user_12345"`
+- 스레드 기반: `"thread_abc123"`
+- 컨텍스트 기반: `"support_ticket_456"`
 
 ### 메모리 지속성
 
--   임시 대화에는 메모리 내 SQLite(`SQLiteSession("session_id")`) 사용
--   지속형 대화에는 파일 기반 SQLite(`SQLiteSession("session_id", "path/to/db.sqlite")`) 사용
--   SQLAlchemy가 지원하는 기존 데이터베이스가 있는 프로덕션 시스템에는 SQLAlchemy 기반 세션(`SQLAlchemySession("session_id", engine=engine, create_tables=True)`) 사용
--   기록을 OpenAI Conversations API에 저장하기를 원하면 OpenAI 호스트하는 스토리지(`OpenAIConversationsSession()`) 사용
--   투명한 암호화와 TTL 기반 만료를 위해 어떤 세션이든 래핑하려면 암호화된 세션(`EncryptedSession(session_id, underlying_session, encryption_key)`) 사용
--   더 고급 사용 사례를 위해 다른 프로덕션 시스템(Redis, Django 등)에 대한 커스텀 세션 백엔드 구현 고려
+- 임시 대화에는 메모리 내 SQLite(`SQLiteSession("session_id")`) 사용
+- 지속형 대화에는 파일 기반 SQLite(`SQLiteSession("session_id", "path/to/db.sqlite")`) 사용
+- SQLAlchemy가 지원하는 기존 데이터베이스가 있는 프로덕션 시스템에는 SQLAlchemy 기반 세션(`SQLAlchemySession("session_id", engine=engine, create_tables=True)`) 사용
+- 기록을 OpenAI Conversations API에 저장하기를 원하면 OpenAI 호스트하는 스토리지(`OpenAIConversationsSession()`) 사용
+- 투명한 암호화와 TTL 기반 만료를 위해 어떤 세션이든 래핑하려면 암호화된 세션(`EncryptedSession(session_id, underlying_session, encryption_key)`) 사용
+- 더 고급 사용 사례를 위해 다른 프로덕션 시스템(Redis, Django 등)에 대한 커스텀 세션 백엔드 구현 고려
 
 ### 세션 관리
 
@@ -453,8 +453,9 @@ if __name__ == "__main__":
 
 자세한 API 문서는 다음을 참고하세요:
 
--   [`Session`][agents.memory.Session] - 프로토콜 인터페이스
--   [`SQLiteSession`][agents.memory.SQLiteSession] - SQLite 구현
--   [`OpenAIConversationsSession`](ref/memory/openai_conversations_session.md) - OpenAI Conversations API 구현
--   [`SQLAlchemySession`][agents.extensions.memory.sqlalchemy_session.SQLAlchemySession] - SQLAlchemy 기반 구현
--   [`EncryptedSession`][agents.extensions.memory.encrypt_session.EncryptedSession] - TTL이 포함된 암호화 세션 래퍼
+- [`Session`][agents.memory.Session] - 프로토콜 인터페이스
+- [`SQLiteSession`][agents.memory.SQLiteSession] - SQLite 구현
+- [`OpenAIConversationsSession`](ref/memory/openai_conversations_session.md) - OpenAI Conversations API 구현
+- [`SQLAlchemySession`][agents.extensions.memory.sqlalchemy_session.SQLAlchemySession] - SQLAlchemy 기반 구현
+- [`EncryptedSession`][agents.extensions.memory.encrypt_session.EncryptedSession] - TTL이 포함된 암호화 세션 래퍼
+
