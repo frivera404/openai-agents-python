@@ -49,3 +49,48 @@ curl -X POST http://localhost:3001/api/agent/launch \
 Sending malformed JSON (like missing double quotes or relying on single quotes alone) will trigger the server's JSON parser and return an `entity.parse.failed` error so you can adjust the payload before retrying.
 
 With these values in place, `npm run dev` starts both the Vite client and the Express server that now launches the OpenAI Assistants API for every agent call.
+
+## Local Development Quickstart
+
+Short instructions to run the backend services and the frontend dev server locally.
+
+### Prerequisites
+- Python 3.10+ (recommended)
+- Node.js and npm
+
+### Backend (open two terminals)
+
+PowerShell:
+```powershell
+# activate virtualenv
+& ".venv\Scripts\Activate.ps1"
+# install python deps (first time)
+pip install -r requirements.txt
+# run main API
+python -m uvicorn workflows.agent_system.app:app --reload --port 8080
+# run orchestrator (separate terminal)
+python -m uvicorn workflows.agent_system.orchestrator_app:app --reload --port 8081
+```
+
+### Frontend
+
+PowerShell / terminal:
+```powershell
+# from project root
+npm install
+npm run dev
+```
+
+Open in browser:
+- http://localhost:5173/
+- If localhost does not respond, try the IPv6 loopback: http://[::1]:5173/
+
+Notes:
+- Restart PowerShell after editing `C:\Program Files\nodejs\npm.ps1` so wrapper changes are picked up.
+- If `npm run dev` fails, run the user-local npm binary:
+
+```powershell
+"C:\Users\frive\AppData\Roaming\npm\npm.cmd" run dev
+```
+
+- Commit the fixed `package.json` and lockfile after verification.
