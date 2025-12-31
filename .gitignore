@@ -32,3 +32,9 @@ workspace/
 __pycache__/
 *.pyc
 dev-ui/
+
+# Local agent run artifacts
+.agent_state/
+.token.txt
+run_response.json
+run_final.json
