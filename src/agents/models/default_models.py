@@ -2,7 +2,7 @@ import copy
 import os
 from typing import Optional
 
-from agents.model_settings import ModelSettings
+from ..model_settings import ModelSettings
 from openai.types.shared import Reasoning
 
 OPENAI_DEFAULT_MODEL_ENV_VARIABLE_NAME = "OPENAI_DEFAULT_MODEL"
