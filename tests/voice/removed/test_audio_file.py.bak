@@ -1,0 +1,3 @@
+import pytest
+
+pytest.skip("Removed passed voice test", allow_module_level=True)
