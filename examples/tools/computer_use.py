@@ -34,6 +34,7 @@ async def main():
             )
             result = await Runner.run(agent, "Search for SF sports news and summarize.")
             import logging
+
             logging.getLogger(__name__).info(result.final_output)
 
 

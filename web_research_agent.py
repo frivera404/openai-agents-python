@@ -1,20 +1,21 @@
-from pydantic import BaseModel
-from typing import List
 import os
-import json
+
+from pydantic import BaseModel
+
 from openai import OpenAI
 
 # Try to import from either the installed 'openai.agents' package or
 # the local 'agents' package. This fallback ensures the agent can run
 # in environments where the package name differs or installation is missing.
 try:
-    from openai.agents import Agent, AgentInputItem, Runner, withTrace, ModelSettings
+    from openai.agents import Agent, AgentInputItem, ModelSettings, Runner, withTrace
 except Exception:
     # Official 'openai-agents' installs a top-level `agents` package.
     # Import relevant symbols from `agents` and provide aliasing for
     # types that may have different names across versions (e.g., TResponseInputItem).
     try:
-        from agents import Agent, Runner, ModelSettings
+        from agents import Agent, ModelSettings, Runner
+
         # `withTrace` may not be available in all `agents` versions; try importing it.
         try:
             from agents import withTrace
@@ -24,8 +25,10 @@ except Exception:
     except Exception:
         # Minimal fallback if `agents` package has a different API.
         from agents import Agent, Runner
+
         withTrace = None
         AgentInputItem = None
+
 
 class Company(BaseModel):
     company_name: str
@@ -36,8 +39,10 @@ class Company(BaseModel):
     description: str
     founded_year: int
 
+
 class WebResearchAgentOutput(BaseModel):
-    companies: List[Company]
+    companies: list[Company]
+
 
 class SummarizeAndDisplayOutput(BaseModel):
     company_name: str
@@ -48,9 +53,14 @@ class SummarizeAndDisplayOutput(BaseModel):
     description: str
     founded_year: int
 
+
 web_research_agent = Agent(
     name="Web research agent",
-    instructions="You are a helpful assistant. Use web search to find information about the following company I can use in marketing asset based on the underlying topic.",
+    instructions=(
+        "You are a helpful assistant. Use web search to find information about "
+        "the following company that can be used in a marketing asset, based "
+        "on the provided topic."
+    ),
     model="gpt-4.1",
     output_type=WebResearchAgentOutput,
     model_settings=ModelSettings(
@@ -58,19 +68,23 @@ web_research_agent = Agent(
         top_p=1,
         max_tokens=2048,
         store=True,
-    )
+    ),
 )
 
 summarize_and_display = Agent(
     name="Summarize and display",
-    instructions="Put the research together in a nice display using the output format described.",
+    instructions=(
+        "Put the research together in a clear display using the output format "
+        "described."
+    ),
     model="gpt-4.1",
     output_type=SummarizeAndDisplayOutput,
     model_settings=ModelSettings(
         reasoning={"effort": "minimal", "summary": "auto"},
         store=True,
-    )
+    ),
 )
+
 
 async def run_web_research_workflow(input_text: str):
     # Use `withTrace` if available; otherwise use a no-op async context manager.
@@ -86,8 +100,7 @@ async def run_web_research_workflow(input_text: str):
         _trace_ctx = withTrace("web research agent")
 
     async with _trace_ctx:
-        state = {}
-        conversation_history: List[AgentInputItem] = [
+        conversation_history: list[AgentInputItem] = [
             {"role": "user", "content": [{"type": "input_text", "text": input_text}]}
         ]
         # Instantiate Runner in a backwards-compatible way: some versions accept
@@ -96,7 +109,7 @@ async def run_web_research_workflow(input_text: str):
         # constructor first and fall back to a no-arg Runner if needed.
         trace_metadata = {
             "__trace_source__": "agent-builder",
-            "workflow_id": "wf_6902eca050788190a1ddf8a59364d5de0e4a2bb1fc56131c"
+            "workflow_id": "wf_6902eca050788190a1ddf8a59364d5de0e4a2bb1fc56131c",
         }
 
         try:
@@ -114,7 +127,7 @@ async def run_web_research_workflow(input_text: str):
         # attribute, set it so older/newer APIs can read it from the
         # instance rather than constructor args.
         try:
-            setattr(runner, 'trace_metadata', trace_metadata)
+            runner.trace_metadata = trace_metadata
         except Exception:
             # Ignore if attribute assignment isn't supported.
             pass
@@ -126,10 +139,10 @@ async def run_web_research_workflow(input_text: str):
             run_kwargs = {}
             try:
                 sig = inspect.signature(runner_obj.run)
-                if 'trace_metadata' in sig.parameters:
-                    run_kwargs['trace_metadata'] = trace_metadata
-                elif 'trace' in sig.parameters:
-                    run_kwargs['trace'] = trace_metadata
+                if "trace_metadata" in sig.parameters:
+                    run_kwargs["trace_metadata"] = trace_metadata
+                elif "trace" in sig.parameters:
+                    run_kwargs["trace"] = trace_metadata
             except Exception:
                 # If introspection fails, fall back to passing nothing.
                 pass
@@ -152,11 +165,13 @@ async def run_web_research_workflow(input_text: str):
         try:
             # (debug prints removed)
 
-            web_research_result = await _run_with_trace(runner, web_research_agent, conversation_history)
+            web_research_result = await _run_with_trace(
+                runner, web_research_agent, conversation_history
+            )
 
             # Support different shapes for new_items across library versions.
-            for item in getattr(web_research_result, 'new_items', []) or []:
-                if hasattr(item, 'raw_item'):
+            for item in getattr(web_research_result, "new_items", []) or []:
+                if hasattr(item, "raw_item"):
                     conversation_history.append(item.raw_item)
                 else:
                     conversation_history.append(item)
@@ -164,14 +179,16 @@ async def run_web_research_workflow(input_text: str):
             if not web_research_result.final_output:
                 raise ValueError("Agent result is undefined")
 
-            summarize_result = await _run_with_trace(runner, summarize_and_display, conversation_history)
+            summarize_result = await _run_with_trace(
+                runner, summarize_and_display, conversation_history
+            )
 
             if not summarize_result.final_output:
                 raise ValueError("Agent result is undefined")
 
             summarize_output = {
                 "output_text": summarize_result.final_output.model_dump_json(),
-                "output_parsed": summarize_result.final_output
+                "output_parsed": summarize_result.final_output,
             }
             return summarize_output
         except Exception as exc:
@@ -179,19 +196,21 @@ async def run_web_research_workflow(input_text: str):
             # mismatches with the installed OpenAI client, fall back to a
             # direct Responses API call with a normalized single-string input.
             err_str = str(exc)
-            if "Invalid type for 'input[1]'" in err_str or 'invalid_type' in err_str.lower():
-                api_key = os.getenv('OPENAI_API_KEY')
+            if "Invalid type for 'input[1]'" in err_str or "invalid_type" in err_str.lower():
+                api_key = os.getenv("OPENAI_API_KEY")
                 if not api_key:
                     raise
 
                 client = OpenAI(api_key=api_key)
-                system_text = web_research_agent.instructions or ''
+                system_text = web_research_agent.instructions or ""
                 prompt_text = f"{system_text}\n\nUser: {input_text}"
 
                 fallback_payload = {
                     "model": web_research_agent.model or "gpt-4.1",
                     "input": prompt_text,
-                    "temperature": web_research_agent.model_settings.temperature if getattr(web_research_agent, 'model_settings', None) else 1,
+                    "temperature": web_research_agent.model_settings.temperature
+                    if getattr(web_research_agent, "model_settings", None)
+                    else 1,
                     "store": True,
                 }
                 # (debug prints removed)
@@ -208,21 +227,23 @@ async def run_web_research_workflow(input_text: str):
                     raise
 
                 # Extract text from response similar to other runner code
-                assistant_response = ''
-                output = getattr(response, 'output', None)
+                assistant_response = ""
+                output = getattr(response, "output", None)
                 if output:
                     for item in output:
-                        if getattr(item, 'type', None) == 'message':
-                            content = getattr(item, 'content', None)
+                        if getattr(item, "type", None) == "message":
+                            content = getattr(item, "content", None)
                             if isinstance(content, list):
                                 for c in content:
-                                    c_type = getattr(c, 'type', None)
+                                    c_type = getattr(c, "type", None)
                                     if c_type in ("output_text", "text"):
-                                        text_obj = getattr(c, 'text', None)
+                                        text_obj = getattr(c, "text", None)
                                         if isinstance(text_obj, str):
                                             assistant_response += text_obj
                                         elif isinstance(text_obj, dict):
-                                            text_value = text_obj.get('value') or text_obj.get('text')
+                                            text_value = text_obj.get("value") or text_obj.get(
+                                                "text"
+                                            )
                                             if text_value:
                                                 assistant_response += str(text_value)
                             elif isinstance(content, str):
@@ -240,8 +261,8 @@ async def run_web_research_workflow(input_text: str):
                 # Not an input-shape error we handle here; re-raise
                 raise
         # Support different shapes for new_items across library versions.
-        for item in getattr(web_research_result, 'new_items', []) or []:
-            if hasattr(item, 'raw_item'):
+        for item in getattr(web_research_result, "new_items", []) or []:
+            if hasattr(item, "raw_item"):
                 conversation_history.append(item.raw_item)
             else:
                 # If item is already a raw dict-like item or AgentInputItem.
@@ -250,17 +271,19 @@ async def run_web_research_workflow(input_text: str):
         if not web_research_result.final_output:
             raise ValueError("Agent result is undefined")
 
-        web_research_output = {
+        {
             "output_text": web_research_result.final_output.model_dump_json(),
-            "output_parsed": web_research_result.final_output
+            "output_parsed": web_research_result.final_output,
         }
-        summarize_result = await _run_with_trace(runner, summarize_and_display, conversation_history)
+        summarize_result = await _run_with_trace(
+            runner, summarize_and_display, conversation_history
+        )
 
         if not summarize_result.final_output:
             raise ValueError("Agent result is undefined")
 
         summarize_output = {
             "output_text": summarize_result.final_output.model_dump_json(),
-            "output_parsed": summarize_result.final_output
+            "output_parsed": summarize_result.final_output,
         }
         return summarize_output

@@ -3,12 +3,12 @@ from typing import Any
 
 import pytest
 from mcp.types import CallToolResult, TextContent, Tool as MCPTool
+from pydantic import BaseModel, TypeAdapter
 
 from agents import Agent, FunctionTool, RunContextWrapper
 from agents.exceptions import AgentsException, ModelBehaviorError
 from agents.mcp import MCPServer, MCPUtil
 from inline_snapshot import snapshot
-from pydantic import BaseModel, TypeAdapter
 
 from .helpers import FakeMCPServer
 

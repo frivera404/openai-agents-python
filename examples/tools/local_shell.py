@@ -39,6 +39,7 @@ async def main():
             "List the files in the current directory and tell me how many there are.",
         )
         import logging
+
         logging.getLogger(__name__).info(result.final_output)
 
 

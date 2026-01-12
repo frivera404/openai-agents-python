@@ -20,6 +20,8 @@ services:
       start_period: 10s
     environment:
       - PYTHONUNBUFFERED=1
+      - FASTMCP_TRANSPORT_SECURITY__ENABLE_DNS_REBINDING_PROTECTION=false
+      - FASTMCP_TRANSPORT_SECURITY__ALLOWED_HOSTS=["mcp-filesystem:*"]
     command:
       [
         'uvicorn',
@@ -37,7 +39,9 @@ services:
     depends_on:
       mcp-filesystem:
         condition: service_healthy
-    volumes:
-      - .:/app
+    # Do not mount the host repository into the container. Mounting the
+    # Windows `.venv` into the Linux container caused I/O errors when the
+    # container attempted to modify `/app/.venv`. Use the image's copy of
+    # the repository (built from the Dockerfile) instead.
     working_dir: /app
     command: uv run python examples/integration_example.py

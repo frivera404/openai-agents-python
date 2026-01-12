@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 AssistantsAgent: thin wrapper around the OpenAI Assistants API.
-python 
+python
 Usage examples:
 
   # 0) Export your key
@@ -32,10 +32,10 @@ Usage examples:
     --file-id file_456...
 """
 
+import argparse
 import os
 import time
-import argparse
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 from openai import OpenAI
 
@@ -67,6 +67,7 @@ class AssistantsAgent:
 
         search_lower = search.lower()
         filtered = [m for m in models.data if search_lower in m.id.lower()]
+
         # Wrap filtered list back into a simple namespace-like object
         class _Result:
             def __init__(self, data):
@@ -84,10 +85,10 @@ class AssistantsAgent:
         model: str,
         instructions: str,
         tools: Optional[list] = None,
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: Optional[dict[str, Any]] = None,
     ):
         tools = tools or []
-        payload: Dict[str, Any] = {
+        payload: dict[str, Any] = {
             "name": name,
             "model": model,
             "instructions": instructions,
@@ -115,7 +116,7 @@ class AssistantsAgent:
     # ---------------------
 
     def create_thread(self, messages: Optional[list] = None, metadata: Optional[dict] = None):
-        payload: Dict[str, Any] = {}
+        payload: dict[str, Any] = {}
         if messages:
             payload["messages"] = messages
         if metadata:
@@ -144,7 +145,7 @@ class AssistantsAgent:
         thread_id: str,
         role: str,
         content: str,
-        file_ids: Optional[List[str]] = None,
+        file_ids: Optional[list[str]] = None,
     ):
         """Create a message on a thread.
 
@@ -152,7 +153,7 @@ class AssistantsAgent:
         on messages.create; files are attached via the "attachments" field instead.
         For simple text messages (the common case here), we only send role+content.
         """
-        kwargs: Dict[str, Any] = {
+        kwargs: dict[str, Any] = {
             "thread_id": thread_id,
             "role": role,
             "content": content,
@@ -160,9 +161,7 @@ class AssistantsAgent:
 
         # If file_ids are provided, map them into attachments for forward compatibility.
         if file_ids:
-            kwargs["attachments"] = [
-                {"file_id": fid} for fid in file_ids
-            ]
+            kwargs["attachments"] = [{"file_id": fid} for fid in file_ids]
 
         return self.client.beta.threads.messages.create(**kwargs)
 
@@ -191,7 +190,7 @@ class AssistantsAgent:
         additional_tools: Optional[list] = None,
         tool_resources: Optional[dict] = None,
     ):
-        payload: Dict[str, Any] = {
+        payload: dict[str, Any] = {
             "thread_id": thread_id,
             "assistant_id": assistant_id,
         }
@@ -221,7 +220,7 @@ class AssistantsAgent:
             run_id=run_id,
         )
 
-    def submit_tool_outputs(self, thread_id: str, run_id: str, tool_outputs: List[Dict[str, Any]]):
+    def submit_tool_outputs(self, thread_id: str, run_id: str, tool_outputs: list[dict[str, Any]]):
         return self.client.beta.threads.runs.submit_tool_outputs(
             thread_id=thread_id,
             run_id=run_id,
@@ -229,7 +228,8 @@ class AssistantsAgent:
         )
 
     def submit_message(self, thread_id: str, run_id: str, role: str, content: str):
-        # Some variants name this differently; use threads.messages.create + runs.submit_tool_outputs/message style as needed.
+        # Some variants name this differently.
+        # Use threads.messages.create + runs.submit_tool_outputs/message style as needed.
         return self.client.beta.threads.runs.submit_message(
             thread_id=thread_id,
             run_id=run_id,
@@ -265,7 +265,7 @@ class AssistantsAgent:
         return file_obj
 
     def list_files(self, purpose: Optional[str] = None):
-        kwargs: Dict[str, Any] = {}
+        kwargs: dict[str, Any] = {}
         if purpose:
             kwargs["purpose"] = purpose
         return self.client.files.list(**kwargs)
@@ -280,9 +280,14 @@ class AssistantsAgent:
     # Vector stores
     # ---------------------
 
-    def create_vector_store(self, name: str, file_ids: Optional[List[str]] = None, metadata: Optional[Dict[str, Any]] = None):
+    def create_vector_store(
+        self,
+        name: str,
+        file_ids: Optional[list[str]] = None,
+        metadata: Optional[dict[str, Any]] = None,
+    ):
         file_ids = file_ids or []
-        payload: Dict[str, Any] = {"name": name, "file_ids": file_ids}
+        payload: dict[str, Any] = {"name": name, "file_ids": file_ids}
         if metadata:
             payload["metadata"] = metadata
         return self.client.vector_stores.create(**payload)
@@ -336,8 +341,12 @@ class AssistantsAgent:
         assistant_id: str,
         user_message: str,
         thread_id: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Single-turn chat helper: create thread (if needed), send user message, run assistant, return reply."""
+    ) -> dict[str, Any]:
+        """Single-turn chat helper.
+
+        Creates a thread (if needed), sends the user message, runs the
+        assistant, and returns the assistant reply.
+        """
         if thread_id is None:
             thread = self.create_thread()
             thread_id = thread.id
@@ -362,7 +371,7 @@ class AssistantsAgent:
             return {"thread_id": thread_id, "assistant_reply": None}
 
         latest = messages.data[0]
-        text_chunks: List[str] = []
+        text_chunks: list[str] = []
         for c in latest.content:
             if c.type == "text":
                 text_chunks.append(c.text.value)
@@ -374,6 +383,7 @@ class AssistantsAgent:
 # -------------------------
 # CLI helpers
 # -------------------------
+
 
 def cmd_create_assistant(agent: AssistantsAgent, args: argparse.Namespace) -> None:
     assistant = agent.create_assistant(

@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import asyncio
+import logging
+
+from pydantic import BaseModel
 
 from agents import Agent, ModelSettings, Runner, function_tool, set_tracing_disabled
-import logging
-from pydantic import BaseModel
 
 """This example uses the built-in support for LiteLLM. To use this, ensure you have the
 OPENAI_API_KEY environment variable set.

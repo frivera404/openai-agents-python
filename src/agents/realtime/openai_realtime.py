@@ -9,11 +9,12 @@ from collections.abc import Mapping
 from datetime import datetime
 from typing import Annotated, Any, Callable, Literal, Union, cast
 
+import pydantic
 import websockets
+from pydantic import Field, TypeAdapter
 from typing_extensions import assert_never
 from websockets.asyncio.client import ClientConnection
 
-import pydantic
 from agents.handoffs import Handoff
 from agents.prompts import Prompt
 from agents.realtime._default_tracker import ModelAudioTracker
@@ -87,7 +88,6 @@ from openai.types.realtime.session_update_event import (
     SessionUpdateEvent as OpenAISessionUpdateEvent,
 )
 from openai.types.responses.response_prompt import ResponsePrompt
-from pydantic import Field, TypeAdapter
 
 from ..exceptions import UserError
 from ..logger import logger

@@ -3,9 +3,8 @@ from __future__ import annotations
 import inspect
 from typing import TYPE_CHECKING, Any, Callable, cast, overload
 
-from typing_extensions import TypeVar
-
 from pydantic import TypeAdapter
+from typing_extensions import TypeVar
 
 from ..exceptions import ModelBehaviorError, UserError
 from ..handoffs import Handoff

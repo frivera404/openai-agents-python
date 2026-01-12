@@ -1,5 +1,6 @@
 import os
 import sys
+
 import pytest
 
 # Path to an external test audio file used by voice tests.

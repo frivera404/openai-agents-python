@@ -5,6 +5,7 @@ connections, including SSL certificates, proxy settings, and custom timeouts.
 """
 
 import asyncio
+import logging
 import os
 import shutil
 import subprocess
@@ -12,6 +13,7 @@ import time
 from typing import Any
 
 import httpx
+
 from agents import Agent, Runner, gen_trace_id, trace
 from agents.mcp import MCPServer, MCPServerStreamableHttp
 from agents.model_settings import ModelSettings
@@ -61,6 +63,7 @@ async def run_with_custom_client(mcp_server: MCPServer):
     # Use the `add` tool to add two numbers
     message = "Add these numbers: 7 and 22."
     import logging
+
     logging.getLogger(__name__).info("Running: %s", message)
     result = await Runner.run(starting_agent=agent, input=message)
     logging.getLogger(__name__).info(result.final_output)
@@ -70,6 +73,7 @@ async def main():
     """Main function demonstrating different HTTP client configurations."""
 
     import logging
+
     logging.getLogger(__name__).info(
         "=== Example: Custom HTTP Client with SSL disabled and custom headers ==="
     )
@@ -102,7 +106,9 @@ if __name__ == "__main__":
         this_dir = os.path.dirname(os.path.abspath(__file__))
         server_file = os.path.join(this_dir, "server.py")
 
-        logging.getLogger(__name__).info("Starting Streamable HTTP server at http://localhost:8000/mcp ...")
+        logging.getLogger(__name__).info(
+            "Starting Streamable HTTP server at http://localhost:8000/mcp ..."
+        )
 
         # Run `uv run server.py` to start the Streamable HTTP server
         process = subprocess.Popen(["uv", "run", server_file])

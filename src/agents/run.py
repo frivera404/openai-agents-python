@@ -6,7 +6,11 @@ import inspect
 import os
 import warnings
 from dataclasses import dataclass, field
-from typing import Any, Callable, Generic, cast
+
+# from openai.types.responses.response_prompt_param import (
+# 	ResponsePromptParam,
+# )
+from typing import Any, Any as _AnyAlias, Callable, Generic, cast
 
 from typing_extensions import NotRequired, TypedDict, Unpack
 
@@ -18,12 +22,6 @@ from openai.types.responses import (
     ResponseFunctionWebSearch,
     ResponseOutputItemDoneEvent,
 )
-
-# from openai.types.responses.response_prompt_param import (
-# 	ResponsePromptParam,
-# )
-from typing import Any as _AnyAlias
-ResponsePromptParam = _AnyAlias
 from openai.types.responses.response_reasoning_item import ResponseReasoningItem
 
 from ._run_impl import (
@@ -86,6 +84,8 @@ from .tracing.span_data import AgentSpanData
 from .usage import Usage
 from .util import _coro, _error_tracing
 from .util._types import MaybeAwaitable
+
+ResponsePromptParam = _AnyAlias
 
 DEFAULT_MAX_TURNS = 10
 

@@ -1,6 +1,7 @@
+from pydantic import BaseModel
+
 from agents import Agent, ModelSettings
 from openai.types.shared.reasoning import Reasoning
-from pydantic import BaseModel
 
 PROMPT = (
     "You are a helpful research assistant. Given a query, come up with a set of web searches "

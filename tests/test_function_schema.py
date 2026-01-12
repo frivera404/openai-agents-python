@@ -3,12 +3,12 @@ from enum import Enum
 from typing import Annotated, Any, Literal
 
 import pytest
+from pydantic import BaseModel, Field, ValidationError
 from typing_extensions import TypedDict
 
 from agents import RunContextWrapper
 from agents.exceptions import UserError
 from agents.function_schema import function_schema
-from pydantic import BaseModel, Field, ValidationError
 
 
 def no_args_function():

@@ -4,8 +4,6 @@ from typing import Literal
 
 # Load environment variables from .env file if present
 try:
-    import os
-
     from dotenv import load_dotenv
 
     # Load .env from the current working directory

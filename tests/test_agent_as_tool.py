@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 import pytest
+from pydantic import BaseModel
 
 from agents import (
     Agent,
@@ -18,7 +19,6 @@ from agents import (
 )
 from agents.tool_context import ToolContext
 from openai.types.responses import ResponseOutputMessage, ResponseOutputText
-from pydantic import BaseModel
 
 
 class BoolCtx(BaseModel):

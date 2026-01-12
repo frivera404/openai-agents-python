@@ -1,8 +1,9 @@
 from typing import Annotated, Literal, Union
 
+from pydantic import BaseModel, Field
+
 from agents.agent_output import AgentOutputSchema
 from agents.strict_schema import ensure_strict_json_schema
-from pydantic import BaseModel, Field
 
 
 def test_oneof_converted_to_anyof():

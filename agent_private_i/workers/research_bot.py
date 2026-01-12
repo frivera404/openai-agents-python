@@ -1,5 +1,6 @@
-from agent_private_i.workers.base import WorkerBase
 import os
+
+from agent_private_i.workers.base import WorkerBase
 
 
 class ResearchBotWorker(WorkerBase):
@@ -16,7 +17,7 @@ class ResearchBotWorker(WorkerBase):
 
                 m = MCPTool(mcp_base)
                 resp = m.search_files(path=".", query=query, max_results=5)
-                return {"notes": f"MCP search returned", "mcp": resp}
+                return {"notes": "MCP search returned", "mcp": resp}
             except Exception as e:
                 return {"error": f"MCP search failed: {e}"}
 

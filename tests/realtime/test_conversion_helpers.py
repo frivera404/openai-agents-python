@@ -4,6 +4,7 @@ import base64
 from unittest.mock import Mock
 
 import pytest
+from pydantic import ValidationError
 
 from agents.realtime.config import RealtimeModelTracingConfig
 from agents.realtime.model_inputs import (
@@ -20,7 +21,6 @@ from openai.types.realtime.input_audio_buffer_append_event import InputAudioBuff
 from openai.types.realtime.realtime_conversation_item_function_call_output import (
     RealtimeConversationItemFunctionCallOutput,
 )
-from pydantic import ValidationError
 
 
 class TestConversionHelperTryConvertRawMessage:

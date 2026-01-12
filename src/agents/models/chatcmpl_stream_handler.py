@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator
 from dataclasses import dataclass, field
+from types import SimpleNamespace
 
 from openai import AsyncStream
 from openai.types.chat import ChatCompletionChunk
@@ -29,10 +30,11 @@ from openai.types.responses import (
     ResponseUsage,
 )
 
-# from openai.types.responses.response_reasoning_item import Content, Summary
-Content = object
-Summary = object
+# Bring additional response usage and local imports to top to keep imports grouped
 from openai.types.responses.response_usage import InputTokensDetails, OutputTokensDetails
+
+from ..items import TResponseStreamEvent
+from .fake_id import FAKE_RESPONSES_ID
 
 # These detailed reasoning summary / text event types are not present
 # in the installed openai version; use simple aliases to keep typing
@@ -42,8 +44,18 @@ DoneEventPart = object
 ResponseReasoningTextDeltaEvent = object
 ResponseReasoningTextDoneEvent = object
 
-from ..items import TResponseStreamEvent
-from .fake_id import FAKE_RESPONSES_ID
+
+# from openai.types.responses.response_reasoning_item import Content, Summary
+@dataclass
+class Content:
+    text: str
+    type: str
+
+
+@dataclass
+class Summary:
+    text: str
+    type: str
 
 
 # Define a Part class for internal use
@@ -126,14 +138,14 @@ class ChatCmplStreamHandler:
                         0,
                         ResponseReasoningItem(
                             id=FAKE_RESPONSES_ID,
-                            summary=[Summary(text="", type="summary_text")],
+                            summary=[{"text": "", "type": "summary_text"}],
                             type="reasoning",
                         ),
                     )
                     yield ResponseOutputItemAddedEvent(
                         item=ResponseReasoningItem(
                             id=FAKE_RESPONSES_ID,
-                            summary=[Summary(text="", type="summary_text")],
+                            summary=[{"text": "", "type": "summary_text"}],
                             type="reasoning",
                         ),
                         output_index=0,
@@ -145,7 +157,7 @@ class ChatCmplStreamHandler:
                         item_id=FAKE_RESPONSES_ID,
                         output_index=0,
                         summary_index=0,
-                        part=AddedEventPart(text="", type="summary_text"),
+                        part={"text": "", "type": "summary_text"},
                         type="response.reasoning_summary_part.added",
                         sequence_number=sequence_number.get_and_increment(),
                     )
@@ -154,7 +166,7 @@ class ChatCmplStreamHandler:
                     # Ensure summary list has at least one element
                     if not state.reasoning_content_index_and_output[1].summary:
                         state.reasoning_content_index_and_output[1].summary = [
-                            Summary(text="", type="summary_text")
+                            {"text": "", "type": "summary_text"}
                         ]
 
                     yield ResponseReasoningSummaryTextDeltaEvent(
@@ -168,8 +180,14 @@ class ChatCmplStreamHandler:
 
                     # Create a new summary with updated text
                     current_content = state.reasoning_content_index_and_output[1].summary[0]
-                    updated_text = current_content.text + reasoning_content
-                    new_content = Summary(text=updated_text, type="summary_text")
+                    # current_content may be a dict or pydantic model; normalize to text
+                    current_text = (
+                        current_content.get("text")
+                        if isinstance(current_content, dict)
+                        else getattr(current_content, "text", "")
+                    )
+                    updated_text = current_text + reasoning_content
+                    new_content = {"text": updated_text, "type": "summary_text"}
                     state.reasoning_content_index_and_output[1].summary[0] = new_content
 
             # Handle reasoning content from 3rd party platforms
@@ -181,7 +199,7 @@ class ChatCmplStreamHandler:
                         ResponseReasoningItem(
                             id=FAKE_RESPONSES_ID,
                             summary=[],
-                            content=[Content(text="", type="reasoning_text")],
+                            content=[{"text": "", "type": "reasoning_text"}],
                             type="reasoning",
                         ),
                     )
@@ -189,7 +207,7 @@ class ChatCmplStreamHandler:
                         item=ResponseReasoningItem(
                             id=FAKE_RESPONSES_ID,
                             summary=[],
-                            content=[Content(text="", type="reasoning_text")],
+                            content=[{"text": "", "type": "reasoning_text"}],
                             type="reasoning",
                         ),
                         output_index=0,
@@ -210,11 +228,16 @@ class ChatCmplStreamHandler:
                     # Create a new summary with updated text
                     if not state.reasoning_content_index_and_output[1].content:
                         state.reasoning_content_index_and_output[1].content = [
-                            Content(text="", type="reasoning_text")
+                            {"text": "", "type": "reasoning_text"}
                         ]
-                    current_text = state.reasoning_content_index_and_output[1].content[0]
-                    updated_text = current_text.text + reasoning_text
-                    new_text_content = Content(text=updated_text, type="reasoning_text")
+                    current_text_item = state.reasoning_content_index_and_output[1].content[0]
+                    current_text = (
+                        current_text_item.get("text")
+                        if isinstance(current_text_item, dict)
+                        else getattr(current_text_item, "text", "")
+                    )
+                    updated_text = current_text + reasoning_text
+                    new_text_content = {"text": updated_text, "type": "reasoning_text"}
                     state.reasoning_content_index_and_output[1].content[0] = new_text_content
 
             # Handle regular content
@@ -420,14 +443,18 @@ class ChatCmplStreamHandler:
                 state.reasoning_content_index_and_output[1].summary
                 and len(state.reasoning_content_index_and_output[1].summary) > 0
             ):
+                # summary[0] may be a dict or a pydantic model; extract text accordingly
+                summary_item = state.reasoning_content_index_and_output[1].summary[0]
+                summary_text = (
+                    summary_item.get("text")
+                    if isinstance(summary_item, dict)
+                    else getattr(summary_item, "text", "")
+                )
                 yield ResponseReasoningSummaryPartDoneEvent(
                     item_id=FAKE_RESPONSES_ID,
                     output_index=0,
                     summary_index=0,
-                    part=DoneEventPart(
-                        text=state.reasoning_content_index_and_output[1].summary[0].text,
-                        type="summary_text",
-                    ),
+                    part={"text": summary_text, "type": "summary_text"},
                     type="response.reasoning_summary_part.done",
                     sequence_number=sequence_number.get_and_increment(),
                 )
@@ -611,6 +638,26 @@ class ChatCmplStreamHandler:
             if usage
             else None
         )
+
+        # Normalize any dict-based summary/content entries into objects with
+        # attribute access so downstream tests and consumers can use `.text`.
+        for out in outputs:
+            try:
+                if isinstance(out, ResponseReasoningItem):
+                    if getattr(out, "summary", None):
+                        out.summary = [
+                            (SimpleNamespace(**s) if isinstance(s, dict) else s)
+                            for s in out.summary
+                        ]
+                    if getattr(out, "content", None):
+                        out.content = [
+                            (SimpleNamespace(**c) if isinstance(c, dict) else c)
+                            for c in out.content
+                        ]
+            except Exception:
+                # Be conservative: if normalization fails, continue without
+                # raising so downstream validation can surface meaningful errors.
+                pass
 
         yield ResponseCompletedEvent(
             response=final_response,

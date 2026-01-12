@@ -1,10 +1,10 @@
 import asyncio
+import logging
 import os
 import shutil
 import subprocess
 import time
 from typing import Any
-import logging
 
 from agents import Agent, Runner, gen_trace_id, trace
 from agents.mcp import MCPServer, MCPServerStreamableHttp
@@ -93,6 +93,7 @@ if __name__ == "__main__":
         raise RuntimeError("uv is not installed")
 
     import logging as _logging
+
     _logging.basicConfig(level=_logging.INFO)
 
     process: subprocess.Popen[Any] | None = None

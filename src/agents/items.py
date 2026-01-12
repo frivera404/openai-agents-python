@@ -2,32 +2,47 @@ from __future__ import annotations
 
 import abc
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Generic, Literal, TypeVar, Union
-
-from typing_extensions import TypeAlias, assert_never
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Any as ComputerCallOutput,
+    Any as FunctionCallOutput,
+    Any as ImageGenerationCall,
+    Any as LocalShellCall,
+    Any as LocalShellCallOutput,
+    Any as McpApprovalRequest,
+    Any as McpApprovalResponse,
+    Any as McpCall,
+    Any as McpListTools,
+    Any as ResponseFunctionCallOutputItemListParam,
+    Any as ResponseFunctionCallOutputItemParam,
+    Generic,
+    Literal,
+    TypeVar,
+    Union,
+)
 
 import pydantic
+from pydantic import BaseModel, ConfigDict
+from typing_extensions import TypeAlias, assert_never
+
 from openai.types.responses import (
     Response,
     ResponseComputerToolCall,
+    ResponseComputerToolCall as ResponseCodeInterpreterToolCall,
     ResponseFileSearchToolCall,
     ResponseFunctionToolCall,
     ResponseFunctionWebSearch,
+    ResponseInputFileParam as ResponseInputFileContentParam,
+    ResponseInputImageParam as ResponseInputImageContentParam,
     ResponseInputItemParam,
     ResponseOutputItem,
     ResponseOutputMessage,
     ResponseOutputRefusal,
     ResponseOutputText,
+    ResponseReasoningItem,
     ResponseStreamEvent,
 )
-from openai.types.responses import ResponseComputerToolCall as ResponseCodeInterpreterToolCall
-from typing import Any as ResponseFunctionCallOutputItemListParam, Any as ResponseFunctionCallOutputItemParam
-from openai.types.responses import ResponseInputFileParam as ResponseInputFileContentParam
-from openai.types.responses import ResponseInputImageParam as ResponseInputImageContentParam
-from typing import Any as ComputerCallOutput, Any as FunctionCallOutput, Any as LocalShellCallOutput, Any as McpApprovalResponse
-from typing import Any as ImageGenerationCall, Any as LocalShellCall, Any as McpApprovalRequest, Any as McpCall, Any as McpListTools
-from openai.types.responses import ResponseReasoningItem
-from pydantic import BaseModel, ConfigDict
 
 from .exceptions import AgentsException, ModelBehaviorError
 from .logger import logger

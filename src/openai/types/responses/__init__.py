@@ -61,10 +61,6 @@ class ResponseOutputRefusal(BaseModel):
     refusal: Any | None
 
 
-class ResponseOutputMessage(BaseModel):
-    content: Any | None
-
-
 class ResponseOutputItem(BaseModel):
     """Base class for all response output items.
 

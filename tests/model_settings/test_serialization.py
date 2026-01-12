@@ -1,11 +1,11 @@
 import json
 from dataclasses import fields
 
+from pydantic import TypeAdapter
 from pydantic_core import to_json
 
 from agents.model_settings import MCPToolChoice, ModelSettings
 from openai.types.shared import Reasoning
-from pydantic import TypeAdapter
 
 
 def verify_serialization(model_settings: ModelSettings) -> None:

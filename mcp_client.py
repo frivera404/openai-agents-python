@@ -24,8 +24,8 @@ import logging
 import os
 import re
 import sys
-from typing import Dict, List, Optional, Any
 from pathlib import Path
+from typing import Optional
 
 import click
 from dotenv import load_dotenv
@@ -36,10 +36,10 @@ load_dotenv()
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     handlers=[
         logging.StreamHandler(sys.stdout),
-        logging.FileHandler('mcp_client.log', encoding='utf-8'),
+        logging.FileHandler("mcp_client.log", encoding="utf-8"),
     ],
 )
 logger = logging.getLogger(__name__)
@@ -52,8 +52,12 @@ _ENV_VAR_PATTERN = re.compile(r"\$\{([A-Z0-9_]+)\}")
 
 try:
     from agents import Agent, Runner
-    from agents.mcp import MCPServerStreamableHttp, MCPServerStreamableHttpParams
-    from agents.mcp import MCPServerStdio, MCPServerStdioParams
+    from agents.mcp import (
+        MCPServerStdio,
+        MCPServerStdioParams,
+        MCPServerStreamableHttp,
+        MCPServerStreamableHttpParams,
+    )
     from agents.model_settings import ModelSettings
 except ImportError as e:
     logger.error(f"Failed to import OpenAI Agents SDK: {e}")
@@ -73,9 +77,9 @@ class MCPClientConfig:
         """Load MCP server configuration"""
         if os.path.exists(self.config_file):
             try:
-                with open(self.config_file, 'r') as f:
+                with open(self.config_file) as f:
                     config = json.load(f)
-                    self.servers = config.get('servers', {})
+                    self.servers = config.get("servers", {})
                 logger.info(f"Loaded configuration from {self.config_file}")
             except Exception as e:
                 logger.error(f"Failed to load config from {self.config_file}: {e}")
@@ -90,21 +94,21 @@ class MCPClientConfig:
                 "url": "https://18268932-6837335c7e6338.router.cloudmcp.run/mcp",
                 "headers": {"Authorization": f"Bearer {os.getenv('CLOUDMCP_TOKEN', 'your-token')}"},
                 "type": "http",
-                "timeout": 30
+                "timeout": 30,
             },
             "cloudmcp-server-48e7550c72e668": {
                 "command": "npx",
                 "args": ["mcp-remote", "https://18268932-48e7550c72e668.router.cloudmcp.run/mcp"],
                 "env": {},
-                "type": "stdio"
-            }
+                "type": "stdio",
+            },
         }
 
-    def get_server_configs(self) -> Dict[str, Dict]:
+    def get_server_configs(self) -> dict[str, dict]:
         """Get all server configurations"""
         return self.servers
 
-    def get_server_config(self, name: str) -> Optional[Dict]:
+    def get_server_config(self, name: str) -> Optional[dict]:
         """Get configuration for a specific server"""
         return self.servers.get(name)
 
@@ -117,7 +121,7 @@ class MCPClient:
         self.mcp_servers = []
         self.agent = None
 
-    async def initialize_servers(self, server_names: Optional[List[str]] = None) -> bool:
+    async def initialize_servers(self, server_names: Optional[list[str]] = None) -> bool:
         """Initialize MCP servers"""
         try:
             server_configs = self.config.get_server_configs()
@@ -143,8 +147,9 @@ class MCPClient:
 
             if server_names:
                 # Filter to specified servers
-                server_configs = {name: config for name, config in server_configs.items()
-                                if name in server_names}
+                server_configs = {
+                    name: config for name, config in server_configs.items() if name in server_names
+                }
 
             for server_name, server_config in server_configs.items():
                 # Allow disabling misbehaving servers via config.
@@ -155,7 +160,7 @@ class MCPClient:
                 logger.info(f"Initializing MCP server: {server_name}")
 
                 try:
-                    if server_config.get('type') == 'http' or 'url' in server_config:
+                    if server_config.get("type") == "http" or "url" in server_config:
                         # HTTP Streamable MCP Server
                         params: MCPServerStreamableHttpParams = {
                             "url": interpolate(server_config["url"]),
@@ -168,9 +173,7 @@ class MCPClient:
                         }
 
                         server = MCPServerStreamableHttp(
-                            params=params,
-                            name=server_name,
-                            cache_tools_list=True
+                            params=params, name=server_name, cache_tools_list=True
                         )
 
                     else:
@@ -207,10 +210,7 @@ class MCPClient:
                             ),
                         }
 
-                        server = MCPServerStdio(
-                            params=params,
-                            name=server_name
-                        )
+                        server = MCPServerStdio(params=params, name=server_name)
 
                     # Connect to the server
                     await server.connect()
@@ -243,7 +243,7 @@ class MCPClient:
             logger.error(f"Failed to initialize MCP servers: {e}")
             return False
 
-    def create_agent(self, model_name: str = "gpt-4o") -> bool:
+    def create_agent(self, model_name: str = "gpt-4.1") -> bool:
         """Create an agent with MCP servers"""
         try:
             if not self.mcp_servers:
@@ -257,39 +257,39 @@ class MCPClient:
             use_fake_model = use_fake_env in {"1", "true", "yes"}
 
             # Check if we have a real OpenAI API key
-            api_key = os.getenv('OPENAI_API_KEY')
-            if use_fake_model or not api_key or api_key == 'your_openai_api_key_here':
-                if not api_key or api_key == 'your_openai_api_key_here':
+            api_key = os.getenv("OPENAI_API_KEY")
+            if use_fake_model or not api_key or api_key == "your_openai_api_key_here":
+                if not api_key or api_key == "your_openai_api_key_here":
                     logger.warning("OpenAI API key not configured. Using fake model for testing.")
                 else:
-                    logger.info("MCP_CLIENT_USE_FAKE_MODEL is set; using FakeModel instead of calling OpenAI.")
+                    logger.info(
+                        "MCP_CLIENT_USE_FAKE_MODEL set; using FakeModel instead of OpenAI."
+                    )
 
                 from tests.fake_model import FakeModel
+
                 model = FakeModel()
             else:
                 # Use real OpenAI model
                 from agents import OpenAIProvider
+
                 provider = OpenAIProvider(api_key=api_key)
                 model = provider.get_model(model_name)
 
             self.agent = Agent(
                 name="MCP Production Agent",
-                instructions="""
-                You are a helpful AI assistant with access to external tools via MCP (Model Context Protocol).
-
-                Available tools:
-                - Use the tools from connected MCP servers to help answer questions
-                - Be informative and provide detailed responses
-                - If you encounter errors, explain them clearly
-
-                Always strive to provide the most accurate and helpful information possible.
-                """,
+                instructions=(
+                    "You are a helpful AI assistant with access to external tools via MCP "
+                    "(Model Context Protocol).\n\n"
+                    "Available tools:\n"
+                    "- Use the tools from connected MCP servers to help answer questions\n"
+                    "- Be informative and provide detailed responses\n"
+                    "- If you encounter errors, explain them clearly\n\n"
+                    "Always strive to provide the most accurate and helpful information possible."
+                ),
                 mcp_servers=self.mcp_servers,
                 model=model,
-                model_settings=ModelSettings(
-                    temperature=0.7,
-                    tool_choice="auto"
-                )
+                model_settings=ModelSettings(temperature=0.7, tool_choice="auto"),
             )
 
             logger.info("✅ Agent created successfully")
@@ -308,10 +308,12 @@ class MCPClient:
 
             logger.info(f"Running query: {query}")
 
-            # For time-sensitive requests (e.g., "latest news"), prefer a deterministic MCP web-search
-            # call so results are current and we don't rely on the model choosing tools.
+            # For time-sensitive requests (e.g., "latest news"), prefer a
+            # deterministic MCP web-search. This ensures results are current
+            # instead of relying on the model to choose tools.
             if re.search(
-                r"\b(latest|today|current|breaking|headline|headlines|news|as of|right now|this week|this month)\b",
+                r"\b(latest|today|current|breaking|headline|headlines|news|"
+                r"as of|right now|this week|this month)\b",
                 query,
                 re.IGNORECASE,
             ):
@@ -327,7 +329,9 @@ class MCPClient:
                                     payload = getattr(tool_result, "content", tool_result)
                                 return (
                                     f"Web search results via {server.name}/{tool_name}:\n"
-                                    + json.dumps(payload, ensure_ascii=False, default=str, indent=2)[:4000]
+                                    + json.dumps(
+                                        payload, ensure_ascii=False, default=str, indent=2
+                                    )[:4000]
                                 )
                     except Exception as e:
                         logger.info(f"Web-search short-circuit skipped for {server.name}: {e}")
@@ -335,7 +339,7 @@ class MCPClient:
             # Use a timeout for the query
             result = await asyncio.wait_for(
                 Runner.run(starting_agent=self.agent, input=query),
-                timeout=300  # 5 minute timeout
+                timeout=300,  # 5 minute timeout
             )
 
             response = result.final_output
@@ -349,7 +353,7 @@ class MCPClient:
             logger.error(f"Query failed: {e}")
             return f"Sorry, an error occurred while processing your request: {str(e)}"
 
-    async def list_tools(self) -> Dict[str, List[str]]:
+    async def list_tools(self) -> dict[str, list[str]]:
         """List available tools from all MCP servers"""
         tools = {}
         try:
@@ -379,8 +383,8 @@ class MCPClient:
 
 
 @click.group()
-@click.option('--config', default='mcp_config.json', help='Path to MCP configuration file')
-@click.option('--verbose', '-v', is_flag=True, help='Enable verbose logging')
+@click.option("--config", default="mcp_config.json", help="Path to MCP configuration file")
+@click.option("--verbose", "-v", is_flag=True, help="Enable verbose logging")
 @click.pass_context
 def cli(ctx, config, verbose):
     """MCP Client - Production-ready MCP integration with OpenAI Agents SDK"""
@@ -388,39 +392,39 @@ def cli(ctx, config, verbose):
         logging.getLogger().setLevel(logging.DEBUG)
 
     ctx.ensure_object(dict)
-    ctx.obj['config'] = MCPClientConfig(config)
-    ctx.obj['client'] = MCPClient(ctx.obj['config'])
+    ctx.obj["config"] = MCPClientConfig(config)
+    ctx.obj["client"] = MCPClient(ctx.obj["config"])
 
 
 @cli.command()
 @click.pass_context
 def list_servers(ctx):
     """List available MCP servers"""
-    config = ctx.obj['config']
+    config = ctx.obj["config"]
     servers = config.get_server_configs()
 
     click.echo("📋 Available MCP Servers:")
     click.echo("=" * 40)
 
     for name, server_config in servers.items():
-        server_type = server_config.get('type', 'stdio')
+        server_type = server_config.get("type", "stdio")
         click.echo(f"🔧 {name} ({server_type})")
 
-        if 'url' in server_config:
+        if "url" in server_config:
             click.echo(f"   URL: {server_config['url']}")
-        elif 'command' in server_config:
-            args = ' '.join(server_config.get('args', []))
+        elif "command" in server_config:
+            args = " ".join(server_config.get("args", []))
             click.echo(f"   Command: {server_config['command']} {args}")
 
         click.echo()
 
 
 @cli.command()
-@click.option('--servers', multiple=True, help='Specific servers to initialize (default: all)')
+@click.option("--servers", multiple=True, help="Specific servers to initialize (default: all)")
 @click.pass_context
 def init(ctx, servers):
     """Initialize MCP servers"""
-    client = ctx.obj['client']
+    client = ctx.obj["client"]
     server_list = list(servers) if servers else None
 
     async def _init():
@@ -445,20 +449,22 @@ def init(ctx, servers):
 
 
 @cli.command()
-@click.option('--model', default='gpt-4.1', help='OpenAI model to use')
+@click.option("--model", default="gpt-4.1", help="OpenAI model to use")
 @click.pass_context
 def create_agent(ctx, model):
     """Create an agent with initialized MCP servers"""
-    client = ctx.obj['client']
+    client = ctx.obj["client"]
 
     # Ensure MCP servers are initialized in this process. The `init` command
     # is useful for inspection, but each CLI invocation is a new process, so
     # we need to initialize servers here as well if none are connected yet.
     if not client.mcp_servers:
+
         async def _init_servers() -> None:
             success = await client.initialize_servers()
             if not success or not client.mcp_servers:
-                click.echo("❌ Failed to initialize MCP servers. Check mcp_config.json and your environment.")
+                click.echo("❌ Failed to initialize MCP servers.")
+                click.echo("Check mcp_config.json and your environment.")
                 sys.exit(1)
 
         asyncio.run(_init_servers())
@@ -472,13 +478,13 @@ def create_agent(ctx, model):
 
 
 @cli.command()
-@click.argument('query')
-@click.option('--timeout', default=300, help='Query timeout in seconds')
-@click.option('--model', default='gpt-4.1', help='OpenAI model to use')
+@click.argument("query")
+@click.option("--timeout", default=300, help="Query timeout in seconds")
+@click.option("--model", default="gpt-4.1", help="OpenAI model to use")
 @click.pass_context
 def query(ctx, query, timeout, model):
     """Run a query using MCP servers and an agent (all in one command)."""
-    client = ctx.obj['client']
+    client = ctx.obj["client"]
 
     async def _query():
         try:
@@ -486,7 +492,8 @@ def query(ctx, query, timeout, model):
             if not client.mcp_servers:
                 init_success = await client.initialize_servers()
                 if not init_success or not client.mcp_servers:
-                    click.echo("❌ Failed to initialize MCP servers. Check mcp_config.json and your environment.")
+                    click.echo("❌ Failed to initialize MCP servers.")
+                    click.echo("Check mcp_config.json and your environment.")
                     sys.exit(1)
 
             # Ensure an agent exists for this process.
@@ -514,13 +521,14 @@ def query(ctx, query, timeout, model):
 @click.pass_context
 def tools(ctx):
     """List available tools from MCP servers"""
-    client = ctx.obj['client']
+    client = ctx.obj["client"]
 
     async def _list_tools():
         if not client.mcp_servers:
             init_success = await client.initialize_servers()
             if not init_success or not client.mcp_servers:
-                click.echo("❌ Failed to initialize MCP servers. Check mcp_config.json and your environment.")
+                click.echo("❌ Failed to initialize MCP servers.")
+                click.echo("Check mcp_config.json and your environment.")
                 sys.exit(1)
 
         tools = await client.list_tools()
@@ -542,7 +550,7 @@ def tools(ctx):
 @click.pass_context
 def cleanup(ctx):
     """Clean up MCP server connections"""
-    client = ctx.obj['client']
+    client = ctx.obj["client"]
 
     async def _cleanup():
         await client.cleanup()

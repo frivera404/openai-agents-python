@@ -1,11 +1,11 @@
 import asyncio
-
 import logging
-from agents import function_tool
 
-logger = logging.getLogger(__name__)
+from agents import function_tool
 from agents.extensions.handoff_prompt import RECOMMENDED_PROMPT_PREFIX
 from agents.realtime import RealtimeAgent, realtime_handoff
+
+logger = logging.getLogger(__name__)
 
 """
 When running the UI example locally, you can edit this file to change the setup. THe server

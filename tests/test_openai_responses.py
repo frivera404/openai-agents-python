@@ -38,7 +38,7 @@ async def test_user_agent_header_responses(override_ua: str | None):
         def __init__(self):
             self.responses = DummyResponses()
 
-    model = OpenAIResponsesModel(model="gpt-4", openai_client=DummyResponsesClient())  # type: ignore
+    model = OpenAIResponsesModel(model="gpt-4.1", openai_client=DummyResponsesClient())  # type: ignore
 
     if override_ua is not None:
         token = RESP_HEADERS.set({"User-Agent": override_ua})

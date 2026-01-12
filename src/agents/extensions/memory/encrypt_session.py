@@ -183,4 +183,3 @@ class EncryptedSession(SessionABC):
 
     async def clear_session(self) -> None:
         await self.underlying_session.clear_session()
-

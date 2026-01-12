@@ -1,24 +1,23 @@
-from agent_private_i.core.queue import InMemoryQueue
-from agent_private_i.core.state_store import FileStateStore
-from agent_private_i.core.orchestrator import Orchestrator
-from agent_private_i.core.router import Router
-from agent_private_i.core.planner import Planner
-from agent_private_i.core.verifier import Verifier
 import os
-
-from agent_private_i.workers.research_bot import ResearchBotWorker
-from agent_private_i.workers.coder import CoderWorker
-from agent_private_i.workers.senior_dev import SeniorDevWorker
-from agent_private_i.workers.verifier import VerifierWorker
+import time
 
 from agent_private_i.core.models import new_task
-import time
+from agent_private_i.core.orchestrator import Orchestrator
+from agent_private_i.core.planner import Planner
+from agent_private_i.core.queue import InMemoryQueue
+from agent_private_i.core.router import Router
+from agent_private_i.core.state_store import FileStateStore
+from agent_private_i.core.verifier import Verifier
+from agent_private_i.workers.coder import CoderWorker
+from agent_private_i.workers.research_bot import ResearchBotWorker
+from agent_private_i.workers.senior_dev import SeniorDevWorker
+from agent_private_i.workers.verifier import VerifierWorker
 
 
 def build_system():
     # Use PostgresStateStore and RedisQueue when environment variables are set,
     # otherwise fall back to file + in-memory queue for local demos.
-    redis_url = os.environ.get("REDIS_URL")
+    os.environ.get("REDIS_URL")
     pg_dsn = os.environ.get("PG_DSN")
 
     if pg_dsn:
@@ -80,7 +79,13 @@ def demo_run():
     start = time.time()
     result = orch.run_task(payload)
     elapsed = time.time() - start
-    print("Task completed:", result.get("task_id"), "status=", result.get("status"), f"(elapsed={elapsed:.2f}s)")
+    print(
+        "Task completed:",
+        result.get("task_id"),
+        "status=",
+        result.get("status"),
+        f"(elapsed={elapsed:.2f}s)",
+    )
     print("History:")
     for h in result.get("history", []):
         print(" -", h)

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import httpx
+
 from openai import AsyncOpenAI, DefaultAsyncHttpxClient
 
 from ...models import _openai_shared

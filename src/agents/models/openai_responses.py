@@ -18,9 +18,6 @@ from openai.types.responses import (
     response_create_params,
 )
 
-# from openai.types.responses.response_prompt_param import ResponsePromptParam
-ResponsePromptParam = Any
-
 from .. import _debug
 from ..agent_output import AgentOutputSchemaBase
 from ..exceptions import UserError
@@ -47,6 +44,10 @@ from .interface import Model, ModelTracing
 
 if TYPE_CHECKING:
     from ..model_settings import ModelSettings
+
+
+# from openai.types.responses.response_prompt_param import ResponsePromptParam
+ResponsePromptParam = Any
 
 
 _USER_AGENT = f"Agents/Python {__version__}"

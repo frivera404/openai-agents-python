@@ -10,8 +10,9 @@ from typing import Any
 This script is intentionally small and tolerant of SDK object shapes.
 """
 
+
 def _read_run_response(path: str = "run_response.json") -> dict:
-    with open(path, "r", encoding="utf-8-sig") as f:
+    with open(path, encoding="utf-8-sig") as f:
         return json.load(f)
 
 

@@ -4,13 +4,13 @@ This module intentionally keeps runtime behavior minimal and only exposes the
 symbols the codebase imports for static checking. Extend as needed.
 """
 
-from typing import Any, Dict
+from typing import Any
 
 # Re-export the `types` package (mypy will resolve submodules from `stubs/openai/types`).
 from . import types
 
 
-def omit(obj: Dict[str, Any], *keys: str) -> Dict[str, Any]:
+def omit(obj: dict[str, Any], *keys: str) -> dict[str, Any]:
     """Return a shallow copy of `obj` without the specified keys."""
     return {k: v for k, v in obj.items() if k not in keys}
 

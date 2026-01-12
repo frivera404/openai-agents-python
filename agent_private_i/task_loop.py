@@ -9,10 +9,11 @@ Usage:
 Environment:
   REDIS_URL - redis://... if set the loop will use RedisQueue; otherwise falls back to local files.
 """
+
 import json
+import logging
 import os
 import time
-import logging
 from pathlib import Path
 
 from agent_private_i.app import build_system
@@ -32,7 +33,7 @@ def process_payload(orch, payload):
         result = orch.run_task(payload)
         logging.info(f"Task {result.get('task_id')} finished: {result.get('status')}")
         return result
-    except Exception as e:
+    except Exception:
         logging.exception("Task run failed")
         return None
 
@@ -62,9 +63,9 @@ def local_loop(orch, tasks_dir: Path):
         files = sorted(tasks_dir.glob("*.json"))
         for f in files:
             try:
-                with open(f, "r", encoding="utf-8") as fh:
+                with open(f, encoding="utf-8") as fh:
                     payload = json.load(fh)
-                result = process_payload(orch, payload)
+                process_payload(orch, payload)
                 # move file to processed
                 target = processed_dir / f.name
                 try:
@@ -77,6 +78,7 @@ def local_loop(orch, tasks_dir: Path):
                     # fallback: try copy + unlink
                     try:
                         import shutil
+
                         shutil.copy2(str(f), str(target))
                         if f.exists():
                             f.unlink()

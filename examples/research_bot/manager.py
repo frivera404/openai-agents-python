@@ -1,19 +1,19 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 import time
 
 from rich.console import Console
 
 from agents import Runner, custom_span, gen_trace_id, trace
-import logging
-
-logger = logging.getLogger(__name__)
 
 from .agents.planner_agent import WebSearchItem, WebSearchPlan, planner_agent
 from .agents.search_agent import search_agent
 from .agents.writer_agent import ReportData, writer_agent
 from .printer import Printer
+
+logger = logging.getLogger(__name__)
 
 
 class ResearchManager:

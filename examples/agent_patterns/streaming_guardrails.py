@@ -3,9 +3,10 @@ from __future__ import annotations
 import asyncio
 import logging
 
+from pydantic import BaseModel, Field
+
 from agents import Agent, Runner
 from openai.types.responses import ResponseTextDeltaEvent
-from pydantic import BaseModel, Field
 
 """
 This example shows how to use guardrails as the model is streaming. Output guardrails run after the

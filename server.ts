@@ -710,6 +710,13 @@ app.get('/api/health', (req: Request, res: Response) => {
     });
 });
 
+// Mock MCP status endpoint for local frontend development
+app.get('/api/mcp/status', (req: Request, res: Response) => {
+    // In development this returns a simple JSON payload indicating the MCP connection status.
+    // Frontend hook `useMcpStatus` expects { status: 'online' | 'offline' }.
+    res.json({ status: 'online' });
+});
+
 // Validation middleware for agent launch
 const validateAgentLaunchRequest = (req: Request, res: Response, next: NextFunction) => {
     const { agentId, model, temperature, systemInstruction, prompt, tools } = req.body;

@@ -1,6 +1,9 @@
 import asyncio
+import logging
 import random
 from typing import Any, Optional, cast
+
+from pydantic import BaseModel
 
 from agents import (
     Agent,
@@ -12,10 +15,8 @@ from agents import (
     Usage,
     function_tool,
 )
-import logging
 from agents.items import ModelResponse, TResponseInputItem
 from agents.tool_context import ToolContext
-from pydantic import BaseModel
 
 
 class LoggingHooks(AgentHooks[Any]):

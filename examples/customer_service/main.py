@@ -1,8 +1,11 @@
 from __future__ import annotations as _annotations
 
 import asyncio
+import logging
 import random
 import uuid
+
+from pydantic import BaseModel
 
 from agents import (
     Agent,
@@ -18,9 +21,7 @@ from agents import (
     handoff,
     trace,
 )
-import logging
 from agents.extensions.handoff_prompt import RECOMMENDED_PROMPT_PREFIX
-from pydantic import BaseModel
 
 ### CONTEXT
 

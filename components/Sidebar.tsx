@@ -92,7 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, onNavClick }) => {
     ];
 
     return (
-        <div className="w-64 bg-tech-gradient text-white flex-shrink-0 flex flex-col border-r border-gray-700 shadow-2xl">
+        <div className="hidden md:flex w-64 bg-tech-gradient text-white flex-shrink-0 flex flex-col border-r border-gray-700 shadow-2xl">
             <div className="h-16 flex items-center px-4 border-b border-gray-600 bg-black/20">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"

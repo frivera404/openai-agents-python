@@ -2,9 +2,10 @@ import asyncio
 import json
 import re
 import time
+from contextlib import asynccontextmanager
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 from uuid import uuid4
 
 import httpx
@@ -14,15 +15,28 @@ from pydantic import AnyHttpUrl, BaseModel
 
 from openai_assistant_agent import AgentConfigurator, OpenAIAssistantAgent
 
-from .supervisor import SupervisorOrchestrator
 from .ctdatenight_agents import (
+    make_info_agent,
+    make_retention_agent,
     make_shopkeeper_agent,
     make_supervisor_agent,
-    make_retention_agent,
-    make_info_agent,
 )
+from .supervisor import SupervisorOrchestrator
 
-app = FastAPI(title="Agent Private I - Prime Goal API")
+
+@asynccontextmanager
+async def _lifespan(app: FastAPI):
+    # startup
+    await _ensure_automation_loaded()
+    _ensure_scheduler_started()
+    try:
+        yield
+    finally:
+        # No special shutdown actions required currently.
+        pass
+
+
+app = FastAPI(title="Agent Private I - Prime Goal API", lifespan=_lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -34,7 +48,7 @@ app.add_middleware(
 
 
 @app.get("/health")
-async def health() -> Dict[str, Any]:
+async def health() -> dict[str, Any]:
     return {"ok": True}
 
 
@@ -60,8 +74,8 @@ class SupervisorAgent(BaseModel):
 
 
 class SystemSettings(BaseModel):
-    global_optimizations: Dict[str, Any]
-    mcp_integration: Dict[str, Any]
+    global_optimizations: dict[str, Any]
+    mcp_integration: dict[str, Any]
 
 
 class CommandRequest(BaseModel):
@@ -196,8 +210,8 @@ _AUTOMATION_STORE_PATH = Path(__file__).resolve().parents[2] / "automation_store
 _automation_lock = asyncio.Lock()
 _automation_loaded = False
 
-_webhooks: Dict[str, Dict[str, Any]] = {}
-_schedules: Dict[str, Dict[str, Any]] = {}
+_webhooks: dict[str, dict[str, Any]] = {}
+_schedules: dict[str, dict[str, Any]] = {}
 
 _scheduler_task: Optional[asyncio.Task[None]] = None
 _scheduler_wakeup = asyncio.Event()
@@ -237,7 +251,7 @@ def _map_path_for_docker_filesystem(path: str) -> str:
     return p
 
 
-def _load_automation_store_sync() -> Dict[str, Any]:
+def _load_automation_store_sync() -> dict[str, Any]:
     if not _AUTOMATION_STORE_PATH.exists():
         return {"webhooks": {}, "schedules": {}}
 
@@ -255,7 +269,7 @@ def _load_automation_store_sync() -> Dict[str, Any]:
     }
 
 
-def _save_automation_store_sync(data: Dict[str, Any]) -> None:
+def _save_automation_store_sync(data: dict[str, Any]) -> None:
     tmp = _AUTOMATION_STORE_PATH.with_suffix(".json.tmp")
     tmp.parent.mkdir(parents=True, exist_ok=True)
     with tmp.open("w", encoding="utf-8") as f:
@@ -310,8 +324,8 @@ def _jsonable(obj: Any) -> Any:
 
 
 async def _call_first_available_mcp_tool(
-    tool_names: List[str], arguments: Dict[str, Any]
-) -> Dict[str, Any]:
+    tool_names: list[str], arguments: dict[str, Any]
+) -> dict[str, Any]:
     await _ensure_mcp_initialized()
 
     if not agent.mcp_servers:
@@ -346,12 +360,12 @@ async def _call_first_available_mcp_tool(
     )
 
 
-async def _dispatch_to_webhook(webhook: Dict[str, Any], payload: Dict[str, Any]) -> Dict[str, Any]:
+async def _dispatch_to_webhook(webhook: dict[str, Any], payload: dict[str, Any]) -> dict[str, Any]:
     url = webhook.get("url")
     if not url:
         return {"ok": False, "error": "Missing webhook url"}
 
-    headers: Dict[str, str] = {}
+    headers: dict[str, str] = {}
     if webhook.get("secret"):
         headers["X-Webhook-Secret"] = str(webhook["secret"])
 
@@ -378,7 +392,7 @@ async def _run_schedule(schedule_id: str) -> None:
     started_at = time.time()
     ok = True
     error: Optional[str] = None
-    result_payload: Dict[str, Any] = {
+    result_payload: dict[str, Any] = {
         "schedule_id": schedule_id,
         "kind": kind,
         "query": query,
@@ -399,7 +413,7 @@ async def _run_schedule(schedule_id: str) -> None:
                 raise RuntimeError("Agent failed to process query")
             result_payload["agent"] = agent_result
 
-        deliveries: Dict[str, Any] = {}
+        deliveries: dict[str, Any] = {}
         async with _automation_lock:
             targets = [
                 (wid, _webhooks.get(wid))
@@ -462,7 +476,7 @@ async def _scheduler_loop() -> None:
         except asyncio.TimeoutError:
             pass
 
-        due: List[str] = []
+        due: list[str] = []
         now = time.time()
         async with _automation_lock:
             for sid, s in _schedules.items():
@@ -486,12 +500,6 @@ def _ensure_scheduler_started() -> None:
         _scheduler_task = asyncio.create_task(_scheduler_loop())
 
 
-@app.on_event("startup")
-async def _startup_automation() -> None:
-    await _ensure_automation_loaded()
-    _ensure_scheduler_started()
-
-
 class WebhookCreateRequest(BaseModel):
     url: AnyHttpUrl
     secret: Optional[str] = None
@@ -509,7 +517,7 @@ class ScheduleCreateRequest(BaseModel):
     kind: str = "agent_query"  # agent_query | web_search
     query: str
     interval_seconds: int = 300
-    webhook_ids: List[str] = []
+    webhook_ids: list[str] = []
     enabled: bool = True
 
 
@@ -518,7 +526,7 @@ class ScheduleResponse(BaseModel):
     kind: str
     query: str
     interval_seconds: int
-    webhook_ids: List[str]
+    webhook_ids: list[str]
     enabled: bool
     next_run_at: float
     created_at: str
@@ -530,7 +538,7 @@ class ScheduleResponse(BaseModel):
 class AutomationRunRequest(BaseModel):
     kind: str = "agent_query"  # agent_query | web_search
     query: str
-    webhook_ids: List[str] = []
+    webhook_ids: list[str] = []
 
 
 async def _ensure_agent_initialized() -> None:
@@ -559,14 +567,14 @@ async def _ensure_agent_initialized() -> None:
 
 @app.get("/agent/prime-goal/status", response_model=PrimeGoalStatus)
 def get_prime_goal_status() -> PrimeGoalStatus:
-    status: Dict[str, Any] = configurator.verify_prime_goal_status(agent)
+    status: dict[str, Any] = configurator.verify_prime_goal_status(agent)
     return PrimeGoalStatus(**status)
 
 
 @app.post("/agent/prime-goal/apply", response_model=ActionResult)
 def apply_prime_goal() -> ActionResult:
     success = agent.apply_prime_goal_configuration()
-    status_dict: Dict[str, Any] = configurator.verify_prime_goal_status(agent)
+    status_dict: dict[str, Any] = configurator.verify_prime_goal_status(agent)
     status = PrimeGoalStatus(**status_dict)
     if not success:
         raise HTTPException(status_code=500, detail="Failed to apply Prime Goal configuration")
@@ -576,15 +584,15 @@ def apply_prime_goal() -> ActionResult:
 @app.post("/agent/prime-goal/reset", response_model=ActionResult)
 def reset_prime_goal() -> ActionResult:
     success = agent.reset_to_prime_goal(confirm=True)
-    status_dict: Dict[str, Any] = configurator.verify_prime_goal_status(agent)
+    status_dict: dict[str, Any] = configurator.verify_prime_goal_status(agent)
     status = PrimeGoalStatus(**status_dict)
     if not success:
         raise HTTPException(status_code=500, detail="Failed to reset Prime Goal configuration")
     return ActionResult(success=True, detail="Prime Goal configuration reset", status=status)
 
 
-@app.get("/agent/supervisors", response_model=List[SupervisorAgent])
-def get_supervisors() -> List[SupervisorAgent]:
+@app.get("/agent/supervisors", response_model=list[SupervisorAgent])
+def get_supervisors() -> list[SupervisorAgent]:
     supervisors = []
     config_supervisors = configurator.prime_goal_config.get("supervisor_agents", {})
     for key, settings in config_supervisors.items():
@@ -612,7 +620,7 @@ def get_system_settings() -> SystemSettings:
 
 
 @app.get("/agent/memory")
-def get_memory() -> Dict[str, Any]:
+def get_memory() -> dict[str, Any]:
     return {
         "memory": agent.memory,
         "stats": agent.get_memory_stats(),
@@ -695,57 +703,86 @@ async def run_supervisor_query(payload: AgentQueryRequest) -> SupervisorQueryRes
     return SupervisorQueryResponse(plan=plan, result=result)
 
 
-@app.get("/agent/tools", response_model=List[ToolDefinition])
-def list_tools() -> List[ToolDefinition]:
+@app.get("/agent/tools", response_model=list[ToolDefinition])
+def list_tools() -> list[ToolDefinition]:
     """Return a simple list of tools that this agent can use.
 
     This endpoint is intentionally descriptive rather than dynamic: it reflects
     the main MCP and built-in tools that Agent Private I is configured to call.
     """
 
-    tools: List[ToolDefinition] = [
+    tools: list[ToolDefinition] = [
         ToolDefinition(
             name="web_search",
-            description="Search the web for up-to-date information using the web search MCP router.",
+            description=(
+                "Search the web for up-to-date information using the web "
+                "search MCP router."
+            ),
             provider="MCP router",
             type="mcp",
-            usage="The agent calls this automatically when it needs web data; no manual parameters required from the UI.",
+            usage=(
+                "The agent calls this automatically when it needs web data; "
+                "no manual parameters required from the UI."
+            ),
         ),
         ToolDefinition(
             name="code_interpreter",
-            description="Run Python code for data analysis, plotting, and file manipulation.",
+            description=(
+                "Run Python code for data analysis, plotting, and "
+                "file manipulation."
+            ),
             provider="OpenAI",
             type="built-in",
-            usage="Used for calculations, CSV/JSON analysis, and scratchpad-style reasoning.",
+            usage=(
+                "Used for calculations, CSV/JSON analysis, and "
+                "scratchpad-style reasoning."
+            ),
         ),
         ToolDefinition(
             name="local_shell",
-            description="Execute safe shell commands on the configured environment (for diagnostics and utilities).",
+            description=(
+                "Execute safe shell commands on the configured environment "
+                "(for diagnostics and utilities)."
+            ),
             provider="MCP local-shell",
             type="mcp",
-            usage="Restricted to diagnostic commands; the agent decides when to invoke it.",
+            usage=(
+                "Restricted to diagnostic commands; the agent decides "
+                "when to invoke it."
+            ),
         ),
         ToolDefinition(
             name="file_search",
-            description="Search project or knowledge base files via the file-search MCP tool.",
+            description=(
+                "Search project or knowledge base files via the "
+                "file-search MCP tool."
+            ),
             provider="MCP file-search",
             type="mcp",
-            usage="Used when the agent needs to look up information in your indexed repositories.",
+            usage=(
+                "Used when the agent needs to look up information in "
+                "your indexed repositories."
+            ),
         ),
         ToolDefinition(
             name="computer_use",
-            description="High-level computer control for UI automation tasks.",
+            description=(
+                "High-level computer control for UI automation tasks."
+            ),
             provider="MCP computer-use",
             type="mcp",
-            usage="Reserved for complex workflows that require interacting with desktop applications.",
+            usage=(
+                "Reserved for complex workflows that require interacting "
+                "with desktop applications."
+            ),
         ),
     ]
 
     return tools
 
 
-@app.get("/agent/mcp-tools", response_model=Dict[str, List[str]])
-async def list_mcp_tools() -> Dict[str, List[str]]:
+@app.get("/agent/mcp-tools", response_model=dict[str, list[str]])
+async def list_mcp_tools() -> dict[str, list[str]]:
     """List real tools discovered from configured MCP servers.
 
     This complements /agent/tools by returning the actual tool names
@@ -780,14 +817,14 @@ async def create_webhook(payload: WebhookCreateRequest) -> WebhookResponse:
 
 
 @app.get("/automation/webhooks")
-async def list_webhooks() -> Dict[str, Any]:
+async def list_webhooks() -> dict[str, Any]:
     await _ensure_automation_loaded()
     async with _automation_lock:
         return {"webhooks": list(_webhooks.values())}
 
 
 @app.delete("/automation/webhooks/{webhook_id}")
-async def delete_webhook(webhook_id: str) -> Dict[str, Any]:
+async def delete_webhook(webhook_id: str) -> dict[str, Any]:
     await _ensure_automation_loaded()
     async with _automation_lock:
         existed = _webhooks.pop(webhook_id, None) is not None
@@ -836,14 +873,14 @@ async def create_schedule(payload: ScheduleCreateRequest) -> ScheduleResponse:
 
 
 @app.get("/automation/schedules")
-async def list_schedules() -> Dict[str, Any]:
+async def list_schedules() -> dict[str, Any]:
     await _ensure_automation_loaded()
     async with _automation_lock:
         return {"schedules": list(_schedules.values())}
 
 
 @app.post("/automation/schedules/{schedule_id}/run-now")
-async def run_schedule_now(schedule_id: str) -> Dict[str, Any]:
+async def run_schedule_now(schedule_id: str) -> dict[str, Any]:
     await _ensure_automation_loaded()
     async with _automation_lock:
         if schedule_id not in _schedules:
@@ -854,7 +891,7 @@ async def run_schedule_now(schedule_id: str) -> Dict[str, Any]:
 
 
 @app.post("/automation/web-search")
-async def automation_web_search(payload: AgentQueryRequest) -> Dict[str, Any]:
+async def automation_web_search(payload: AgentQueryRequest) -> dict[str, Any]:
     """Hard-coded web search via MCP (does not require OpenAI model access)."""
 
     await _ensure_mcp_initialized()
@@ -865,7 +902,7 @@ async def automation_web_search(payload: AgentQueryRequest) -> Dict[str, Any]:
 
 
 @app.post("/automation/filesystem/list")
-async def automation_filesystem_list(payload: FilesystemPathRequest) -> Dict[str, Any]:
+async def automation_filesystem_list(payload: FilesystemPathRequest) -> dict[str, Any]:
     """List a directory via MCP filesystem tools."""
     mapped = _map_path_for_docker_filesystem(payload.path)
     return await _call_first_available_mcp_tool(
@@ -875,7 +912,7 @@ async def automation_filesystem_list(payload: FilesystemPathRequest) -> Dict[str
 
 
 @app.post("/automation/filesystem/read")
-async def automation_filesystem_read(payload: FilesystemPathRequest) -> Dict[str, Any]:
+async def automation_filesystem_read(payload: FilesystemPathRequest) -> dict[str, Any]:
     """Read a file via MCP filesystem tools."""
     mapped = _map_path_for_docker_filesystem(payload.path)
     return await _call_first_available_mcp_tool(
@@ -885,7 +922,7 @@ async def automation_filesystem_read(payload: FilesystemPathRequest) -> Dict[str
 
 
 @app.post("/automation/filesystem/info")
-async def automation_filesystem_info(payload: FilesystemPathRequest) -> Dict[str, Any]:
+async def automation_filesystem_info(payload: FilesystemPathRequest) -> dict[str, Any]:
     """Get file/directory info via MCP filesystem tools."""
     mapped = _map_path_for_docker_filesystem(payload.path)
     return await _call_first_available_mcp_tool(
@@ -895,7 +932,7 @@ async def automation_filesystem_info(payload: FilesystemPathRequest) -> Dict[str
 
 
 @app.post("/automation/filesystem/search")
-async def automation_filesystem_search(payload: FilesystemSearchRequest) -> Dict[str, Any]:
+async def automation_filesystem_search(payload: FilesystemSearchRequest) -> dict[str, Any]:
     """Search files under a directory via MCP filesystem tools."""
     mapped = _map_path_for_docker_filesystem(payload.path)
     return await _call_first_available_mcp_tool(
@@ -905,7 +942,7 @@ async def automation_filesystem_search(payload: FilesystemSearchRequest) -> Dict
 
 
 @app.post("/automation/filesystem")
-async def automation_filesystem(payload: FilesystemOpRequest) -> Dict[str, Any]:
+async def automation_filesystem(payload: FilesystemOpRequest) -> dict[str, Any]:
     """Unified filesystem MCP endpoint.
 
     Body: {"op": "list"|"read"|"info"|"search", "path": "...", "query"?: "...", "max_results"?: 20}
@@ -941,7 +978,7 @@ async def automation_filesystem(payload: FilesystemOpRequest) -> Dict[str, Any]:
 
 
 @app.post("/automation/run")
-async def automation_run(payload: AutomationRunRequest) -> Dict[str, Any]:
+async def automation_run(payload: AutomationRunRequest) -> dict[str, Any]:
     """Run a one-off automation (agent query or web search), then POST to webhooks."""
 
     await _ensure_automation_loaded()
@@ -951,7 +988,7 @@ async def automation_run(payload: AutomationRunRequest) -> Dict[str, Any]:
 
     run_id = uuid4().hex
     started_at = time.time()
-    output: Dict[str, Any] = {
+    output: dict[str, Any] = {
         "run_id": run_id,
         "kind": kind,
         "query": payload.query,
@@ -970,7 +1007,7 @@ async def automation_run(payload: AutomationRunRequest) -> Dict[str, Any]:
             raise HTTPException(status_code=500, detail="Agent failed to process query")
         output["agent"] = agent_result
 
-    deliveries: Dict[str, Any] = {}
+    deliveries: dict[str, Any] = {}
     async with _automation_lock:
         targets = [
             (wid, _webhooks.get(wid))

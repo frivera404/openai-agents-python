@@ -1,6 +1,6 @@
 import asyncio
-import os
 import logging
+
 from agents import Agent, Runner, gen_trace_id, trace
 from agents.mcp import MCPServerStreamableHttp
 from agents.model_settings import ModelSettings

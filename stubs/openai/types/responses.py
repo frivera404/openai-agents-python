@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Any
 
 # Placeholder classes for the openai.types.responses namespace.
 # Extend with attributes as needed to satisfy mypy attr-defined checks.
@@ -9,7 +9,6 @@ from typing import Any, Dict, Optional
 # Minimal placeholder for ResponseIncludable used by runtime imports in the repo.
 class ResponseIncludable:
     pass
-
 
 
 class Response:
@@ -57,8 +56,8 @@ class ResponseComputerToolCall(ResponseOutputItem):
 
 class ResponseReasoningItem(ResponseOutputItem):
     content: Any
-    summary: Optional[str]
-    encrypted_content: Optional[Any]
+    summary: str | None
+    encrypted_content: Any | None
 
 
 class CompletionUsage:
@@ -75,9 +74,9 @@ class response_create_params:
 
 
 # Generic type aliases used in the codebase
-ResponseInputItemParam = Dict[str, Any]
-ResponseInputTextParam = Dict[str, Any]
-ResponseInputImageParam = Dict[str, Any]
+ResponseInputItemParam = dict[str, Any]
+ResponseInputTextParam = dict[str, Any]
+ResponseInputImageParam = dict[str, Any]
 
 __all__ = [
     "Response",

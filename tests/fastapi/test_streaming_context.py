@@ -1,6 +1,6 @@
 import pytest
-
 from httpx import ASGITransport, AsyncClient
+
 from inline_snapshot import snapshot
 
 from ..fake_model import FakeModel

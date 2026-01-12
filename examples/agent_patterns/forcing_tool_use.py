@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import asyncio
-from typing import Any, Literal
 import logging
+from typing import Any, Literal
+
+from pydantic import BaseModel
 
 from agents import (
     Agent,
@@ -14,7 +16,6 @@ from agents import (
     ToolsToFinalOutputResult,
     function_tool,
 )
-from pydantic import BaseModel
 
 """
 This example shows how to force the agent to use a tool. It uses `ModelSettings(tool_choice="required")`
@@ -86,8 +87,8 @@ async def main(tool_use_behavior: Literal["default", "first_tool", "custom"] = "
 
 if __name__ == "__main__":
     import argparse
-
     import logging as _logging
+
     _logging.basicConfig(level=_logging.INFO)
     # Reduce noise from underlying HTTP client (httpx) used by OpenAI/tracing.
     _logging.getLogger("httpx").setLevel(_logging.WARNING)

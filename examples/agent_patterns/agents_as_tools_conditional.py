@@ -1,8 +1,9 @@
 import asyncio
 import logging
 
-from agents import Agent, AgentBase, RunContextWrapper, Runner, trace
 from pydantic import BaseModel
+
+from agents import Agent, AgentBase, RunContextWrapper, Runner, trace
 
 """
 This example demonstrates the agents-as-tools pattern with conditional tool enabling.
@@ -112,6 +113,7 @@ async def main():
 
 if __name__ == "__main__":
     import logging as _logging
+
     _logging.basicConfig(level=_logging.INFO)
 
     asyncio.run(main())

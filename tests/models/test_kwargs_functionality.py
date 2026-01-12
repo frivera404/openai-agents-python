@@ -76,7 +76,7 @@ async def test_openai_chatcompletions_kwargs_forwarded(monkeypatch):
             return ChatCompletion(
                 id="test-id",
                 created=0,
-                model="gpt-4",
+                model="gpt-4.1",
                 object="chat.completion",
                 choices=[choice],
                 usage=CompletionUsage(completion_tokens=5, prompt_tokens=10, total_tokens=15),
@@ -102,7 +102,7 @@ async def test_openai_chatcompletions_kwargs_forwarded(monkeypatch):
     )
 
     mock_client = MockClient()
-    model = OpenAIChatCompletionsModel(model="gpt-4", openai_client=mock_client)  # type: ignore
+    model = OpenAIChatCompletionsModel(model="gpt-4.1", openai_client=mock_client)  # type: ignore
 
     await model.get_response(
         system_instructions="Test system",

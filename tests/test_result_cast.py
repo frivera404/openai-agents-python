@@ -1,9 +1,9 @@
 from typing import Any
 
 import pytest
+from pydantic import BaseModel
 
 from agents import Agent, RunContextWrapper, RunResult
-from pydantic import BaseModel
 
 
 def create_run_result(final_output: Any) -> RunResult:

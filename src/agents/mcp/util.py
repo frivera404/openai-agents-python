@@ -4,9 +4,8 @@ from collections.abc import Awaitable
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Callable, Optional, Protocol, Union
 
-from typing_extensions import NotRequired, TypedDict
-
 import httpx
+from typing_extensions import NotRequired, TypedDict
 
 try:
     # Prefer absolute imports when the package is installed or the repo root is on PYTHONPATH.

@@ -3,10 +3,10 @@ from __future__ import annotations
 from typing import Any
 
 from openai.types.responses.response_text_delta_event import ResponseTextDeltaEvent
-from .logger import logger
 
 from .agent import Agent
 from .items import TResponseInputItem
+from .logger import logger
 from .result import RunResultBase
 from .run import Runner
 from .run_context import TContext
@@ -61,6 +61,9 @@ async def run_demo_loop(
         else:
             result = await Runner.run(current_agent, input_items, context=context)
             if result.final_output is not None:
+                # Print final output to stdout for interactive REPL usage and
+                # tests that capture stdout.
+                print(result.final_output)
                 logger.debug("REPL final_output: %s", result.final_output)
 
         current_agent = result.last_agent

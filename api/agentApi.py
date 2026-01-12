@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 
-async def runSupervisorQuery(body: Dict[str, Any]) -> Dict[str, Any]:
+async def runSupervisorQuery(body: dict[str, Any]) -> dict[str, Any]:
     """Stub implementation used by tests.
 
     The real implementation lives in the frontend TypeScript client

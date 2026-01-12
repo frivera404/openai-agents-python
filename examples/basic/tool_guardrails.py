@@ -173,4 +173,3 @@ Example output:
 4. Rejecting function tool output containing sensitive data:
 ❌ Guardrail rejected function tool output: I'm unable to retrieve the contact info for user456 because it contains restricted information.
 """
-

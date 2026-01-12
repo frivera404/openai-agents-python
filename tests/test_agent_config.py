@@ -1,10 +1,10 @@
 import pytest
+from pydantic import BaseModel
 
 from agents import Agent, AgentOutputSchema, Handoff, RunContextWrapper, handoff
 from agents.lifecycle import AgentHooksBase
 from agents.model_settings import ModelSettings
 from agents.run import AgentRunner
-from pydantic import BaseModel
 
 
 @pytest.mark.asyncio

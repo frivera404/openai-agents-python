@@ -1,5 +1,6 @@
-from agents import Agent
 from pydantic import BaseModel
+
+from agents import Agent
 
 # Writer agent brings together the raw search results and optionally calls out
 # to sub‑analyst tools for specialized commentary, then returns a cohesive markdown report.

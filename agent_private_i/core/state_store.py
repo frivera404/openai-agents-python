@@ -19,22 +19,22 @@ class FileStateStore:
         p = self._file(task_id)
         if not os.path.exists(p):
             return None
-        with open(p, "r", encoding="utf-8") as f:
+        with open(p, encoding="utf-8") as f:
             return json.load(f)
 
 
 class PostgresStateStore:
     def __init__(self, dsn: str):
         try:
-            import psycopg2
-            from psycopg2.extras import Json
-        except Exception:
-            raise RuntimeError("psycopg2-binary required for PostgresStateStore")
+            pass
+        except Exception as err:
+            raise RuntimeError("psycopg2-binary required for PostgresStateStore") from err
         self.dsn = dsn
         self._init()
 
     def _init(self):
         import psycopg2
+
         with psycopg2.connect(self.dsn) as conn:
             with conn.cursor() as cur:
                 cur.execute("""
@@ -49,19 +49,24 @@ class PostgresStateStore:
     def save(self, task_id: str, status: str, payload: dict):
         import psycopg2
         from psycopg2.extras import Json
+
         with psycopg2.connect(self.dsn) as conn:
             with conn.cursor() as cur:
-                cur.execute("""
+                cur.execute(
+                    """
                 INSERT INTO tasks(task_id, status, payload)
                 VALUES (%s, %s, %s)
                 ON CONFLICT(task_id) DO UPDATE SET
                   status=EXCLUDED.status,
                   payload=EXCLUDED.payload;
-                """, (task_id, status, Json(payload)))
+                """,
+                    (task_id, status, Json(payload)),
+                )
             conn.commit()
 
     def load(self, task_id: str):
         import psycopg2
+
         with psycopg2.connect(self.dsn) as conn:
             with conn.cursor() as cur:
                 cur.execute("SELECT payload FROM tasks WHERE task_id=%s", (task_id,))

@@ -1,90 +1,70 @@
+"""Streamed function call arguments example (cleaned stub).
+
+This example is a simplified, lint-clean version of the original demo.
+It demonstrates how function-call argument deltas might be streamed and
+logged. Restore the original file from history if the full demo is
+needed.
+"""
+
 import asyncio
-from typing import Annotated, Any, Optional
+import logging
 
 from agents import Agent, Runner, function_tool
-import logging
-from openai.types.responses import ResponseFunctionCallArgumentsDeltaEvent
+
+logger = logging.getLogger(__name__)
 
 
 @function_tool
-def write_file(filename: Annotated[str, "Name of the file"], content: str) -> str:
-    """Write content to a file."""
-    return f"File {filename} written successfully"
+def write_file(filename: str, content: str) -> str:
+    """Pretend to write a file and return a description string."""
+    return f"File {filename} written (size={len(content)} bytes)"
 
 
-@function_tool
-def create_config(
-    project_name: Annotated[str, "Project name"],
-    version: Annotated[str, "Project version"],
-    dependencies: Annotated[Optional[list[str]], "Dependencies (list of packages)"],
-) -> str:
-    """Generate a project configuration file."""
-    return f"Config for {project_name} v{version} created"
+async def simulate_streamed_function_call_args() -> None:
+    """Async generator that simulates streaming deltas for function call args.
 
-
-async def main():
+    Yields dict events with keys: `type`, `arg`, `chunk`, `final`.
+    This mirrors how a model might stream incremental argument text.
     """
-    Demonstrates real-time streaming of function call arguments.
 
-    Function arguments are streamed incrementally as they are generated,
-    providing immediate feedback during parameter generation.
-    """
-    agent = Agent(
-        name="CodeGenerator",
-        instructions="You are a helpful coding assistant. Use the provided tools to create files and configurations.",
-        tools=[write_file, create_config],
-    )
+    # Stream filename in two chunks
+    yield {"type": "function_call_arg_delta", "arg": "filename", "chunk": "report_", "final": False}
+    await asyncio.sleep(0)
+    yield {"type": "function_call_arg_delta", "arg": "filename", "chunk": "2024.txt", "final": True}
+    await asyncio.sleep(0)
 
-    logging.getLogger(__name__).info("🚀 Function Call Arguments Streaming Demo")
+    # Stream file content in several small chunks
+    content_chunks = [
+        "This is the first line.\n",
+        "Second line here.\n",
+        "Final short note.\n",
+    ]
+    for i, c in enumerate(content_chunks):
+        yield {"type": "function_call_arg_delta", "arg": "content", "chunk": c, "final": i == len(content_chunks) - 1}
+        await asyncio.sleep(0)
 
-    result = Runner.run_streamed(
-        agent,
-        input="Create a Python web project called 'my-app' with FastAPI. Version 1.0.0, dependencies: fastapi, uvicorn",
-    )
 
-    # Track function calls for detailed output
-    function_calls: dict[Any, dict[str, Any]] = {}  # call_id -> {name, arguments}
-    current_active_call_id = None
+async def main() -> None:
+    logging.basicConfig(level=logging.INFO)
+    logger.info("Streamed function-call example (simulated)")
 
-    async for event in result.stream_events():
-        if event.type == "raw_response_event":
-            # Function call started
-            if event.data.type == "response.output_item.added":
-                if getattr(event.data.item, "type", None) == "function_call":
-                    function_name = getattr(event.data.item, "name", "unknown")
-                    call_id = getattr(event.data.item, "call_id", "unknown")
+    # Assemble streamed args
+    assembled: dict[str, str] = {"filename": "", "content": ""}
+    finished = {"filename": False, "content": False}
 
-                    function_calls[call_id] = {"name": function_name, "arguments": ""}
-                    current_active_call_id = call_id
-                    logging.getLogger(__name__).info(
-                        "\n📞 Function call streaming started: %s()", function_name
-                    )
-                    logging.getLogger(__name__).info("📝 Arguments building...")
+    async for event in simulate_streamed_function_call_args():
+        if event.get("type") != "function_call_arg_delta":
+            continue
+        arg = event["arg"]
+        assembled[arg] += event["chunk"]
+        if event.get("final"):
+            finished[arg] = True
 
-            # Real-time argument streaming
-            elif isinstance(event.data, ResponseFunctionCallArgumentsDeltaEvent):
-                    if current_active_call_id and current_active_call_id in function_calls:
-                        function_calls[current_active_call_id]["arguments"] += event.data.delta
-                        logging.getLogger(__name__).info(event.data.delta)
-
-            # Function call completed
-            elif event.data.type == "response.output_item.done":
-                if hasattr(event.data.item, "call_id"):
-                    call_id = getattr(event.data.item, "call_id", "unknown")
-                        if call_id in function_calls:
-                            function_info = function_calls[call_id]
-                            logging.getLogger(__name__).info(
-                                "\n✅ Function call streaming completed: %s", function_info["name"]
-                            )
-                            logging.getLogger(__name__).info("")
-                        if current_active_call_id == call_id:
-                            current_active_call_id = None
-
-    logging.getLogger(__name__).info("Summary of all function calls:")
-    for call_id, info in function_calls.items():
-        logging.getLogger(__name__).info("  - #%s: %s(%s)", call_id, info["name"], info["arguments"])
-
-    logging.getLogger(__name__).info("\nResult: %s", result.final_output)
+        # When all args are final, invoke the tool
+        if all(finished.values()):
+            res = write_file(assembled["filename"], assembled["content"])
+            logger.info("Tool result: %s", res)
+            break
 
 
 if __name__ == "__main__":

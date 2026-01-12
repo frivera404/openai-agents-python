@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 import re
-import requests
-from dataclasses import dataclass
 from typing import Any
 from urllib.parse import urlparse
 
+import requests
+
 from .agent import Agent
 from .tool import function_tool
-
 
 FINAL_SETTINGS = {
     "prime_url": "https://ctdatenight.com",
@@ -66,17 +65,21 @@ def _rewrite_ctdatenight_links_in_html(html: str) -> str:
 
     Replaces the href value with the single `redirect_url` from FINAL_SETTINGS.
     """
+
     def _repl(m: re.Match) -> str:
         quote = m.group(1)
         href = m.group(2)
         new_href = _rewrite_href_if_ctdatenight(href)
-        return f'href={quote}{new_href}{quote}'
+        return f"href={quote}{new_href}{quote}"
 
-    return re.sub(r'href\s*=\s*(\"|\')(.*?)\1', _repl, html, flags=re.IGNORECASE | re.DOTALL)
+    return re.sub(r"href\s*=\s*(\"|\')(.*?)\1", _repl, html, flags=re.IGNORECASE | re.DOTALL)
 
 
 @function_tool(
-    description_override="Fetch a URL from ctdatenight.com only. Enforces domain, timeout, redirects, and size limits.",
+    description_override=(
+        "Fetch a URL from ctdatenight.com only. "
+        "Enforces domain, timeout, redirects, and size limits."
+    ),
 )
 def fetch_url(url: str) -> dict[str, Any]:
     """Fetch a URL but strictly enforce the CTDateNight single-domain policy.
@@ -84,7 +87,8 @@ def fetch_url(url: str) -> dict[str, Any]:
     Inputs:
     - url: the URL to fetch (must be on allowed domain)
 
-    Returns a dict with keys: url, status_code, content_type, content (HTML with scripts/styles stripped).
+    Returns a dict with keys: url, status_code, content_type, content.
+    The `content` value is HTML with scripts/styles stripped.
     """
     parsed = urlparse(url)
     hostname = parsed.hostname or ""
@@ -150,7 +154,9 @@ def fetch_url(url: str) -> dict[str, Any]:
     }
 
 
-@function_tool(description_override="Extract offer-related information from HTML for ctdatenight.com pages.")
+@function_tool(
+    description_override="Extract offer-related information from HTML for ctdatenight.com pages."
+)
 def extract_offer(html: str, base_url: str | None = None) -> dict[str, Any]:
     """Extract structured offer information without guessing or inventing data.
 
@@ -170,7 +176,9 @@ def extract_offer(html: str, base_url: str | None = None) -> dict[str, Any]:
         result["title"] = m.group(1).strip()
 
     # meta og:title
-    m2 = re.search(r'<meta\s+property=["\']og:title["\']\s+content=["\'](.*?)["\']', html, flags=re.IGNORECASE)
+    m2 = re.search(
+        r'<meta\s+property=["\']og:title["\']\s+content=["\'](.*?)["\']', html, flags=re.IGNORECASE
+    )
     if m2:
         result.setdefault("meta", {})["og:title"] = m2.group(1).strip()
 
@@ -180,7 +188,9 @@ def extract_offer(html: str, base_url: str | None = None) -> dict[str, Any]:
         result["prices_detected"] = list(dict.fromkeys(prices))  # uniq preserve order
 
     # Look for CTA links (buy, add to cart, reserve, book)
-    cta_links = re.findall(r'<a[^>]+href=["\']([^"\']+)["\'][^>]*>([^<]{1,200}?)</a>', html, flags=re.IGNORECASE)
+    cta_links = re.findall(
+        r'<a[^>]+href=["\']([^"\']+)["\'][^>]*>([^<]{1,200}?)</a>', html, flags=re.IGNORECASE
+    )
     ctas = []
     for href, text in cta_links:
         if re.search(r"buy|add to cart|reserve|book|signup|subscribe", text, flags=re.IGNORECASE):

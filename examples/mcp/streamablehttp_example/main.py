@@ -1,9 +1,9 @@
 import asyncio
+import logging
 import os
 import shutil
 import subprocess
 import time
-import logging
 from typing import Any
 
 from agents import Agent, Runner, gen_trace_id, trace
@@ -49,7 +49,9 @@ async def main():
         trace_id = gen_trace_id()
         with trace(workflow_name="Streamable HTTP Example", trace_id=trace_id):
             logger = logging.getLogger(__name__)
-            logger.info("View trace: https://platform.openai.com/traces/trace?trace_id=%s\n", trace_id)
+            logger.info(
+                "View trace: https://platform.openai.com/traces/trace?trace_id=%s\n", trace_id
+            )
             await run(server)
 
 

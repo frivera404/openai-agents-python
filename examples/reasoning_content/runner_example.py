@@ -10,8 +10,8 @@ To run this example, you need to:
 """
 
 import asyncio
-import os
 import logging
+import os
 
 from agents import Agent, ModelSettings, Runner, trace
 from agents.items import ReasoningItem

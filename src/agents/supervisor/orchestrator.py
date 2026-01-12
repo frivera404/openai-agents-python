@@ -1,17 +1,20 @@
 from __future__ import annotations
 
+import sys
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Mapping, Optional
-import sys
+from typing import Any
 
-# Ensure the project root (which contains ``openai_assistant_agent.py``) is on sys.path.
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.append(str(PROJECT_ROOT))
-
-from openai_assistant_agent import OpenAIAssistantAgent
-from ..agent import Agent
+try:
+    from agents.agent import Agent
+    from openai_assistant_agent import OpenAIAssistantAgent
+except Exception:
+    PROJECT_ROOT = Path(__file__).resolve().parents[3]
+    if str(PROJECT_ROOT) not in sys.path:
+        sys.path.append(str(PROJECT_ROOT))
+    from agents.agent import Agent
+    from openai_assistant_agent import OpenAIAssistantAgent
 
 
 @dataclass(frozen=True)
@@ -119,8 +122,8 @@ class SupervisorOrchestrator:
     def __init__(
         self,
         agent: OpenAIAssistantAgent,
-        sub_agents: Optional[Mapping[str, SubAgentSpec]] = None,
-        sub_agent_instances: Optional[Mapping[str, Agent]] = None,
+        sub_agents: Mapping[str, SubAgentSpec] | None = None,
+        sub_agent_instances: Mapping[str, Agent] | None = None,
     ) -> None:
         self._agent = agent
         self._sub_agents: Mapping[str, SubAgentSpec] = sub_agents or DEFAULT_SUB_AGENTS
@@ -138,15 +141,33 @@ class SupervisorOrchestrator:
 
         text = query.lower()
         # Hard routing for commerce / offers / signup related queries
-        if any(tok in text for tok in ("offer", "offers", "shop", "shopkeeper", "product", "price", "signup", "sign up", "checkout")):
+        if any(
+            tok in text
+            for tok in (
+                "offer",
+                "offers",
+                "shop",
+                "shopkeeper",
+                "product",
+                "price",
+                "signup",
+                "sign up",
+                "checkout",
+            )
+        ):
             return self._sub_agents.get("shopkeeper", self._sub_agents["ui"])
 
         # Retention-related queries
-        if any(tok in text for tok in ("retain", "retention", "discount", "coupon", "promo", "promotions")):
+        if any(
+            tok in text
+            for tok in ("retain", "retention", "discount", "coupon", "promo", "promotions")
+        ):
             return self._sub_agents.get("retention", self._sub_agents["ui"])
 
         # Info-specific queries
-        if any(tok in text for tok in ("info", "information", "faq", "help", "how do i", "where can i")):
+        if any(
+            tok in text for tok in ("info", "information", "faq", "help", "how do i", "where can i")
+        ):
             return self._sub_agents.get("info", self._sub_agents["ui"])
 
         if any(word in text for word in ("search", "look up", "look-up", "research", "google")):
@@ -161,7 +182,7 @@ class SupervisorOrchestrator:
         # Default: treat this as a normal conversational request.
         return self._sub_agents["ui"]
 
-    async def plan(self, query: str) -> Dict[str, Any]:
+    async def plan(self, query: str) -> dict[str, Any]:
         """Return a small, machine-readable plan for the request.
 
         Structure is intentionally shallow so it is easy to surface over HTTP
@@ -176,7 +197,7 @@ class SupervisorOrchestrator:
             "selected_sub_agent_description": sub_agent.description,
         }
 
-    async def run_supervised(self, query: str, thread_id: Optional[str] = None) -> Dict[str, Any]:
+    async def run_supervised(self, query: str, thread_id: str | None = None) -> dict[str, Any]:
         """Run a query through the shared agent with supervisor metadata.
 
         The result shape is a dict so it is easy to expose as JSON:

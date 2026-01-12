@@ -42,6 +42,7 @@ async def main():
         ],
     )
     import logging
+
     logging.getLogger(__name__).info(result.final_output)
 
 

@@ -332,4 +332,3 @@ class SQLAlchemySession(SessionABC):
             AsyncEngine: The SQLAlchemy async engine instance.
         """
         return self._engine
-

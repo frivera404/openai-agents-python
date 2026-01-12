@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pytest
+from pydantic import BaseModel
 
 from agents import (
     Agent,
@@ -24,7 +25,6 @@ from openai.types.responses import (
 from openai.types.responses.response_computer_tool_call import ActionClick
 from openai.types.responses.response_function_web_search import ActionSearch
 from openai.types.responses.response_reasoning_item import ResponseReasoningItem, Summary
-from pydantic import BaseModel
 
 from .test_responses import (
     get_final_output_message,

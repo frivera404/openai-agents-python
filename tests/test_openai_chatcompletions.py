@@ -3,9 +3,9 @@ from __future__ import annotations
 from collections.abc import AsyncIterator
 from typing import Any
 
+import httpx
 import pytest
 
-import httpx
 from agents import (
     ModelResponse,
     ModelSettings,
@@ -68,7 +68,7 @@ async def test_get_response_with_text_message(monkeypatch) -> None:
         return chat
 
     monkeypatch.setattr(OpenAIChatCompletionsModel, "_fetch_response", patched_fetch_response)
-    model = OpenAIProvider(use_responses=False).get_model("gpt-4")
+    model = OpenAIProvider(use_responses=False).get_model("gpt-4.1")
     resp: ModelResponse = await model.get_response(
         system_instructions=None,
         input="",
@@ -121,7 +121,7 @@ async def test_get_response_with_refusal(monkeypatch) -> None:
         return chat
 
     monkeypatch.setattr(OpenAIChatCompletionsModel, "_fetch_response", patched_fetch_response)
-    model = OpenAIProvider(use_responses=False).get_model("gpt-4")
+    model = OpenAIProvider(use_responses=False).get_model("gpt-4.1")
     resp: ModelResponse = await model.get_response(
         system_instructions=None,
         input="",
@@ -175,7 +175,7 @@ async def test_get_response_with_tool_call(monkeypatch) -> None:
         return chat
 
     monkeypatch.setattr(OpenAIChatCompletionsModel, "_fetch_response", patched_fetch_response)
-    model = OpenAIProvider(use_responses=False).get_model("gpt-4")
+    model = OpenAIProvider(use_responses=False).get_model("gpt-4.1")
     resp: ModelResponse = await model.get_response(
         system_instructions=None,
         input="",
@@ -218,7 +218,7 @@ async def test_get_response_with_no_message(monkeypatch) -> None:
         return chat
 
     monkeypatch.setattr(OpenAIChatCompletionsModel, "_fetch_response", patched_fetch_response)
-    model = OpenAIProvider(use_responses=False).get_model("gpt-4")
+    model = OpenAIProvider(use_responses=False).get_model("gpt-4.1")
     resp: ModelResponse = await model.get_response(
         system_instructions=None,
         input="",
@@ -268,7 +268,7 @@ async def test_fetch_response_non_stream(monkeypatch) -> None:
     )
     completions = DummyCompletions()
     dummy_client = DummyClient(completions)
-    model = OpenAIChatCompletionsModel(model="gpt-4", openai_client=dummy_client)  # type: ignore
+    model = OpenAIChatCompletionsModel(model="gpt-4.1", openai_client=dummy_client)  # type: ignore
     # Execute the private fetch with a system instruction and simple string input.
     with generation_span(disabled=True) as span:
         result = await model._fetch_response(
@@ -287,7 +287,7 @@ async def test_fetch_response_non_stream(monkeypatch) -> None:
     kwargs = completions.kwargs
     assert kwargs["stream"] is omit
     assert kwargs["store"] is omit
-    assert kwargs["model"] == "gpt-4"
+    assert kwargs["model"] == "gpt-4.1"
     assert kwargs["messages"][0]["role"] == "system"
     assert kwargs["messages"][0]["content"] == "sys"
     assert kwargs["messages"][1]["role"] == "user"
@@ -325,7 +325,7 @@ async def test_fetch_response_stream(monkeypatch) -> None:
 
     completions = DummyCompletions()
     dummy_client = DummyClient(completions)
-    model = OpenAIChatCompletionsModel(model="gpt-4", openai_client=dummy_client)  # type: ignore
+    model = OpenAIChatCompletionsModel(model="gpt-4.1", openai_client=dummy_client)  # type: ignore
     with generation_span(disabled=True) as span:
         response, stream = await model._fetch_response(
             system_instructions=None,
@@ -345,7 +345,7 @@ async def test_fetch_response_stream(monkeypatch) -> None:
     # Response is a proper openai Response
     assert isinstance(response, Response)
     assert response.id == FAKE_RESPONSES_ID
-    assert response.model == "gpt-4"
+    assert response.model == "gpt-4.1"
     assert response.object == "response"
     assert response.output == []
     # We returned the async iterator produced by our dummy.
@@ -399,7 +399,7 @@ async def test_user_agent_header_chat_completions(override_ua):
             self.chat = type("_Chat", (), {"completions": DummyCompletions()})()
             self.base_url = "https://api.openai.com"
 
-    model = OpenAIChatCompletionsModel(model="gpt-4", openai_client=DummyChatClient())  # type: ignore
+    model = OpenAIChatCompletionsModel(model="gpt-4.1", openai_client=DummyChatClient())  # type: ignore
 
     if override_ua is not None:
         token = HEADERS_OVERRIDE.set({"User-Agent": override_ua})

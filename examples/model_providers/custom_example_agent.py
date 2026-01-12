@@ -1,8 +1,8 @@
 import asyncio
+import logging
 import os
 
 from agents import Agent, OpenAIChatCompletionsModel, Runner, function_tool, set_tracing_disabled
-import logging
 from openai import AsyncOpenAI
 
 BASE_URL = os.getenv("EXAMPLE_BASE_URL") or ""
@@ -55,6 +55,7 @@ async def main():
 
 if __name__ == "__main__":
     import logging as _logging
+
     _logging.basicConfig(level=_logging.INFO)
 
     asyncio.run(main())

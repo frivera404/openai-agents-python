@@ -1,8 +1,9 @@
 import asyncio
 import logging
 
-from agents import Agent, Runner, trace
 from pydantic import BaseModel
+
+from agents import Agent, Runner, trace
 
 """
 This example demonstrates a deterministic flow, where each step is performed by an agent.
@@ -83,6 +84,7 @@ async def main():
 
 if __name__ == "__main__":
     import logging as _logging
+
     _logging.basicConfig(level=_logging.INFO)
 
     asyncio.run(main())

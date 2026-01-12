@@ -1,12 +1,16 @@
-from agent_private_i.workers.base import WorkerBase
 import os
+
+from agent_private_i.workers.base import WorkerBase
 
 
 class VerifierWorker(WorkerBase):
     role = "verifier"
 
     def run(self, step: dict, task_payload: dict) -> dict:
-        """Attempt verification via MCP test-runner when available, otherwise apply simple heuristics.
+        """Attempt verification via MCP test-runner when available.
+
+        If MCP is unavailable, apply simple heuristics to determine
+        verification status.
 
         Returns {'verified': bool, ...}.
         """

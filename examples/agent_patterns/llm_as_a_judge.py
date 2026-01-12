@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from dataclasses import dataclass
 from typing import Literal
 
 from agents import Agent, ItemHelpers, Runner, TResponseInputItem, trace
-import logging
 
 """
 This example shows the LLM as a judge pattern. The first agent generates an outline for a story.

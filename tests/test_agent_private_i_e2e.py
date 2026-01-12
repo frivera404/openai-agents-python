@@ -1,15 +1,17 @@
-import tempfile
-from pathlib import Path
+import os
+import sys
+
+# Ensure the project root is on sys.path when running this file directly
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from agent_private_i.core.models import new_task
-from agent_private_i.core.state_store import FileStateStore
+from agent_private_i.core.orchestrator import Orchestrator
 from agent_private_i.core.planner import Planner
 from agent_private_i.core.router import Router
+from agent_private_i.core.state_store import FileStateStore
 from agent_private_i.core.verifier import Verifier
-from agent_private_i.core.orchestrator import Orchestrator
-
-from agent_private_i.workers.research_bot import ResearchBotWorker
 from agent_private_i.workers.coder import CoderWorker
+from agent_private_i.workers.research_bot import ResearchBotWorker
 from agent_private_i.workers.senior_dev import SeniorDevWorker
 from agent_private_i.workers.verifier import VerifierWorker
 
@@ -48,4 +50,3 @@ def test_orchestrator_completes_task(tmp_path):
     # persisted state should exist
     loaded = store.load(result["task_id"])
     assert loaded is not None
-

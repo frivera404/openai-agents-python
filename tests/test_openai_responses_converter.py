@@ -24,6 +24,7 @@ We test the following aspects:
 """
 
 import pytest
+from pydantic import BaseModel
 
 from agents import (
     Agent,
@@ -40,7 +41,6 @@ from agents import (
 )
 from agents.models.openai_responses import Converter
 from openai import omit
-from pydantic import BaseModel
 
 
 def test_convert_tool_choice_standard_values():

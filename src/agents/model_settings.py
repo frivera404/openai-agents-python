@@ -5,17 +5,16 @@ from collections.abc import Mapping
 from dataclasses import fields, replace
 from typing import Annotated, Any, Literal, Union
 
+from pydantic import BaseModel, GetCoreSchemaHandler  # type: ignore[attr-defined]
+from pydantic.dataclasses import dataclass
 from pydantic_core import core_schema
 from typing_extensions import TypeAlias
 
 from openai import Omit as _Omit
-from typing import Dict
-Body: TypeAlias = Dict[str, Any]
-Query: TypeAlias = Dict[str, Any]
-from openai.types.responses import ResponseIncludable
 from openai.types.shared import Reasoning
-from pydantic import BaseModel, GetCoreSchemaHandler, ConfigDict  # type: ignore[attr-defined]
-from pydantic.dataclasses import dataclass
+
+Body: TypeAlias = dict[str, Any]
+Query: TypeAlias = dict[str, Any]
 
 
 class _OmitTypeAnnotation:
@@ -60,7 +59,6 @@ ToolChoice: TypeAlias = Union[Literal["auto", "required", "none"], str, MCPToolC
 
 @dataclass
 class ModelSettings:
-
     temperature: float | None = None
     """The temperature to use when calling the model."""
 

@@ -19,6 +19,7 @@ from openai_assistant_agent import OpenAIAssistantAgent
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 async def test_memory_management():
     """Test memory management features"""
     logger.info("🧠 Testing Memory Management Features")
@@ -52,6 +53,7 @@ async def test_memory_management():
     stats = agent.get_memory_stats()
     logger.info("📊 Updated memory stats: %s", json.dumps(stats, indent=2))
 
+
 async def test_mcp_integration():
     """Test MCP server integration"""
     logger.info("🔗 Testing MCP Integration")
@@ -74,6 +76,7 @@ async def test_mcp_integration():
     else:
         logger.warning("⚠️  MCP server initialization failed")
 
+
 async def test_configuration_persistence():
     """Test configuration persistence"""
     logger.info("💾 Testing Configuration Persistence")
@@ -82,21 +85,22 @@ async def test_configuration_persistence():
     agent = OpenAIAssistantAgent()
 
     # Modify configuration
-    if 'test_config' not in agent.config:
-        agent.config['test_config'] = {
-            'memory_enabled': True,
-            'auto_save_interval': 300,
-            'max_conversations': 100
+    if "test_config" not in agent.config:
+        agent.config["test_config"] = {
+            "memory_enabled": True,
+            "auto_save_interval": 300,
+            "max_conversations": 100,
         }
         agent.save_config()
         logger.info("✅ Test configuration added and saved")
 
     # Verify configuration was saved
     agent2 = OpenAIAssistantAgent()
-    if 'test_config' in agent2.config:
+    if "test_config" in agent2.config:
         logger.info("✅ Configuration persistence verified")
     else:
         logger.warning("⚠️  Configuration persistence failed")
+
 
 async def main():
     """Main test function"""
@@ -122,6 +126,7 @@ async def main():
         # Cleanup
         agent = OpenAIAssistantAgent()
         await agent.cleanup()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

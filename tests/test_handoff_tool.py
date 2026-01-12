@@ -3,6 +3,7 @@ import json
 from typing import Any
 
 import pytest
+from pydantic import BaseModel
 
 from agents import (
     Agent,
@@ -16,7 +17,6 @@ from agents import (
 )
 from agents.run import AgentRunner
 from openai.types.responses import ResponseOutputMessage, ResponseOutputText
-from pydantic import BaseModel
 
 
 def message_item(content: str, agent: Agent[Any]) -> MessageOutputItem:

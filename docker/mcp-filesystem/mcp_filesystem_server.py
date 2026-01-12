@@ -9,11 +9,21 @@ A standalone MCP server that provides filesystem access via HTTP (streamable) or
 import argparse
 import json
 import os
-from typing import Any, Dict, List
-from mcp.server.fastmcp import FastMCP
+from typing import Any
 
-# Create FastMCP server
-mcp = FastMCP("Filesystem Server")
+from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
+
+# Create FastMCP server with explicit transport security settings to
+# allow the container service hostname and disable DNS-rebinding checks
+# for local development.
+mcp = FastMCP(
+    "Filesystem Server",
+    transport_security=TransportSecuritySettings(
+        enable_dns_rebinding_protection=False,
+        allowed_hosts=["mcp-filesystem:*"]
+    ),
+)
 
 
 @mcp.tool()
@@ -45,7 +55,7 @@ def read_file(path: str) -> str:
         if os.path.isdir(path):
             return f"'{path}' is a directory, not a file"
 
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             return f.read()
     except UnicodeDecodeError:
         return f"File '{path}' is not a text file"
@@ -88,7 +98,7 @@ def search_files(path: str = ".", query: str = "", max_results: int = 20) -> str
     root = path if os.path.isdir(path) else os.path.dirname(path) or "."
     query_lower = query.lower()
 
-    matches: List[Dict[str, Any]] = []
+    matches: list[dict[str, Any]] = []
     max_bytes = 2 * 1024 * 1024  # 2MB safety cap per file
     skip_ext = {
         ".exe",
@@ -140,7 +150,7 @@ def search_files(path: str = ".", query: str = "", max_results: int = 20) -> str
                     continue
 
                 try:
-                    with open(full_path, "r", encoding="utf-8", errors="ignore") as f:
+                    with open(full_path, encoding="utf-8", errors="ignore") as f:
                         for idx, line in enumerate(f, start=1):
                             if query_lower in line.lower():
                                 matches.append(
@@ -175,9 +185,7 @@ def main() -> None:
         help="Serve the tools via the stdio transport.",
     )
     parser.add_argument("--host", default="127.0.0.1", help="Host to bind (HTTP only).")
-    parser.add_argument(
-        "--port", type=int, default=3000, help="Port to bind (HTTP only)."
-    )
+    parser.add_argument("--port", type=int, default=3000, help="Port to bind (HTTP only).")
     args = parser.parse_args()
 
     if args.stdio:

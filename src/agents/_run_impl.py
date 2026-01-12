@@ -14,11 +14,6 @@ from openai.types.responses import (
     ResponseFunctionWebSearch,
     ResponseOutputMessage,
 )
-
-# from openai.types.responses.response_code_interpreter_tool_call import (
-#     ResponseCodeInterpreterToolCall,
-# )
-ResponseCodeInterpreterToolCall = Any
 from openai.types.responses.response_computer_tool_call import (
     ActionClick,
     ActionDoubleClick,
@@ -30,67 +25,8 @@ from openai.types.responses.response_computer_tool_call import (
     ActionType,
     ActionWait,
 )
-from openai.types.responses.response_input_item_param import *  # type: ignore
 from openai.types.responses.response_input_param import ComputerCallOutput
-from openai.types.responses.response_output_item import *  # type: ignore
 from openai.types.responses.response_reasoning_item import ResponseReasoningItem
-
-
-class _ImageGenerationCall:
-    """Runtime placeholder type for image generation calls.
-
-    The concrete SDK type is not available in this version, so we use
-    a private sentinel class to keep type hints compiling without
-    accidentally matching arbitrary outputs at runtime.
-    """
-
-
-class _LocalShellCall:
-    """Runtime placeholder type for local shell calls."""
-
-
-class _McpApprovalRequest:
-    """Runtime placeholder type for MCP approval requests."""
-
-
-class _McpCall:
-    """Runtime placeholder type for generic MCP calls."""
-
-
-class _McpListTools:
-    """Runtime placeholder type for MCP list-tools responses."""
-
-
-class _McpApprovalResponse:
-    """Runtime placeholder type for MCP approval responses."""
-
-
-class _ComputerCallOutputAcknowledgedSafetyCheck:
-    """Runtime placeholder type for acknowledged safety checks."""
-
-
-ImageGenerationCall = _ImageGenerationCall
-LocalShellCall = _LocalShellCall
-McpApprovalRequest = _McpApprovalRequest
-McpCall = _McpCall
-McpListTools = _McpListTools
-McpApprovalResponse = _McpApprovalResponse
-ComputerCallOutputAcknowledgedSafetyCheck = _ComputerCallOutputAcknowledgedSafetyCheck
-
-
-def _isinstance_safe(obj: object, cls: Any) -> bool:
-    """Safe isinstance that tolerates ``typing.Any`` on Python 3.14+.
-
-    Python 3.14 raises ``TypeError`` for ``isinstance(x, Any)``. In this
-    codebase several protocol types are currently aliased to ``Any`` as
-    placeholders (for MCP-related response types). Historically,
-    ``isinstance(x, Any)`` behaved like ``True`` for all ``x``; we
-    preserve that behavior here while avoiding the runtime error.
-    """
-
-    if cls is Any:
-        return True
-    return isinstance(obj, cls)
 
 from .agent import Agent, ToolsToFinalOutputResult
 from .agent_output import AgentOutputSchemaBase
@@ -153,6 +89,85 @@ from .tracing import (
     trace,
 )
 from .util import _coro, _error_tracing
+
+
+# from openai.types.responses.response_code_interpreter_tool_call import (
+#     ResponseCodeInterpreterToolCall,
+# )
+class _ResponseCodeInterpreterToolCall:
+    """Runtime placeholder for the code interpreter tool call type."""
+
+
+ResponseCodeInterpreterToolCall = _ResponseCodeInterpreterToolCall
+# The detailed response imports live higher in the file to keep imports grouped
+# at the top and avoid E402 (module-level imports must appear before code).
+
+
+class _ImageGenerationCall:
+    """Runtime placeholder type for image generation calls.
+
+    The concrete SDK type is not available in this version, so we use
+    a private sentinel class to keep type hints compiling without
+    accidentally matching arbitrary outputs at runtime.
+    """
+
+
+class _LocalShellCall:
+    """Runtime placeholder type for local shell calls."""
+
+
+class _McpApprovalRequest:
+    """Runtime placeholder type for MCP approval requests."""
+
+
+class _McpCall:
+    """Runtime placeholder type for generic MCP calls."""
+
+
+class _McpListTools:
+    """Runtime placeholder type for MCP list-tools responses."""
+
+
+class _McpApprovalResponse:
+    """Runtime placeholder type for MCP approval responses."""
+
+
+@dataclass
+class _ComputerCallOutputAcknowledgedSafetyCheck:
+    """Runtime placeholder type for acknowledged safety checks.
+
+    Provide a simple dataclass with the expected fields so callers can
+    instantiate it with keyword args during tests and runtime.
+    """
+
+    id: str | None = None
+    code: str | None = None
+    message: str | None = None
+
+
+ImageGenerationCall = _ImageGenerationCall
+LocalShellCall = _LocalShellCall
+McpApprovalRequest = _McpApprovalRequest
+McpCall = _McpCall
+McpListTools = _McpListTools
+McpApprovalResponse = _McpApprovalResponse
+ComputerCallOutputAcknowledgedSafetyCheck = _ComputerCallOutputAcknowledgedSafetyCheck
+
+
+def _isinstance_safe(obj: object, cls: Any) -> bool:
+    """Safe isinstance that tolerates ``typing.Any`` on Python 3.14+.
+
+    Python 3.14 raises ``TypeError`` for ``isinstance(x, Any)``. In this
+    codebase several protocol types are currently aliased to ``Any`` as
+    placeholders (for MCP-related response types). Historically,
+    ``isinstance(x, Any)`` behaved like ``True`` for all ``x``; we
+    preserve that behavior here while avoiding the runtime error.
+    """
+
+    if cls is Any:
+        return True
+    return isinstance(obj, cls)
+
 
 if TYPE_CHECKING:
     from .run import RunConfig
@@ -317,6 +332,7 @@ class RunImpl:
 
         new_step_items: list[RunItem] = []
         new_step_items.extend(processed_response.new_items)
+        # (no-op) intentionally left brief to avoid noisy logs in normal runs
 
         # First, lets run the tool calls - function tools, computer actions, and local shell calls
         (
@@ -347,8 +363,11 @@ class RunImpl:
             ),
         )
         new_step_items.extend([result.run_item for result in function_results])
+        # silent after function results
         new_step_items.extend(computer_results)
+        # silent after computer results
         new_step_items.extend(local_shell_results)
+        # silent after local shell results
 
         # Next, run the MCP approval requests
         if processed_response.mcp_approval_requests:
@@ -358,6 +377,7 @@ class RunImpl:
                 context_wrapper=context_wrapper,
             )
             new_step_items.extend(approval_results)
+            # silent after MCP approvals
 
         # Next, check if there are any handoffs
         if run_handoffs := processed_response.handoffs:
@@ -497,6 +517,7 @@ class RunImpl:
         }
 
         for output in response.output:
+            # lightweight type checks (no logging)
             if isinstance(output, ResponseOutputMessage):
                 items.append(MessageOutputItem(raw_item=output, agent=agent))
             elif isinstance(output, ResponseFileSearchToolCall):
@@ -557,7 +578,12 @@ class RunImpl:
             elif _isinstance_safe(output, ResponseCodeInterpreterToolCall):
                 items.append(ToolCallItem(raw_item=output, agent=agent))
                 tools_used.append("code_interpreter")
-            elif _isinstance_safe(output, LocalShellCall):
+            # LocalShellCall may come from the OpenAI SDK and not match our
+            # placeholder type. Detect by the official `type` field as a
+            # fallback so we reliably schedule local shell calls for execution.
+            elif getattr(output, "type", None) == "local_shell_call" or _isinstance_safe(
+                output, LocalShellCall
+            ):
                 items.append(ToolCallItem(raw_item=output, agent=agent))
                 tools_used.append("local_shell")
                 if not local_shell_tool:
@@ -625,6 +651,28 @@ class RunImpl:
                         function_tool=function_map[output.name],
                     )
                 )
+
+        # De-duplicate identical tool-call items (sometimes duplicate entries
+        # appear due to upstream SDK shapes). Keep first occurrence.
+        try:
+            unique = []
+            seen_fn_calls = set()
+            for it in items:
+                raw = getattr(it, "raw_item", None)
+                raw_type = getattr(raw, "type", None) if raw is not None else None
+                # Only deduplicate identical function_call ToolCallItems (same name+call_id)
+                if raw_type == "function_call" and type(it).__name__ == "ToolCallItem":
+                    key = (getattr(raw, "name", None), getattr(raw, "call_id", None))
+                    if key in seen_fn_calls:
+                        continue
+                    seen_fn_calls.add(key)
+                unique.append(it)
+            items = unique
+        except Exception:
+            # if dedupe fails, fall back to original items
+            pass
+
+        # completed processed response
 
         return ProcessedResponse(
             new_items=items,
@@ -979,6 +1027,8 @@ class RunImpl:
         context_wrapper: RunContextWrapper[TContext],
         run_config: RunConfig,
     ) -> SingleStepResult:
+        # (no-op) handoff entry state is intentionally quiet
+
         # If there is more than one handoff, add tool responses that reject those handoffs
         multiple_handoffs = len(run_handoffs) > 1
         if multiple_handoffs:
@@ -1364,6 +1414,28 @@ class ComputerAction:  # type: ignore[no-untyped-def]
 
         # TODO: don't send a screenshot every single time, use references
         image_url = f"data:image/png;base64,{output}"
+        # Serialize acknowledged safety checks into primitive dicts for the raw
+        # item so that downstream consumers (and tests) receive plain serializable
+        # data instead of local dataclass instances.
+        ack_for_raw = None
+        if acknowledged_safety_checks:
+            ack_for_raw = []
+            for a in acknowledged_safety_checks:
+                # dataclasses.asdict handles dataclasses; fall back to __dict__ or the value itself
+                try:
+                    import dataclasses as _dc
+
+                    if _dc.is_dataclass(a):
+                        ack_for_raw.append(_dc.asdict(a))
+                        continue
+                except Exception:
+                    pass
+
+                if hasattr(a, "__dict__"):
+                    ack_for_raw.append(a.__dict__)
+                else:
+                    ack_for_raw.append(a)
+
         return ToolCallOutputItem(
             agent=agent,
             output=image_url,
@@ -1374,7 +1446,7 @@ class ComputerAction:  # type: ignore[no-untyped-def]
                     "image_url": image_url,
                 },
                 type="computer_call_output",
-                acknowledged_safety_checks=acknowledged_safety_checks,
+                acknowledged_safety_checks=ack_for_raw,
             ),
         )
 

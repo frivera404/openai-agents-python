@@ -14,7 +14,6 @@ from agents import Agent, Runner, SQLiteSession
 from agents.extensions.memory import EncryptedSession
 from agents.extensions.memory.encrypt_session import EncryptedEnvelope
 
-
 logger = logging.getLogger(__name__)
 
 

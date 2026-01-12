@@ -2,9 +2,9 @@
 
 from unittest.mock import MagicMock, patch
 
+import httpx
 import pytest
 
-import httpx
 from agents.mcp import MCPServerStreamableHttp
 
 
@@ -245,4 +245,3 @@ class TestMCPServerStreamableHttpClientFactory:
                 terminate_on_close=False,
                 httpx_client_factory=comprehensive_factory,
             )
-

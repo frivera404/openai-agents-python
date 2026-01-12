@@ -1,8 +1,8 @@
 import argparse
 import asyncio
 import json
-import os
 import logging
+import os
 from datetime import datetime
 
 from agents import Agent, HostedMCPTool, Runner
@@ -35,15 +35,18 @@ async def main(verbose: bool, stream: bool):
     today = datetime.now().strftime("%Y-%m-%d")
     if stream:
         result = Runner.run_streamed(agent, f"What is my schedule for {today}?")
+        printed = False
         async for event in result.stream_events():
-                if event.type == "raw_response_event":
-                    if event.data.type.startswith("response.output_item"):
-                        logger.debug(json.dumps(event.data.to_dict(), indent=2))
-                    if event.data.type.startswith("response.mcp"):
-                        logger.debug(json.dumps(event.data.to_dict(), indent=2))
-                    if event.data.type == "response.output_text.delta":
-                        # Keep streaming deltas printed to stdout for interactive UX.
-                        print(event.data.delta, end="", flush=True)
+            if event.type == "raw_response_event":
+                if getattr(event.data, "type", "").startswith("response.output_item"):
+                    logger.debug(json.dumps(event.data.to_dict(), indent=2))
+                if getattr(event.data, "type", "").startswith("response.mcp"):
+                    logger.debug(json.dumps(event.data.to_dict(), indent=2))
+                if getattr(event.data, "type", "") == "response.output_text.delta":
+                    # Keep streaming deltas printed to stdout for interactive UX.
+                    print(event.data.delta, end="", flush=True)
+                    printed = True
+        if printed:
             print()
     else:
         res = await Runner.run(agent, f"What is my schedule for {today}?")

@@ -12,8 +12,6 @@ Usage:
 import asyncio
 import json
 import logging
-import os
-import pickle
 import sys
 from typing import Optional
 
@@ -25,24 +23,23 @@ load_dotenv()
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
+
 
 # Suppress MCP-related asyncio cleanup errors
 class MCPAsyncioFilter(logging.Filter):
     def filter(self, record):
-        if record.name == 'asyncio' and record.levelno == logging.ERROR:
+        if record.name == "asyncio" and record.levelno == logging.ERROR:
             message = record.getMessage()
             # Suppress MCP stdio client cleanup errors
-            if ('cancel scope' in message or
-                'GeneratorExit' in message or
-                'stdio_client' in message):
+            if "cancel scope" in message or "GeneratorExit" in message or "stdio_client" in message:
                 return False
         return True
 
+
 # Add filter to asyncio logger
-asyncio_logger = logging.getLogger('asyncio')
+asyncio_logger = logging.getLogger("asyncio")
 asyncio_logger.addFilter(MCPAsyncioFilter())
 logger = logging.getLogger(__name__)
 
@@ -58,13 +55,13 @@ def save_agent_state(agent: OpenAIAssistantAgent, filename: str = "agent_state.j
     """Save agent state to JSON file"""
     try:
         state = {
-            'config_file': agent.config_file,
-            'assistant_id': agent.assistant_id,
-            'vector_store_id': agent.vector_store_id,
-            'api_key': agent.api_key,
-            'mcp_servers_initialized': len(agent.mcp_servers) > 0
+            "config_file": agent.config_file,
+            "assistant_id": agent.assistant_id,
+            "vector_store_id": agent.vector_store_id,
+            "api_key": agent.api_key,
+            "mcp_servers_initialized": len(agent.mcp_servers) > 0,
         }
-        with open(filename, 'w') as f:
+        with open(filename, "w") as f:
             json.dump(state, f, indent=2)
     except Exception as e:
         logger.warning(f"Failed to save agent state: {e}")
@@ -73,7 +70,7 @@ def save_agent_state(agent: OpenAIAssistantAgent, filename: str = "agent_state.j
 def load_agent_state(filename: str = "agent_state.json") -> Optional[dict]:
     """Load agent state from JSON file"""
     try:
-        with open(filename, 'r') as f:
+        with open(filename) as f:
             return json.load(f)
     except FileNotFoundError:
         return None
@@ -85,10 +82,11 @@ def load_agent_state(filename: str = "agent_state.json") -> Optional[dict]:
 def recreate_agent_from_state(state: dict) -> Optional[OpenAIAssistantAgent]:
     """Recreate agent from saved state"""
     try:
-        agent = OpenAIAssistantAgent(state['config_file'])
+        agent = OpenAIAssistantAgent(state["config_file"])
 
         # Reinitialize MCP servers if they were initialized before
-        if state.get('mcp_servers_initialized', False):
+        if state.get("mcp_servers_initialized", False):
+
             async def _reinit():
                 success = await agent.initialize_mcp_servers()
                 if success:
@@ -100,6 +98,7 @@ def recreate_agent_from_state(state: dict) -> Optional[OpenAIAssistantAgent]:
                         except Exception as e:
                             logger.warning(f"Failed to reconnect to {server.name}: {e}")
                 return agent
+
             return asyncio.run(_reinit())
         else:
             agent.create_agent()
@@ -110,7 +109,7 @@ def recreate_agent_from_state(state: dict) -> Optional[OpenAIAssistantAgent]:
 
 
 @click.group()
-@click.option('--verbose', '-v', is_flag=True, help='Enable verbose logging')
+@click.option("--verbose", "-v", is_flag=True, help="Enable verbose logging")
 @click.pass_context
 def cli(ctx, verbose):
     """OpenAI Assistant Agent with MCP Integration"""
@@ -121,7 +120,7 @@ def cli(ctx, verbose):
 
 
 @cli.command()
-@click.option('--servers', multiple=True, help='Specific MCP servers to initialize')
+@click.option("--servers", multiple=True, help="Specific MCP servers to initialize")
 @click.pass_context
 def init(ctx, servers):
     """Initialize the OpenAI Assistant Agent with MCP servers"""
@@ -133,7 +132,7 @@ def init(ctx, servers):
         click.echo("🚀 Initializing OpenAI Assistant Agent...")
 
         # Initialize MCP servers
-        mcp_success = await agent.initialize_mcp_servers(server_list)
+        await agent.initialize_mcp_servers(server_list)
 
         # Create the agent
         agent_success = agent.create_agent()
@@ -163,9 +162,9 @@ def init(ctx, servers):
 
 
 @cli.command()
-@click.argument('query')
-@click.option('--thread-id', help='OpenAI thread ID for conversation continuity')
-@click.option('--output-file', help='Save response to JSON file')
+@click.argument("query")
+@click.option("--thread-id", help="OpenAI thread ID for conversation continuity")
+@click.option("--output-file", help="Save response to JSON file")
 @click.pass_context
 def query(ctx, query, thread_id, output_file):
     """Run a query using the OpenAI Assistant Agent"""
@@ -187,10 +186,10 @@ def query(ctx, query, thread_id, output_file):
         if result:
             click.echo("\n📝 Response:")
             click.echo("=" * 50)
-            click.echo(result['response'])
+            click.echo(result["response"])
 
             if output_file:
-                with open(output_file, 'w') as f:
+                with open(output_file, "w") as f:
                     json.dump(result, f, indent=2, default=str)
                 click.echo(f"\n💾 Response saved to {output_file}")
         else:
@@ -201,7 +200,7 @@ def query(ctx, query, thread_id, output_file):
 
 
 @cli.command()
-@click.argument('server_name')
+@click.argument("server_name")
 @click.pass_context
 def test_server(ctx, server_name):
     """Test connection to a specific MCP server"""
@@ -253,7 +252,7 @@ def tools(ctx):
 @click.pass_context
 def info(ctx):
     """Show information about the OpenAI Assistant Agent"""
-    agent = ctx.obj.get('agent')
+    agent = ctx.obj.get("agent")
     if not agent:
         click.echo("❌ Agent not initialized. Run 'init' first.")
         sys.exit(1)
@@ -275,7 +274,7 @@ def info(ctx):
 @click.pass_context
 def cleanup(ctx):
     """Clean up MCP server connections"""
-    agent = ctx.obj.get('agent')
+    agent = ctx.obj.get("agent")
     if not agent:
         click.echo("❌ Agent not initialized.")
         return
@@ -296,6 +295,7 @@ def demo():
         # Import and run the main demo function
         try:
             from openai_assistant_agent import main as demo_main
+
             await demo_main()
         except Exception as e:
             click.echo(f"❌ Demo failed: {e}")

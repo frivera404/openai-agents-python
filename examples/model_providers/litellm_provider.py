@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 
 from agents import Agent, Runner, function_tool, set_tracing_disabled
-import logging
 from agents.extensions.models.litellm_model import LitellmModel
 
 """This example uses the LitellmModel directly, to hit any model provider.

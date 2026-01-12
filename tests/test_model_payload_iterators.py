@@ -3,9 +3,9 @@ from __future__ import annotations
 from collections.abc import Iterable, Iterator
 from typing import Any, cast
 
+import httpx
 import pytest
 
-import httpx
 from agents import (
     ModelSettings,
     ModelTracing,
@@ -87,7 +87,7 @@ async def test_chat_completions_materializes_iterator_payload(
             return ChatCompletion(
                 id="dummy-id",
                 created=0,
-                model="gpt-4",
+                model="gpt-4.1",
                 object="chat.completion",
                 choices=[],
                 usage=None,
@@ -98,7 +98,7 @@ async def test_chat_completions_materializes_iterator_payload(
             self.chat = type("_Chat", (), {"completions": DummyCompletions()})()
             self.base_url = httpx.URL("http://example.test")
 
-    model = OpenAIChatCompletionsModel(model="gpt-4", openai_client=DummyClient())  # type: ignore[arg-type]
+    model = OpenAIChatCompletionsModel(model="gpt-4.1", openai_client=DummyClient())  # type: ignore[arg-type]
 
     with generation_span(disabled=True) as span:
         await cast(Any, model)._fetch_response(

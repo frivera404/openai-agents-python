@@ -185,7 +185,11 @@ def test_tool_call_output_item_file_dict_variant_with_file_data() -> None:
 def test_tool_call_output_item_file_dict_variant_with_file_url() -> None:
     """Dict with type='file' and file_url field should be treated as structured output."""
     call = _make_tool_call()
-    out = {"type": "file", "file_url": "https://ctdatenight.com/report.pdf", "filename": "report.pdf"}
+    out = {
+        "type": "file",
+        "file_url": "https://ctdatenight.com/report.pdf",
+        "filename": "report.pdf",
+    }
     payload = ItemHelpers.tool_call_output_item(call, out)
 
     assert payload["type"] == "function_call_output"
@@ -369,4 +373,3 @@ def test_tool_call_output_item_mixed_list_partial_invalid_not_converted() -> Non
     # All-or-nothing: if any item is invalid, convert entire list to string
     assert isinstance(payload["output"], str)
     assert payload["output"] == "[{'type': 'text', 'text': 'hello'}, {'msg': 'foobar'}]"
-

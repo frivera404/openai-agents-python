@@ -9,7 +9,8 @@ A standalone MCP server that provides filesystem access via HTTP (streamable) or
 import argparse
 import json
 import os
-from typing import Any, Dict, List
+from typing import Any
+
 from mcp.server.fastmcp import FastMCP
 
 # Create FastMCP server
@@ -45,7 +46,7 @@ def read_file(path: str) -> str:
         if os.path.isdir(path):
             return f"'{path}' is a directory, not a file"
 
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             return f.read()
     except UnicodeDecodeError:
         return f"File '{path}' is not a text file"
@@ -88,7 +89,7 @@ def search_files(path: str = ".", query: str = "", max_results: int = 20) -> str
     root = path if os.path.isdir(path) else os.path.dirname(path) or "."
     query_lower = query.lower()
 
-    matches: List[Dict[str, Any]] = []
+    matches: list[dict[str, Any]] = []
     max_bytes = 2 * 1024 * 1024  # 2MB safety cap per file
     skip_ext = {
         ".exe",
@@ -140,7 +141,7 @@ def search_files(path: str = ".", query: str = "", max_results: int = 20) -> str
                     continue
 
                 try:
-                    with open(full_path, "r", encoding="utf-8", errors="ignore") as f:
+                    with open(full_path, encoding="utf-8", errors="ignore") as f:
                         for idx, line in enumerate(f, start=1):
                             if query_lower in line.lower():
                                 matches.append(

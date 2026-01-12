@@ -134,6 +134,6 @@ def fetch_normalized_spans(
 
 
 async def example_api_call():
-    res = await runSupervisorQuery({ "query": "research latest OpenAI tools" })
+    await runSupervisorQuery({"query": "research latest OpenAI tools"})
     # res.plan => chosen sub-agent
     # res.result.response => final answer text

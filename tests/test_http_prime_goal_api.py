@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 from fastapi.testclient import TestClient
 
@@ -25,7 +25,7 @@ def test_list_tools_returns_core_tools() -> None:
 
 
 def test_agent_query_uses_lazy_initialization_once(monkeypatch) -> None:
-    calls: Dict[str, int] = {"init": 0, "create": 0, "query": 0}
+    calls: dict[str, int] = {"init": 0, "create": 0, "query": 0}
 
     async def fake_init_mcp() -> bool:  # type: ignore[return-type]
         calls["init"] += 1
@@ -35,7 +35,7 @@ def test_agent_query_uses_lazy_initialization_once(monkeypatch) -> None:
         calls["create"] += 1
         return True
 
-    async def fake_run_query(query: str, thread_id: str | None = None) -> Dict[str, Any]:
+    async def fake_run_query(query: str, thread_id: str | None = None) -> dict[str, Any]:
         calls["query"] += 1
         return {
             "query": query,
@@ -65,7 +65,7 @@ def test_agent_query_uses_lazy_initialization_once(monkeypatch) -> None:
 
 
 def test_list_mcp_tools_uses_agent(monkeypatch) -> None:
-    fake_tools: Dict[str, list[str]] = {"local-mcp": ["web_search", "file_search"]}
+    fake_tools: dict[str, list[str]] = {"local-mcp": ["web_search", "file_search"]}
 
     async def fake_init_mcp() -> bool:  # type: ignore[return-type]
         return True
@@ -73,7 +73,7 @@ def test_list_mcp_tools_uses_agent(monkeypatch) -> None:
     def fake_create_agent() -> bool:
         return True
 
-    async def fake_list_available_tools() -> Dict[str, list[str]]:
+    async def fake_list_available_tools() -> dict[str, list[str]]:
         return fake_tools
 
     # Force a fresh init for this test
@@ -94,7 +94,7 @@ def test_list_mcp_tools_uses_agent(monkeypatch) -> None:
 def test_supervisor_query_returns_plan_and_result(monkeypatch) -> None:
     """Supervisor endpoint should return both plan metadata and agent result."""
 
-    async def fake_run_supervised(query: str, thread_id: str | None = None) -> Dict[str, Any]:
+    async def fake_run_supervised(query: str, thread_id: str | None = None) -> dict[str, Any]:
         return {
             "plan": {
                 "selected_sub_agent_id": "research",
@@ -135,7 +135,7 @@ def test_command_with_deploy_routes_to_automation(monkeypatch) -> None:
         }
     }
 
-    async def fake_run_query(query: str, thread_id: str | None = None) -> Dict[str, Any]:
+    async def fake_run_query(query: str, thread_id: str | None = None) -> dict[str, Any]:
         # Expose the query so we can assert that automation context was injected.
         return {
             "query": query,

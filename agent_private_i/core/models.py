@@ -1,7 +1,7 @@
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Literal, Optional
 import time
 import uuid
+from dataclasses import dataclass, field
+from typing import Any, Literal, Optional
 
 TaskStatus = Literal["queued", "running", "blocked", "failed", "done"]
 StepStatus = Literal["pending", "running", "failed", "done"]
@@ -12,8 +12,8 @@ class Step:
     step_id: str
     title: str
     assigned_role: str
-    input: Dict[str, Any] = field(default_factory=dict)
-    output: Optional[Dict[str, Any]] = None
+    input: dict[str, Any] = field(default_factory=dict)
+    output: Optional[dict[str, Any]] = None
     status: StepStatus = "pending"
     error: Optional[str] = None
 
@@ -22,14 +22,14 @@ class Step:
 class Task:
     task_id: str
     goal: str
-    inputs: Dict[str, Any] = field(default_factory=dict)
-    constraints: Dict[str, Any] = field(default_factory=dict)
-    success_criteria: List[str] = field(default_factory=list)
+    inputs: dict[str, Any] = field(default_factory=dict)
+    constraints: dict[str, Any] = field(default_factory=dict)
+    success_criteria: list[str] = field(default_factory=list)
     status: TaskStatus = "queued"
     attempts: int = 0
-    steps: List[Step] = field(default_factory=list)
-    history: List[Dict[str, Any]] = field(default_factory=list)
-    artifacts: Dict[str, Any] = field(default_factory=dict)
+    steps: list[Step] = field(default_factory=list)
+    history: list[dict[str, Any]] = field(default_factory=list)
+    artifacts: dict[str, Any] = field(default_factory=dict)
     created_at: float = field(default_factory=time.time)
 
 

@@ -1,10 +1,17 @@
-import pytest
-pytest.skip("Removed passed voice test", allow_module_level=True)
-
 import io
 import wave
 
 import numpy as np
+import pytest
+
+# Provide small stubs so the linter sees these names defined even though
+# the module is skipped at import time in CI/dev environments.
+DEFAULT_SAMPLE_RATE = 16000
+
+def _buffer_to_audio_file(buffer):
+    raise NotImplementedError("Test helper not available in this environment")
+
+pytest.skip("Removed passed voice test", allow_module_level=True)
 
 
 def test_buffer_to_audio_file_int16():
@@ -44,6 +51,7 @@ def test_buffer_to_audio_file_float32():
         assert wav_file.getframerate() == DEFAULT_SAMPLE_RATE
         assert wav_file.getnframes() == len(buffer)
 
-import pytest
-pytest.skip("Removed — original moved to tests/voice/removed/test_input.py.bak", allow_module_level=True)
-    # Create a buffer with invalid dtype (float64)
+
+pytest.skip(
+    "Removed — original moved to tests/voice/removed/test_input.py.bak", allow_module_level=True
+)

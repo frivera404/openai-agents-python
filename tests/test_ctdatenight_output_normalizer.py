@@ -1,9 +1,12 @@
-from src.agents.output_normalizer import normalize_links, output_normalizer
 from src.agents.ctdatenight_agents import FINAL_SETTINGS
+from src.agents.output_normalizer import normalize_links, output_normalizer
 
 
 def test_normalize_string_html():
-    s = '<p>See <a href="https://ctdatenight.com/deal">deal</a> or visit https://ctdatenight.com/page for more.</p>'
+    s = (
+        '<p>See <a href="https://ctdatenight.com/deal">deal</a> or '
+        'visit https://ctdatenight.com/page for more.</p>'
+    )
     out = normalize_links(s)
     assert FINAL_SETTINGS["redirect_url"] in out
     assert "ctdatenight.com/deal" not in out

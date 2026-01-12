@@ -1,10 +1,11 @@
 import asyncio
-import random
 import logging
+import random
 from typing import Any
 
-from agents import Agent, AgentHooks, RunContextWrapper, Runner, Tool, function_tool
 from pydantic import BaseModel
+
+from agents import Agent, AgentHooks, RunContextWrapper, Runner, Tool, function_tool
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +17,9 @@ class CustomAgentHooks(AgentHooks):
 
     async def on_start(self, context: RunContextWrapper, agent: Agent) -> None:
         self.event_counter += 1
-        logger.info("### (%s) %d: Agent %s started", self.display_name, self.event_counter, agent.name)
+        logger.info(
+            "### (%s) %d: Agent %s started", self.display_name, self.event_counter, agent.name
+        )
 
     async def on_end(self, context: RunContextWrapper, agent: Agent, output: Any) -> None:
         self.event_counter += 1

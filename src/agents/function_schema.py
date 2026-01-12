@@ -16,9 +16,10 @@ from typing import (
     get_type_hints,
 )
 
-from griffe import Docstring, DocstringSectionKind
 from pydantic import BaseModel, Field, create_model
 from pydantic.fields import FieldInfo
+
+from griffe import Docstring, DocstringSectionKind
 
 from .exceptions import UserError
 from .run_context import RunContextWrapper
@@ -176,9 +177,10 @@ def generate_func_documentation(
         docstring = Docstring(doc, lineno=1, parser=style or _detect_docstring_style(doc))
         parsed = docstring.parse()
 
-    description: str | None = next(
-        (section.value for section in parsed if section.kind == DocstringSectionKind.text), None
-    )
+    # Use the first paragraph from the raw docstring as the description. This
+    # avoids cases where return lines get merged into the text description by
+    # some parsers.
+    description = doc.split("\n\n", 1)[0].strip()
 
     param_descriptions: dict[str, str] = {
         param.name: param.description
@@ -186,6 +188,62 @@ def generate_func_documentation(
         if section.kind == DocstringSectionKind.parameters
         for param in section.value  # type: ignore[attr-defined]
     }
+
+    # Fallback parsing for docstring styles that griffe didn't extract.
+    if not param_descriptions:
+        lines = doc.splitlines()
+
+        # Sphinx style: :param name: description
+        sphinx_matches = re.findall(r"^:param\s+(\w+):\s*(.+)$", doc, flags=re.MULTILINE)
+        if sphinx_matches:
+            param_descriptions = {name: desc.strip() for name, desc in sphinx_matches}
+        else:
+            # Google or numpy style: look for a Parameters/Args block
+            # Find a header index
+            header_idx = None
+            for i, line in enumerate(lines):
+                if re.match(r"^(Args|Arguments):\s*$", line) or re.match(r"^Parameters\s*$", line):
+                    header_idx = i
+                    break
+
+            if header_idx is not None:
+                i = header_idx + 1
+                # Skip underline for numpy style if present
+                if i < len(lines) and re.match(r"^\s*-{3,}\s*$", lines[i]):
+                    i += 1
+
+                parsed_params: dict[str, str] = {}
+                while i < len(lines):
+                    line = lines[i]
+                    if not line.strip():
+                        break
+                    g = re.match(r"^\s*(\w+)\s*:\s*(.*)$", line)
+                    if g:
+                        name = g.group(1)
+                        rest = g.group(2).strip()
+                        # Description may be on following indented lines
+                        j = i + 1
+                        desc_lines: list[str] = []
+                        while j < len(lines) and (
+                            lines[j].startswith(" ") or lines[j].startswith("\t")
+                        ):
+                            desc_lines.append(lines[j].strip())
+                            j += 1
+                        if desc_lines:
+                            desc_text = " ".join(desc_lines).strip()
+                        else:
+                            desc_text = rest
+                        parsed_params[name] = desc_text
+                        i = j
+                        continue
+                    # Google style inline param lines like '    a: The first argument.'
+                    g2 = re.match(r"^\s*(\w+)\s*:\s*(.+)$", line)
+                    if g2:
+                        parsed_params[g2.group(1)] = g2.group(2).strip()
+                    i += 1
+
+                if parsed_params:
+                    param_descriptions = parsed_params
 
     return FuncDocumentation(
         name=func.__name__,

@@ -1,6 +1,6 @@
+import logging
 import random
 
-import logging
 from mcp.server.fastmcp import FastMCP
 
 # Create server

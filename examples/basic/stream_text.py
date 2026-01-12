@@ -4,7 +4,6 @@ import logging
 from agents import Agent, Runner
 from openai.types.responses import ResponseTextDeltaEvent
 
-
 logger = logging.getLogger(__name__)
 
 

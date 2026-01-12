@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import re
 import inspect
+import re
 from typing import Any
 from urllib.parse import urlparse
 
@@ -19,7 +19,8 @@ def normalize_links(obj: Any) -> Any:
     """Recursively rewrite CTDateNight links in strings, HTML anchor hrefs, and URL occurrences.
 
     - HTML anchor hrefs are rewritten using `_rewrite_ctdatenight_links_in_html`.
-    - Plain URLs (http/https) pointing to CTDateNight are replaced with `FINAL_SETTINGS['redirect_url']`.
+        - Plain URLs (http/https) pointing to CTDateNight are replaced with
+            `FINAL_SETTINGS['redirect_url']`.
     - Relative links are treated as CTDateNight and rewritten when found in HTML anchors.
     """
     if isinstance(obj, bytes):
@@ -68,6 +69,7 @@ def output_normalizer(func):
     """
 
     if inspect.iscoroutinefunction(func):
+
         async def async_wrapper(*args, **kwargs):
             res = await func(*args, **kwargs)
             return normalize_links(res)

@@ -3,12 +3,15 @@ import json
 import os
 import sys
 
-# Ensure project root is on sys.path so we can import mcp_client when running from tests/
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if ROOT not in sys.path:
-    sys.path.insert(0, ROOT)
-
-from mcp_client import MCPClientConfig, MCPClient
+# Try import first; if the package isn't available (running from tests/),
+# insert the project root onto sys.path and retry.
+try:
+    from mcp_client import MCPClient, MCPClientConfig
+except Exception:
+    ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if ROOT not in sys.path:
+        sys.path.insert(0, ROOT)
+    from mcp_client import MCPClient, MCPClientConfig
 
 
 async def main():
@@ -28,9 +31,15 @@ async def main():
                 print("Tools:", [t.name for t in tools])
                 if any(t.name == "tavily_search" for t in tools):
                     print("Invoking tavily_search...")
-                    result = await server.call_tool("tavily_search", {"query": "ctdatenight offers"})
+                    result = await server.call_tool(
+                        "tavily_search", {"query": "ctdatenight offers"}
+                    )
                     # Try to extract structured_content or content
-                    payload = getattr(result, "structured_content", None) or getattr(result, "content", None) or result
+                    payload = (
+                        getattr(result, "structured_content", None)
+                        or getattr(result, "content", None)
+                        or result
+                    )
                     print(json.dumps(payload, ensure_ascii=False, default=str, indent=2)[:4000])
                     return
             except Exception as e:

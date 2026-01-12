@@ -118,7 +118,7 @@ async def test_stream_response_yields_events_for_reasoning_content(monkeypatch) 
         return resp, create_fake_stream(chunks)
 
     monkeypatch.setattr(OpenAIChatCompletionsModel, "_fetch_response", patched_fetch_response)
-    model = OpenAIProvider(use_responses=False).get_model("gpt-4")
+    model = OpenAIProvider(use_responses=False).get_model("gpt-4.1")
     output_events = []
     async for event in model.stream_response(
         system_instructions=None,
@@ -207,7 +207,7 @@ async def test_get_response_with_reasoning_content(monkeypatch) -> None:
         return chat
 
     monkeypatch.setattr(OpenAIChatCompletionsModel, "_fetch_response", patched_fetch_response)
-    model = OpenAIProvider(use_responses=False).get_model("gpt-4")
+    model = OpenAIProvider(use_responses=False).get_model("gpt-4.1")
     resp = await model.get_response(
         system_instructions=None,
         input="",
@@ -261,7 +261,7 @@ async def test_stream_response_with_empty_reasoning_content(monkeypatch) -> None
         return resp, create_fake_stream(chunks)
 
     monkeypatch.setattr(OpenAIChatCompletionsModel, "_fetch_response", patched_fetch_response)
-    model = OpenAIProvider(use_responses=False).get_model("gpt-4")
+    model = OpenAIProvider(use_responses=False).get_model("gpt-4.1")
     output_events = []
     async for event in model.stream_response(
         system_instructions=None,

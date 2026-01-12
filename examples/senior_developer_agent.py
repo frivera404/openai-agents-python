@@ -8,12 +8,11 @@ The agent can consult the assistant for code-related advice and use MCP tools fo
 """
 
 import asyncio
-import os
 import logging
-from openai import OpenAI
 
-from agents import Agent, Runner, gen_trace_id, trace, function_tool
+from agents import Agent, Runner, function_tool, gen_trace_id, trace
 from agents.mcp import MCPServerStreamableHttp
+from openai import OpenAI
 
 logger = logging.getLogger(__name__)
 
@@ -36,25 +35,15 @@ async def consult_assistant(query: str) -> str:
         thread = client.beta.threads.create()
 
         # Add the query as a message
-        client.beta.threads.messages.create(
-            thread_id=thread.id,
-            role="user",
-            content=query
-        )
+        client.beta.threads.messages.create(thread_id=thread.id, role="user", content=query)
 
         # Run the assistant
-        run = client.beta.threads.runs.create(
-            thread_id=thread.id,
-            assistant_id=ASSISTANT_ID
-        )
+        run = client.beta.threads.runs.create(thread_id=thread.id, assistant_id=ASSISTANT_ID)
 
         # Wait for the run to complete
         while run.status != "completed":
             await asyncio.sleep(1)
-            run = client.beta.threads.runs.retrieve(
-                thread_id=thread.id,
-                run_id=run.id
-            )
+            run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
             if run.status == "failed":
                 return f"Assistant run failed: {run.last_error}"
 

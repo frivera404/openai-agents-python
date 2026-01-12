@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List
 
 
 class DocstringSectionKind:
@@ -27,16 +26,16 @@ class Docstring:
         self.lineno = lineno
         self.parser = parser
 
-    def parse(self) -> List[_Section]:
-        sections: List[_Section] = []
+    def parse(self) -> list[_Section]:
+        sections: list[_Section] = []
         lines = [line.strip() for line in self.text.strip().splitlines()]
-        description_parts: List[str] = []
-        params: List[_Parameter] = []
+        description_parts: list[str] = []
+        params: list[_Parameter] = []
         current = None
         for line in lines:
             if not line:
                 continue
-            upper = line.rstrip(":")
+            line.rstrip(":")
             if line in {"Args:", "Arguments:"}:
                 current = "params"
                 continue

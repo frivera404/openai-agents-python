@@ -126,4 +126,3 @@ def test_message_handler_propagates_to_server_base(server_cls, params):
     server = server_cls(params, message_handler=handler)
 
     assert server.message_handler is handler
-

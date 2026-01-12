@@ -1,9 +1,9 @@
 import asyncio
 import logging
 
-logger = logging.getLogger(__name__)
-
 from agents import Agent, ItemHelpers, MessageOutputItem, Runner, trace
+
+logger = logging.getLogger(__name__)
 
 """
 This example shows the agents-as-tools pattern. The frontline agent receives a user message and

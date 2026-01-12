@@ -6,6 +6,29 @@ from pathlib import Path
 
 import pytest
 
+try:
+    from agents.models import _openai_shared
+    from agents.models.openai_chatcompletions import OpenAIChatCompletionsModel
+    from agents.models.openai_responses import OpenAIResponsesModel
+    from agents.run import set_default_agent_runner
+    from agents.tracing import set_trace_processors
+    from agents.tracing.setup import get_trace_provider
+    from tests.testing_processor import SPAN_PROCESSOR_TESTING
+except Exception:
+    # Fall back to inserting src on sys.path for ad-hoc invocations
+    SRC_DIR = Path(__file__).resolve().parents[1] / "src"
+    if str(SRC_DIR) not in sys.path:
+        sys.path.insert(0, str(SRC_DIR))
+
+    from agents.models import _openai_shared
+    from agents.models.openai_chatcompletions import OpenAIChatCompletionsModel
+    from agents.models.openai_responses import OpenAIResponsesModel
+    from agents.run import set_default_agent_runner
+    from agents.tracing import set_trace_processors
+    from agents.tracing.setup import get_trace_provider
+    from tests.testing_processor import SPAN_PROCESSOR_TESTING
+
+
 def pytest_ignore_collect(path, config):
     """Ignore collecting tests that require optional external dependencies in this environment.
 
@@ -24,19 +47,6 @@ def pytest_ignore_collect(path, config):
     if "test_sqlalchemy_session.py" in p:
         return True
     return False
-
-SRC_DIR = Path(__file__).resolve().parents[1] / "src"
-if str(SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(SRC_DIR))
-
-from agents.models import _openai_shared
-from agents.models.openai_chatcompletions import OpenAIChatCompletionsModel
-from agents.models.openai_responses import OpenAIResponsesModel
-from agents.run import set_default_agent_runner
-from agents.tracing import set_trace_processors
-from agents.tracing.setup import get_trace_provider
-
-from .testing_processor import SPAN_PROCESSOR_TESTING
 
 
 # This fixture will run once before any tests are executed

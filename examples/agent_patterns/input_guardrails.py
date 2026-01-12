@@ -3,6 +3,8 @@ from __future__ import annotations
 import asyncio
 import logging
 
+from pydantic import BaseModel
+
 from agents import (
     Agent,
     GuardrailFunctionOutput,
@@ -12,7 +14,6 @@ from agents import (
     TResponseInputItem,
     input_guardrail,
 )
-from pydantic import BaseModel
 
 """
 This example shows how to use guardrails.
@@ -105,6 +106,7 @@ async def main():
 
 if __name__ == "__main__":
     import logging as _logging
+
     _logging.basicConfig(level=_logging.INFO)
 
     asyncio.run(main())

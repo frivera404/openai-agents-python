@@ -8,20 +8,23 @@ workflow engine for reliable, durable agent execution.
 
 import asyncio
 import logging
-from datetime import timedelta
+import sys
+from pathlib import Path
+
 from temporalio import workflow
 from temporalio.client import Client
 from temporalio.worker import Worker
 
 logger = logging.getLogger(__name__)
 
-# Add the src directory to the path
-import sys
-from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
-from agents import Agent, Runner
-from tests.fake_model import FakeModel
+# Try importing project modules first; if that fails, add `src` to sys.path.
+try:
+    from agents import Agent, Runner
+    from tests.fake_model import FakeModel
+except Exception:
+    sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+    from agents import Agent, Runner
+    from tests.fake_model import FakeModel
 
 
 @workflow.defn

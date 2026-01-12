@@ -1,10 +1,10 @@
 import pytest
+from pydantic import BaseModel
 
 from agents import Agent, Handoff, function_tool, handoff
 from agents.exceptions import UserError
 from agents.models.chatcmpl_converter import Converter
 from agents.tool import FileSearchTool, WebSearchTool
-from pydantic import BaseModel
 
 
 def some_function(a: str, b: list[int]) -> str:

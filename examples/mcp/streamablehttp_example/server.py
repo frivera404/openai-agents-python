@@ -1,5 +1,5 @@
-import random
 import logging
+import random
 
 import requests
 from mcp.server.fastmcp import FastMCP

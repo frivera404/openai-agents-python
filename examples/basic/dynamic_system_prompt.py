@@ -1,8 +1,8 @@
 import asyncio
+import logging
 import random
 from dataclasses import dataclass
 from typing import Literal
-import logging
 
 from agents import Agent, RunContextWrapper, Runner
 
@@ -44,6 +44,7 @@ async def main():
 
 if __name__ == "__main__":
     import logging as _logging
+
     _logging.basicConfig(level=_logging.INFO)
 
     asyncio.run(main())

@@ -1,5 +1,4 @@
 import asyncio
-
 import logging
 
 from agents import Agent, Runner, ToolOutputImage, ToolOutputImageDict, function_tool

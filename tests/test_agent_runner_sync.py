@@ -9,14 +9,20 @@ from agents.run import AgentRunner
 
 
 @pytest.fixture
-def fresh_event_loop_policy() -> Generator[asyncio.AbstractEventLoopPolicy, None, None]:
+def fresh_event_loop_policy(monkeypatch) -> Generator[asyncio.AbstractEventLoopPolicy, None, None]:
+    """Provide an isolated event loop policy for tests without setting it globally.
+
+    We avoid calling `asyncio.set_event_loop_policy` (deprecated) and instead
+    monkeypatch `asyncio.get_event_loop_policy` to return the test policy.
+    """
     policy_before = asyncio.get_event_loop_policy()
     new_policy = asyncio.DefaultEventLoopPolicy()
-    asyncio.set_event_loop_policy(new_policy)
+    # Make asyncio.get_event_loop_policy() return our test policy for the duration
+    monkeypatch.setattr(asyncio, "get_event_loop_policy", lambda: new_policy)
     try:
         yield new_policy
     finally:
-        asyncio.set_event_loop_policy(policy_before)
+        monkeypatch.setattr(asyncio, "get_event_loop_policy", lambda: policy_before)
 
 
 def test_run_sync_reuses_existing_default_loop(monkeypatch, fresh_event_loop_policy):

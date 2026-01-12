@@ -2,11 +2,12 @@
 """Launches the OpenAI Responses API to respond to prompts coming from the UI backend."""
 
 import json
+import logging
 import os
 import sys
-import logging
-import requests
 from pathlib import Path
+
+import requests
 
 from openai import OpenAI
 
@@ -32,19 +33,25 @@ def execute_weather_tool(city: str) -> str:
         url = f"https://wttr.in/{city}?format=j1"
         response = requests.get(url, timeout=10)
         response.raise_for_status()
-        
+
         data = response.json()
-        current_condition = data['current_condition'][0]
-        
+        current_condition = data["current_condition"][0]
+
         # Extract relevant weather information
-        temp_c = current_condition['temp_C']
-        temp_f = current_condition['temp_F']
-        weather_desc = current_condition['weatherDesc'][0]['value']
-        humidity = current_condition['humidity']
-        wind_speed = current_condition['windspeedKmph']
-        
-        return f"Current weather in {city}: {weather_desc}, {temp_c}°C ({temp_f}°F), Humidity: {humidity}%, Wind: {wind_speed} km/h"
-    
+        temp_c = current_condition["temp_C"]
+        temp_f = current_condition["temp_F"]
+        weather_desc = current_condition["weatherDesc"][0]["value"]
+        humidity = current_condition["humidity"]
+        wind_speed = current_condition["windspeedKmph"]
+
+        parts = [
+            f"Current weather in {city}: {weather_desc}",
+            f"{temp_c}°C ({temp_f}°F)",
+            f"Humidity: {humidity}%",
+            f"Wind: {wind_speed} km/h",
+        ]
+        return ", ".join(parts)
+
     except Exception as e:
         logger.error(f"Error fetching weather for {city}: {e}")
         return f"Sorry, I couldn't fetch the weather for {city} at the moment. Error: {str(e)}"
@@ -92,39 +99,46 @@ async def run_assistant() -> int:
     thread_description = os.getenv("AGENT_ID", "assistant")
     model_override = os.getenv("MODEL") or assistant_defaults.get("model", "gpt-4.1")
     tools_json = os.getenv("TOOLS", "[]")
-    
+
     # Parse tools from JSON
     tools = []
     try:
         tools_data = json.loads(tools_json)
         for tool in tools_data:
             # Map tool names to function names
-            function_name = "get_weather" if tool["name"].lower() == "weather" else tool["name"].lower().replace(" ", "_")
-            tools.append({
-                "type": "function",
-                "function": {
-                    "name": function_name,
-                    "description": tool["description"],
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "city": {
-                                "type": "string",
-                                "description": "The name of the city to get weather for"
-                            }
+            function_name = (
+                "get_weather"
+                if tool["name"].lower() == "weather"
+                else tool["name"].lower().replace(" ", "_")
+            )
+            tools.append(
+                {
+                    "type": "function",
+                    "function": {
+                        "name": function_name,
+                        "description": tool["description"],
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "city": {
+                                    "type": "string",
+                                    "description": "The name of the city to get weather for",
+                                }
+                            },
+                            "required": ["city"],
                         },
-                        "required": ["city"]
-                    }
+                    },
                 }
-            })
+            )
     except json.JSONDecodeError:
         logger.warning("⚠️  Unable to parse TOOLS environment variable, ignoring tools")
         tools = []
 
-    if thread_description == 'web-research':
+    if thread_description == "web-research":
         from web_research_agent import run_web_research_workflow
+
         result = await run_web_research_workflow(prompt)
-        print(result['output_text'])
+        print(result["output_text"])
         return 0
 
     client = OpenAI(api_key=api_key)
@@ -184,28 +198,33 @@ async def run_assistant() -> int:
     # Wait for completion
     while response.status not in {"completed", "failed", "cancelled", "expired"}:
         import time
+
         time.sleep(0.4)
         response = client.responses.retrieve(response.id)
 
     if response.status != "completed":
         error = getattr(response, "error", None)
-        message = getattr(error, "message", "Unknown error") if error else "Response did not finish successfully"
+        message = (
+            getattr(error, "message", "Unknown error")
+            if error
+            else "Response did not finish successfully"
+        )
         logger.error("❌ Response %s: %s", response.status, message)
         return 1
 
     # Process the response and handle tool calls
     assistant_response = ""
     tool_calls = []
-    
+
     # Extract content and tool calls from the response
     for item in response.output:
         if item.type == "message":
             content = item.content
             if isinstance(content, list):
                 for c in content:
-                    c_type = getattr(c, 'type', None)
+                    c_type = getattr(c, "type", None)
                     if c_type in ("output_text", "text"):
-                        text_obj = getattr(c, 'text', None)
+                        text_obj = getattr(c, "text", None)
                         if isinstance(text_obj, str):
                             assistant_response += text_obj
                         elif isinstance(text_obj, dict):
@@ -218,20 +237,22 @@ async def run_assistant() -> int:
     # Execute tool calls if any
     if tool_calls:
         logger.info(f"🔧 Executing {len(tool_calls)} tool call(s)")
-        
+
         # Add the assistant's message with tool calls to the conversation
-        messages.append({
-            "role": "assistant", 
-            "content": assistant_response if assistant_response else None,
-            "tool_calls": tool_calls
-        })
-        
+        messages.append(
+            {
+                "role": "assistant",
+                "content": assistant_response if assistant_response else None,
+                "tool_calls": tool_calls,
+            }
+        )
+
         # Execute each tool call and collect results
         tool_results = []
         for tool_call in tool_calls:
-            function_name = getattr(tool_call, 'name', 'unknown')
-            function_args_json = getattr(tool_call, 'arguments', '{}')
-            
+            function_name = getattr(tool_call, "name", "unknown")
+            function_args_json = getattr(tool_call, "arguments", "{}")
+
             try:
                 function_args = json.loads(function_args_json)
                 tool_result = execute_tool(function_name, function_args)
@@ -239,19 +260,12 @@ async def run_assistant() -> int:
             except Exception as e:
                 tool_result = f"Error executing tool {function_name}: {str(e)}"
                 logger.error(f"❌ Tool {function_name} execution failed: {e}")
-            
-            tool_results.append({
-                "tool_call_id": tool_call.id,
-                "output": tool_result
-            })
-        
+
+            tool_results.append({"tool_call_id": tool_call.id, "output": tool_result})
+
         # Add tool results to messages
-        messages.append({
-            "role": "user",
-            "content": None,
-            "tool_results": tool_results
-        })
-        
+        messages.append({"role": "user", "content": None, "tool_results": tool_results})
+
         # Make a follow-up request with tool results
         try:
             followup_response = client.responses.create(
@@ -260,13 +274,14 @@ async def run_assistant() -> int:
                 temperature=temperature,
                 store=True,
             )
-            
+
             # Wait for completion
             while followup_response.status not in {"completed", "failed", "cancelled", "expired"}:
                 import time
+
                 time.sleep(0.4)
                 followup_response = client.responses.retrieve(followup_response.id)
-            
+
             if followup_response.status == "completed":
                 # Extract the final response
                 for item in followup_response.output:
@@ -274,9 +289,9 @@ async def run_assistant() -> int:
                         content = item.content
                         if isinstance(content, list):
                             for c in content:
-                                c_type = getattr(c, 'type', None)
+                                c_type = getattr(c, "type", None)
                                 if c_type in ("output_text", "text"):
-                                    text_obj = getattr(c, 'text', None)
+                                    text_obj = getattr(c, "text", None)
                                     if isinstance(text_obj, str):
                                         assistant_response += text_obj
                                     elif isinstance(text_obj, dict):
@@ -285,10 +300,12 @@ async def run_assistant() -> int:
                                             assistant_response += str(text_value)
             else:
                 assistant_response += "\n[Tool execution completed, but final response failed]"
-                
+
         except Exception as e:
             logger.error(f"❌ Follow-up request failed: {e}")
-            assistant_response += f"\n[Tool results: {', '.join([r['output'] for r in tool_results])}]"
+            assistant_response += (
+                f"\n[Tool results: {', '.join([r['output'] for r in tool_results])}]"
+            )
 
     if not assistant_response.strip():
         logger.error("❌ Assistant did not return any text content")
@@ -300,5 +317,6 @@ async def run_assistant() -> int:
 
 if __name__ == "__main__":
     import asyncio
+
     exit_code = asyncio.run(run_assistant())
     sys.exit(exit_code)

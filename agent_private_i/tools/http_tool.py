@@ -1,5 +1,7 @@
-import requests
 from typing import Optional
+
+import requests
+
 
 class HTTPTool:
     def __init__(self, timeout: int = 10):
@@ -18,6 +20,11 @@ class HTTPTool:
         try:
             r = requests.post(url, json=json, timeout=timeout or self.timeout)
             r.raise_for_status()
-            return {"status_code": r.status_code, "json": r.json() if r.headers.get('content-type','').startswith('application/json') else None}
+            return {
+                "status_code": r.status_code,
+                "json": r.json()
+                if r.headers.get("content-type", "").startswith("application/json")
+                else None,
+            }
         except Exception as e:
             return {"error": str(e)}

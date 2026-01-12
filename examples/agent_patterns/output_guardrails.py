@@ -4,6 +4,8 @@ import asyncio
 import json
 import logging
 
+from pydantic import BaseModel, Field
+
 from agents import (
     Agent,
     GuardrailFunctionOutput,
@@ -12,7 +14,6 @@ from agents import (
     Runner,
     output_guardrail,
 )
-from pydantic import BaseModel, Field
 
 """
 This example shows how to use output guardrails.

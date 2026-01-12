@@ -4,11 +4,12 @@ Demo script showing the MCP Client app functionality
 """
 
 import asyncio
-import sys
 import logging
+
 from mcp_client import MCPClient, MCPClientConfig
 
 logger = logging.getLogger(__name__)
+
 
 async def demo_app():
     """Demonstrate the MCP client app functionality"""
@@ -68,6 +69,7 @@ async def demo_app():
     logger.info("   2. Run: python mcp_client.py init")
     logger.info("   3. Run: python mcp_client.py create-agent")
     logger.info("   4. Run: python mcp_client.py query 'Your question here'")
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)

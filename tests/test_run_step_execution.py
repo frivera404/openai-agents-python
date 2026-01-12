@@ -4,6 +4,7 @@ import json
 from typing import Any
 
 import pytest
+from pydantic import BaseModel
 
 from agents import (
     Agent,
@@ -28,7 +29,6 @@ from agents._run_impl import (
 from agents.run import AgentRunner
 from agents.tool import function_tool
 from agents.tool_context import ToolContext
-from pydantic import BaseModel
 
 from .test_responses import (
     get_final_output_message,

@@ -1,6 +1,6 @@
 import asyncio
-import random
 import logging
+import random
 
 from agents import Agent, ItemHelpers, Runner, function_tool
 
@@ -29,15 +29,15 @@ async def main():
         # We'll ignore the raw responses event deltas
         if event.type == "raw_response_event":
             continue
-        elif event.type == "agent_updated_stream_event":
+        if event.type == "agent_updated_stream_event":
             logger.info("Agent updated: %s", event.new_agent.name)
             continue
-        elif event.type == "run_item_stream_event":
-                if event.item.type == "tool_call_item":
+        if event.type == "run_item_stream_event":
+            if getattr(event, "item", None) and getattr(event.item, "type", None) == "tool_call_item":
                 logger.info("-- Tool was called")
-            elif event.item.type == "tool_call_output_item":
+            elif getattr(event, "item", None) and getattr(event.item, "type", None) == "tool_call_output_item":
                 logger.info("-- Tool output: %s", event.item.output)
-            elif event.item.type == "message_output_item":
+            elif getattr(event, "item", None) and getattr(event.item, "type", None) == "message_output_item":
                 logger.info("-- Message output:\n %s", ItemHelpers.text_message_output(event.item))
             else:
                 pass  # Ignore other event types

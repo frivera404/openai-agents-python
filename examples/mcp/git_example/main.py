@@ -1,7 +1,6 @@
 import asyncio
-import shutil
-
 import logging
+import shutil
 
 from agents import Agent, Runner, trace
 from agents.mcp import MCPServer, MCPServerStdio
@@ -45,6 +44,7 @@ if __name__ == "__main__":
     if not shutil.which("uvx"):
         raise RuntimeError("uvx is not installed. Please install it with `pip install uvx`.")
     import logging as _logging
+
     _logging.basicConfig(level=_logging.INFO)
 
     asyncio.run(main())

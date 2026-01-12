@@ -35,7 +35,7 @@ class DummyClient:
 @pytest.mark.asyncio
 async def test_top_logprobs_param_passed():
     client = DummyClient()
-    model = OpenAIResponsesModel(model="gpt-4", openai_client=client)  # type: ignore
+    model = OpenAIResponsesModel(model="gpt-4.1", openai_client=client)  # type: ignore
     await model.get_response(
         system_instructions=None,
         input="hi",

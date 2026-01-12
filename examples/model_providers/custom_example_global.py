@@ -43,6 +43,7 @@ set_tracing_disabled(disabled=True)
 @function_tool
 def get_weather(city: str):
     import logging
+
     logging.getLogger(__name__).debug("[debug] getting weather for %s", city)
     return f"The weather in {city} is sunny."
 
@@ -57,6 +58,7 @@ async def main():
 
     result = await Runner.run(agent, "What's the weather in Tokyo?")
     import logging as _logging
+
     _logging.getLogger(__name__).info(result.final_output)
 
 

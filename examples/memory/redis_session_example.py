@@ -181,6 +181,7 @@ async def demonstrate_advanced_features():
 
 if __name__ == "__main__":
     import logging as _logging
+
     _logging.basicConfig(level=_logging.INFO)
 
     asyncio.run(main())

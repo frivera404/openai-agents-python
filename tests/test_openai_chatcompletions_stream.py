@@ -79,7 +79,7 @@ async def test_stream_response_yields_events_for_text_content(monkeypatch) -> No
         return resp, fake_stream()
 
     monkeypatch.setattr(OpenAIChatCompletionsModel, "_fetch_response", patched_fetch_response)
-    model = OpenAIProvider(use_responses=False).get_model("gpt-4")
+    model = OpenAIProvider(use_responses=False).get_model("gpt-4.1")
     output_events = []
     async for event in model.stream_response(
         system_instructions=None,
@@ -173,7 +173,7 @@ async def test_stream_response_yields_events_for_refusal_content(monkeypatch) ->
         return resp, fake_stream()
 
     monkeypatch.setattr(OpenAIChatCompletionsModel, "_fetch_response", patched_fetch_response)
-    model = OpenAIProvider(use_responses=False).get_model("gpt-4")
+    model = OpenAIProvider(use_responses=False).get_model("gpt-4.1")
     output_events = []
     async for event in model.stream_response(
         system_instructions=None,
@@ -264,7 +264,7 @@ async def test_stream_response_yields_events_for_tool_call(monkeypatch) -> None:
         return resp, fake_stream()
 
     monkeypatch.setattr(OpenAIChatCompletionsModel, "_fetch_response", patched_fetch_response)
-    model = OpenAIProvider(use_responses=False).get_model("gpt-4")
+    model = OpenAIProvider(use_responses=False).get_model("gpt-4.1")
     output_events = []
     async for event in model.stream_response(
         system_instructions=None,
@@ -382,7 +382,7 @@ async def test_stream_response_yields_real_time_function_call_arguments(monkeypa
         return resp, fake_stream()
 
     monkeypatch.setattr(OpenAIChatCompletionsModel, "_fetch_response", patched_fetch_response)
-    model = OpenAIProvider(use_responses=False).get_model("gpt-4")
+    model = OpenAIProvider(use_responses=False).get_model("gpt-4.1")
     output_events = []
     async for event in model.stream_response(
         system_instructions=None,

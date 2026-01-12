@@ -5,9 +5,6 @@ import enum
 from collections.abc import AsyncIterator
 from typing import TYPE_CHECKING, Any
 
-# from openai.types.responses.response_prompt_param import ResponsePromptParam
-ResponsePromptParam = Any
-
 from ..agent_output import AgentOutputSchemaBase
 from ..handoffs import Handoff
 from ..items import ModelResponse, TResponseInputItem, TResponseStreamEvent
@@ -15,6 +12,10 @@ from ..tool import Tool
 
 if TYPE_CHECKING:
     from ..model_settings import ModelSettings
+
+
+# from openai.types.responses.response_prompt_param import ResponsePromptParam
+ResponsePromptParam = Any
 
 
 class ModelTracing(enum.Enum):

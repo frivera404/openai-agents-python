@@ -2,6 +2,7 @@ import json
 from typing import Any
 
 import pytest
+from pydantic import BaseModel
 from typing_extensions import TypedDict
 
 from agents import (
@@ -14,7 +15,6 @@ from agents import (
 from agents.agent_output import _WRAPPER_DICT_KEY
 from agents.run import AgentRunner
 from agents.util import _json
-from pydantic import BaseModel
 
 
 def test_plain_text_output():

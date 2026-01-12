@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 import time
 from collections.abc import Sequence
-import logging
 
 from rich.console import Console
 

@@ -17,7 +17,7 @@ import os
 import re
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 from agents import Agent, ModelSettings, Runner
 from agents.mcp import (
@@ -49,7 +49,8 @@ logger = logging.getLogger(__name__)
 
 _ENV_VAR_PATTERN = re.compile(r"\$\{([A-Z0-9_]+)\}")
 _CURRENT_INFO_QUERY_RE = re.compile(
-    r"\b(latest|today|current|breaking|headline|headlines|news|as of|right now|this week|this month)\b",
+    r"\b(latest|today|current|breaking|headline|headlines|news|"
+    r"as of|right now|this week|this month)\b",
     re.IGNORECASE,
 )
 
@@ -62,7 +63,10 @@ class AgentConfigurator:
         self.prime_goal_config = {
             "version": "1.0",
             "mode": "prime_goal",
-            "description": "Agent Private I - Optimal settings for all supervisor agents and sub-agents",
+            "description": (
+                "Agent Private I - optimal settings for supervisor agents "
+                "and sub-agents"
+            ),
             "supervisor_agents": {
                 "affiliate_marketing_manager": {
                     "optimization_level": "maximum",
@@ -214,7 +218,7 @@ class AgentConfigurator:
             logger.error("❌ Agent Private I: Failed to apply Prime Goal configuration: %s", e)
             return False
 
-    def verify_prime_goal_status(self, agent: "OpenAIAssistantAgent") -> Dict[str, Any]:
+    def verify_prime_goal_status(self, agent: "OpenAIAssistantAgent") -> dict[str, Any]:
         """Verify that all agents are in Prime Goal optimal configuration"""
         status = {
             "prime_goal_active": False,
@@ -387,7 +391,7 @@ class OpenAIAssistantAgent:
             self._save_memory()
 
     def add_conversation(
-        self, query: str, response: str, metadata: Optional[Dict[str, Any]] = None
+        self, query: str, response: str, metadata: Optional[dict[str, Any]] = None
     ) -> None:
         """Add a conversation entry to memory"""
         conversation_entry = {
@@ -408,7 +412,7 @@ class OpenAIAssistantAgent:
         if self.memory.get("auto_save_enabled", True):
             self._save_memory()
 
-    def get_memory_stats(self) -> Dict[str, Any]:
+    def get_memory_stats(self) -> dict[str, Any]:
         """Get memory statistics"""
         return {
             "total_conversations": len(self.memory.get("conversations", [])),
@@ -424,7 +428,7 @@ class OpenAIAssistantAgent:
         """Force save memory regardless of auto-save setting"""
         self._save_memory()
 
-    def get_recent_conversations(self, limit: int = 10) -> List[Dict[str, Any]]:
+    def get_recent_conversations(self, limit: int = 10) -> list[dict[str, Any]]:
         """Get the most recent conversations from memory"""
         conversations = self.memory.get("conversations", [])
         return conversations[-limit:] if conversations else []
@@ -461,7 +465,7 @@ class OpenAIAssistantAgent:
             logger.error("❌ Failed to apply Prime Goal configuration: %s", e)
             return False
 
-    def verify_prime_goal_status(self) -> Dict[str, Any]:
+    def verify_prime_goal_status(self) -> dict[str, Any]:
         """Verify Prime Goal configuration status"""
         try:
             configurator = AgentConfigurator()
@@ -479,7 +483,7 @@ class OpenAIAssistantAgent:
             logger.error("❌ Failed to reset to Prime Goal: %s", e)
             return False
 
-    async def _add_local_mcp_server(self, mcp_config: Dict[str, Any]) -> None:
+    async def _add_local_mcp_server(self, mcp_config: dict[str, Any]) -> None:
         """Add the local MCP server at http://localhost:3002 if available"""
         local_server_name = "local-mcp-server"
         local_server_url = "http://localhost:3002"
@@ -595,7 +599,10 @@ class OpenAIAssistantAgent:
                                 if not isinstance(value, str):
                                     continue
                                 placeholder_var = is_single_placeholder(value)
-                                if placeholder_var is not None and os.getenv(placeholder_var) is None:
+                                if (
+                                    placeholder_var is not None
+                                    and os.getenv(placeholder_var) is None
+                                ):
                                     # Don't overwrite an inherited env var with a placeholder.
                                     self._missing_env_vars.add(placeholder_var)
                                     continue
@@ -603,7 +610,9 @@ class OpenAIAssistantAgent:
 
                             resolved_args: list[str] = []
                             for arg in server_config.get("args", []):
-                                resolved_args.append(interpolate(arg) if isinstance(arg, str) else arg)
+                                resolved_args.append(
+                                    interpolate(arg) if isinstance(arg, str) else arg
+                                )
 
                             cwd = server_config.get("cwd")
                             if isinstance(cwd, str) and not os.path.isabs(cwd):
@@ -733,51 +742,12 @@ class OpenAIAssistantAgent:
                 # Use OpenAI Assistant with MCP integration
                 agent_config = {
                     "name": "Multi-Agent Orchestration System",
-                    "instructions": f"""
-                    You are the Supervisor Agent (Top-Level Executive) governing an advanced multi-agent ecosystem with specialized capabilities across marketing, customer service, research, development, and operations.
-
-                    **CORE AGENTS UNDER YOUR SUPERVISION:**
-
-                    **Affiliate Marketing Manager**
-                    Oversees all marketing automation agents, optimizing campaign delivery, coordinating messaging workflows, and maximizing affiliate performance through strategic routing, analytics, and synchronized execution across email, voice, and chat channels.
-
-                    **Customer Service Agent**
-                    Provides comprehensive customer assistance by diagnosing issues, delivering personalized recommendations and discounts, guiding users through checkout, and completing secure transactions through coordinated handoffs to specialized agents.
-
-                    **Financial Research Agent**
-                    Generates structured financial insights by retrieving market data, analyzing fundamentals, technical indicators, and risk factors, and producing evidence-backed reports with verified sources and clearly defined assumptions.
-
-                    **Research Bot**
-                    Conducts multi-source research using automated web discovery, evaluates information credibility, synthesizes findings, and produces structured, citation-supported reports tailored to user requirements.
-
-                    **Senior Developer Agent**
-                    Acts as lead technical engineer, architecting solutions, reviewing and optimizing code, managing project structure, and coordinating build, test, and deployment workflows through MCP-based tools and subordinate coding agents.
-
-                    **Data Science Agent**
-                    Performs data exploration, modeling, visualization, and insight generation by processing diverse datasets, applying statistical and machine-learning techniques, and delivering actionable analytics in visual or structured formats.
-
-                    **Alex Supervisor**
-                    Coordinates complex workflows across operational, research, and development agents, ensuring accurate task delegation, maintaining execution order, preventing conflicts, and optimizing multi-agent collaboration.
-
-                    **Layer Manager**
-                    Manages system-level architecture and resource allocation, optimizing MCP server performance, balancing compute workloads, monitoring concurrency, and maintaining operational stability across the entire agent network.
-
-                    **Coder**
-                    Executes focused programming tasks by generating, refining, and documenting high-quality code while following best practices and ensuring secure, non-destructive operations within the MCP environment.
-
-                    **Gemini Mahem API Agent**
-                    Handles complex API integrations, data transformations, and cross-service workflows by validating responses, managing authentication, optimizing request flows, and ensuring reliable interoperability between external systems and internal agents.
-
-                    **YOUR ROLE AS SUPERVISOR AGENT:**
-                    - Set system-level strategies and monitor performance metrics
-                    - Ensure compliance with operational policies and escalate critical issues
-                    - Maintain optimal orchestration across all subordinate agents
-                    - Coordinate task delegation and prevent workflow conflicts
-                    - Leverage OpenAI Assistant (ID: {self.assistant_id}) and Vector Store (ID: {self.vector_store_id})
-                    - Utilize MCP servers for external tool access ({len(self.mcp_servers)} connected)
-
-                    When responding, identify which specialized agent(s) should handle each aspect of the user's request and coordinate their execution.
-                    """,
+                    "instructions": (
+                        f"You are the Supervisor Agent responsible for routing requests "
+                        f"to specialized sub-agents and coordinating their execution. "
+                        f"Use the Vector Store (ID: {self.vector_store_id}) and OpenAI "
+                        f"Assistant (ID: {self.assistant_id}) where appropriate."
+                    ),
                     "model_settings": ModelSettings(temperature=0.7, tool_choice="auto"),
                 }
             else:
@@ -832,50 +802,12 @@ class OpenAIAssistantAgent:
 
                 agent_config = {
                     "name": "Multi-Agent Orchestration System (Fallback)",
-                    "instructions": f"""
-                    You are the Supervisor Agent (Top-Level Executive) governing an advanced multi-agent ecosystem with specialized capabilities across marketing, customer service, research, development, and operations.
-
-                    **CORE AGENTS UNDER YOUR SUPERVISION:**
-
-                    **Affiliate Marketing Manager**
-                    Oversees all marketing automation agents, optimizing campaign delivery, coordinating messaging workflows, and maximizing affiliate performance through strategic routing, analytics, and synchronized execution across email, voice, and chat channels.
-
-                    **Customer Service Agent**
-                    Provides comprehensive customer assistance by diagnosing issues, delivering personalized recommendations and discounts, guiding users through checkout, and completing secure transactions through coordinated handoffs to specialized agents.
-
-                    **Financial Research Agent**
-                    Generates structured financial insights by retrieving market data, analyzing fundamentals, technical indicators, and risk factors, and producing evidence-backed reports with verified sources and clearly defined assumptions.
-
-                    **Research Bot**
-                    Conducts multi-source research using automated web discovery, evaluates information credibility, synthesizes findings, and produces structured, citation-supported reports tailored to user requirements.
-
-                    **Senior Developer Agent**
-                    Acts as lead technical engineer, architecting solutions, reviewing and optimizing code, managing project structure, and coordinating build, test, and deployment workflows through MCP-based tools and subordinate coding agents.
-
-                    **Data Science Agent**
-                    Performs data exploration, modeling, visualization, and insight generation by processing diverse datasets, applying statistical and machine-learning techniques, and delivering actionable analytics in visual or structured formats.
-
-                    **Alex Supervisor**
-                    Coordinates complex workflows across operational, research, and development agents, ensuring accurate task delegation, maintaining execution order, preventing conflicts, and optimizing multi-agent collaboration.
-
-                    **Layer Manager**
-                    Manages system-level architecture and resource allocation, optimizing MCP server performance, balancing compute workloads, monitoring concurrency, and maintaining operational stability across the entire agent network.
-
-                    **Coder**
-                    Executes focused programming tasks by generating, refining, and documenting high-quality code while following best practices and ensuring secure, non-destructive operations within the MCP environment.
-
-                    **Gemini Mahem API Agent**
-                    Handles complex API integrations, data transformations, and cross-service workflows by validating responses, managing authentication, optimizing request flows, and ensuring reliable interoperability between external systems and internal agents.
-
-                    **YOUR ROLE AS SUPERVISOR AGENT:**
-                    - Set system-level strategies and monitor performance metrics
-                    - Ensure compliance with operational policies and escalate critical issues
-                    - Maintain optimal orchestration across all subordinate agents
-                    - Coordinate task delegation and prevent workflow conflicts
-                    - Utilize external tools via MCP servers for enhanced capabilities ({len(self.mcp_servers)} connected)
-
-                    When responding, identify which specialized agent(s) should handle each aspect of the user's request and coordinate their execution. Leverage available MCP tools for external data access and operations.
-                    """,
+                    "instructions": (
+                        f"You are the Supervisor Agent. Route requests to specialized "
+                        f"sub-agents and coordinate their execution. Use available "
+                        f"MCP tools for external data access. ({len(self.mcp_servers)} "
+                        f"MCP servers connected)"
+                    ),
                     "model": model,
                     "model_settings": ModelSettings(temperature=0.7, tool_choice="auto"),
                 }
@@ -898,7 +830,7 @@ class OpenAIAssistantAgent:
 
     async def run_query(
         self, query: str, thread_id: Optional[str] = None
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[dict[str, Any]]:
         """Run a query using the OpenAI Assistant with MCP tools"""
         try:
             if not self.agent:
@@ -997,10 +929,7 @@ class OpenAIAssistantAgent:
                 title = (item.get("title") or item.get("name") or "").strip()
                 url = (item.get("url") or item.get("link") or "").strip()
                 snippet = (
-                    item.get("content")
-                    or item.get("snippet")
-                    or item.get("description")
-                    or ""
+                    item.get("content") or item.get("snippet") or item.get("description") or ""
                 )
                 snippet = str(snippet).strip().replace("\n", " ")
                 if title and url:
@@ -1049,7 +978,7 @@ class OpenAIAssistantAgent:
             logger.info("ℹ️  Web-search short-circuit unavailable: %s", last_error)
         return None
 
-    async def list_available_tools(self) -> Dict[str, list[str]]:
+    async def list_available_tools(self) -> dict[str, list[str]]:
         """List all available tools from MCP servers"""
         tools = {}
 

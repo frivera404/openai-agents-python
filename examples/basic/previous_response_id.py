@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 from agents import Agent, Runner
 
@@ -22,6 +23,7 @@ async def main():
 
     result = await Runner.run(agent, "What is the largest country in South America?")
     import logging
+
     logging.getLogger(__name__).info(result.final_output)
     # Brazil
 

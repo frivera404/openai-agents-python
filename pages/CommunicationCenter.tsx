@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { getDeployedAgents, sendAgentCommand } from '../services/openaiService';
 
 const MODEL_OPTIONS = [
-    { value: 'gpt-4o-mini', label: 'gpt-4o-mini (cheapest default)' },
-    { value: 'gpt-4.1', label: 'gpt-4.1' },
+    { value: 'gpt-4.1', label: 'gpt-4.1 (default)' },
+    { value: 'gpt-4o-mini', label: 'gpt-4o-mini (cheaper)' },
     { value: 'gpt-5.1', label: 'gpt-5.1' },
 ];
 
@@ -111,7 +111,7 @@ const CommunicationCenter: React.FC = () => {
                             ))}
                         </select>
                         <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                            Each assistant remembers its last-used model. Default is gpt-4o-mini.
+                            Each assistant remembers its last-used model. Default is gpt-4.1.
                         </p>
                     </div>
                     <div>

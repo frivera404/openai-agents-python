@@ -52,6 +52,7 @@ if __name__ == "__main__":
     parser.add_argument("--stream", action="store_true", default=False)
     args = parser.parse_args()
     import logging as _logging
+
     _logging.basicConfig(level=_logging.INFO)
 
     asyncio.run(main(args.verbose, args.stream))

@@ -8,19 +8,23 @@ simple synthesized output for each tool call so the run can continue.
 Run:
   uv run python submit_tool_outputs.py
 """
+
 import json
-import os
-from typing import List, Dict, Any
+from typing import Any
 
 from assistants_agent import AssistantsAgent
 
 
-def synthesize_output(call: Dict[str, Any]) -> str:
+def synthesize_output(call: dict[str, Any]) -> str:
     # Support both dict-like and SDK object shapes for the incoming call
     try:
         if hasattr(call, "get"):
             func = call.get("function") or {}
-            args_text = func.get("arguments") if isinstance(func, dict) else getattr(func, "arguments", None)
+            args_text = (
+                func.get("arguments")
+                if isinstance(func, dict)
+                else getattr(func, "arguments", None)
+            )
         else:
             func = getattr(call, "function", None)
             args_text = getattr(func, "arguments", None)
@@ -33,7 +37,7 @@ def synthesize_output(call: Dict[str, Any]) -> str:
             payload = {}
 
         path = payload.get("path") or payload.get("file") or payload.get("filename") or "<unknown>"
-        question = payload.get("question") or payload.get("msg") or ""
+        payload.get("question") or payload.get("msg") or ""
         return f"Path: {path}. Answer: Quick classification done. Recommended: Alex M."
     except Exception:
         return "Tool output: (auto) result — see logs."
@@ -41,7 +45,7 @@ def synthesize_output(call: Dict[str, Any]) -> str:
 
 def main() -> None:
     try:
-        with open("run_final.json", "r", encoding="utf-8") as f:
+        with open("run_final.json", encoding="utf-8") as f:
             run = json.load(f)
     except Exception as e:
         print("Could not read run_final.json:", e)
@@ -57,7 +61,7 @@ def main() -> None:
         print("No required tool calls found in run_final.json; nothing to submit.")
         return
 
-    outputs: List[Dict[str, Any]] = []
+    outputs: list[dict[str, Any]] = []
     for call in tool_calls:
         # support SDK objects and dicts
         if hasattr(call, "get"):

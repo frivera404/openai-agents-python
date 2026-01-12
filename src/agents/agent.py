@@ -5,11 +5,9 @@ import dataclasses
 import inspect
 from collections.abc import Awaitable
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, Callable, Generic, Literal, cast
+from typing import TYPE_CHECKING, Any, Any as ResponsePromptParam, Callable, Generic, Literal, cast
 
 from typing_extensions import NotRequired, TypeAlias, TypedDict
-
-from typing import Any as ResponsePromptParam
 
 from .agent_output import AgentOutputSchemaBase
 from .guardrail import InputGuardrail, OutputGuardrail

@@ -6,9 +6,8 @@ from collections.abc import Awaitable
 from dataclasses import dataclass, replace as dataclasses_replace
 from typing import TYPE_CHECKING, Any, Callable, Generic, cast, overload
 
-from typing_extensions import TypeAlias, TypeVar
-
 from pydantic import TypeAdapter
+from typing_extensions import TypeAlias, TypeVar
 
 from .exceptions import ModelBehaviorError, UserError
 from .items import RunItem, TResponseInputItem

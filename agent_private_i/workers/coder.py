@@ -1,14 +1,17 @@
-from agent_private_i.workers.base import WorkerBase
-import os
 import json
+import os
 from pathlib import Path
+
+from agent_private_i.workers.base import WorkerBase
 
 
 class CoderWorker(WorkerBase):
     role = "coder"
 
     def run(self, step: dict, task_payload: dict) -> dict:
-        """Attempt code generation via MCP if configured, otherwise write a local placeholder artifact.
+        """Attempt code generation via MCP when configured.
+
+        If MCP is unavailable, write a local placeholder artifact.
 
         Returns a dict with at least `result` and `artifact_path` when possible.
         """
@@ -48,4 +51,8 @@ class CoderWorker(WorkerBase):
             )
             with open(filename, "w", encoding="utf-8") as f:
                 f.write(content)
-            return {"result": "placeholder_written", "artifact_path": str(filename), "error": str(e)}
+            return {
+                "result": "placeholder_written",
+                "artifact_path": str(filename),
+                "error": str(e),
+            }

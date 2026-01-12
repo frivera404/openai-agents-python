@@ -62,7 +62,7 @@ async def test_user_agent_header_litellm(override_ua: str | None, monkeypatch):
     monkeypatch.setattr(litellm_mod, "litellm", litellm_fake, raising=True)
     LitellmModel = litellm_mod.LitellmModel
 
-    model = LitellmModel(model="gpt-4")
+    model = LitellmModel(model="gpt-4.1")
 
     if override_ua is not None:
         token = HEADERS_OVERRIDE.set({"User-Agent": override_ua})

@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 
+from pydantic import TypeAdapter
+
 from agents import (
     Agent,
     ItemHelpers,
@@ -35,7 +37,6 @@ from openai.types.responses.response_output_text import ResponseOutputText
 from openai.types.responses.response_output_text_param import ResponseOutputTextParam
 from openai.types.responses.response_reasoning_item import ResponseReasoningItem, Summary
 from openai.types.responses.response_reasoning_item_param import ResponseReasoningItemParam
-from pydantic import TypeAdapter
 
 
 def make_message(

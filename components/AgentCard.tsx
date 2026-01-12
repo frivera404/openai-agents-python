@@ -15,7 +15,7 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent, onSelect, onLaunch, isLaun
             : 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200';
 
     return (
-        <div className="agent-card bg-card-gradient rounded-lg shadow-lg flex flex-col border border-gray-600 hover:border-blue-500/50">
+        <div className="agent-card bg-card-gradient rounded-lg shadow-lg flex flex-col border border-gray-600 hover:border-blue-500/50 max-w-full sm:max-w-sm">
             <div className="p-6 flex-grow">
                 <div className="flex items-start justify-between">
                     <div className="flex items-start">
@@ -30,7 +30,7 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent, onSelect, onLaunch, isLaun
                         </div>
                     </div>
                 </div>
-                <p className="mt-4 text-sm text-gray-300 leading-relaxed">{agent.description}</p>
+                <p className="mt-4 text-sm text-gray-300 leading-relaxed">{agent.description || 'No description provided.'}</p>
             </div>
             <div className="border-t border-gray-600 bg-gray-800/50 p-4 rounded-b-lg">
                 <div className="flex justify-end space-x-3">

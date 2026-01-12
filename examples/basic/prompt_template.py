@@ -26,6 +26,7 @@ class DynamicContext:
         self.prompt_id = prompt_id
         self.poem_style = random.choice(["limerick", "haiku", "ballad"])
         import logging
+
         logging.getLogger(__name__).debug(
             "[debug] DynamicContext initialized with poem_style: %s", self.poem_style
         )
@@ -52,6 +53,7 @@ async def dynamic_prompt(prompt_id: str):
 
     result = await Runner.run(agent, "Tell me about recursion in programming.", context=context)
     import logging as _logging
+
     _logging.getLogger(__name__).info(result.final_output)
 
 
@@ -69,6 +71,7 @@ async def static_prompt(prompt_id: str):
 
     result = await Runner.run(agent, "Tell me about recursion in programming.")
     import logging as _logging
+
     _logging.getLogger(__name__).info(result.final_output)
 
 

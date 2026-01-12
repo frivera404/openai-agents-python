@@ -1,9 +1,9 @@
 import asyncio
 import logging
 
-from agents import Agent, Runner, Usage, function_tool
 from pydantic import BaseModel
 
+from agents import Agent, Runner, Usage, function_tool
 
 logger = logging.getLogger(__name__)
 

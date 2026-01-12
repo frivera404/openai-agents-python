@@ -3,9 +3,8 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import Any, Literal
 
-from typing_extensions import TypeVar
-
 from pydantic import TypeAdapter, ValidationError
+from typing_extensions import TypeVar
 
 from ..exceptions import ModelBehaviorError
 from ..tracing import SpanError

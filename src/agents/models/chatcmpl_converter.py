@@ -4,7 +4,7 @@ import json
 from collections.abc import Iterable
 from typing import Any, Literal, Union, cast
 
-from openai import Omit, omit
+from openai import BaseModel, Omit, omit
 from openai.types.chat import (
     ChatCompletionAssistantMessageParam,
     ChatCompletionContentPartImageParam,
@@ -20,10 +20,6 @@ from openai.types.chat import (
     ChatCompletionToolMessageParam,
     ChatCompletionUserMessageParam,
 )
-
-# from openai.types.chat.chat_completion_content_part_param import File, FileFile
-File = Any
-FileFile = Any
 from openai.types.chat.chat_completion_tool_param import ChatCompletionToolParam
 from openai.types.chat.completion_create_params import ResponseFormat
 from openai.types.responses import (
@@ -46,9 +42,6 @@ from openai.types.responses import (
 from openai.types.responses.response_input_param import FunctionCallOutput, ItemReference, Message
 
 # from openai.types.responses.response_reasoning_item import Content, Summary
-Content = Any
-Summary = Any
-
 from ..agent_output import AgentOutputSchemaBase
 from ..exceptions import AgentsException, UserError
 from ..handoffs import Handoff
@@ -56,6 +49,16 @@ from ..items import TResponseInputItem, TResponseOutputItem
 from ..model_settings import MCPToolChoice
 from ..tool import FunctionTool, Tool
 from .fake_id import FAKE_RESPONSES_ID
+
+# Restore response reasoning aliases after local imports
+Content = Any
+Summary = Any
+File = Any
+FileFile = Any
+
+# from openai.types.chat.chat_completion_content_part_param import File, FileFile
+File = Any
+FileFile = Any
 
 
 class Converter:
@@ -107,12 +110,19 @@ class Converter:
         if hasattr(message, "reasoning_content") and message.reasoning_content:
             reasoning_item = ResponseReasoningItem(
                 id=FAKE_RESPONSES_ID,
-                summary=[Summary(text=message.reasoning_content, type="summary_text")],
+                summary=[{"text": message.reasoning_content, "type": "summary_text"}],
                 type="reasoning",
             )
 
             # Store thinking blocks for Anthropic compatibility
             if hasattr(message, "thinking_blocks") and message.thinking_blocks:
+                # Use a lightweight BaseModel-compatible Part equivalent so
+                # attribute access and serialization work reliably regardless
+                # of the installed openai package version.
+                class _LocalPart(BaseModel):
+                    text: str | None = None
+                    type: str | None = None
+
                 # Store thinking text in content and signature in encrypted_content
                 reasoning_item.content = []
                 signatures: list[str] = []
@@ -121,7 +131,7 @@ class Converter:
                         thinking_text = block.get("thinking", "")
                         if thinking_text:
                             reasoning_item.content.append(
-                                Content(text=thinking_text, type="reasoning_text")
+                                _LocalPart(text=thinking_text, type="reasoning_text")
                             )
                         # Store the signature if present
                         if signature := block.get("signature"):
@@ -375,6 +385,37 @@ class Converter:
         current_assistant_msg: ChatCompletionAssistantMessageParam | None = None
         pending_thinking_blocks: list[dict[str, str]] | None = None
 
+        # Pre-scan items for reasoning entries so we can reconstruct thinking
+        # blocks even if the main loop ordering prevents the "pending"
+        # variable from being set at the right time (some serializers may
+        # reorder or omit fields during round-trips).
+        pre_scanned_thinking: list[list[dict[str, str]]] = []
+        if preserve_thinking_blocks:
+            for it in items:
+                if isinstance(it, dict) and it.get("type") == "reasoning":
+                    content_items = it.get("content", [])
+                    encrypted_content = it.get("encrypted_content")
+                    signatures = encrypted_content.split("\n") if encrypted_content else []
+                    reconstructed: list[dict[str, str]] = []
+                    for content_item in content_items:
+                        if (
+                            isinstance(content_item, dict)
+                            and content_item.get("type") == "reasoning_text"
+                        ):
+                            thinking_block = {
+                                "type": "thinking",
+                                "thinking": content_item.get("text", ""),
+                            }
+                            if signatures:
+                                thinking_block["signature"] = signatures.pop(0)
+                            reconstructed.append(thinking_block)
+                    if reconstructed:
+                        pre_scanned_thinking.append(reconstructed)
+
+        # Ensure we have a sequence we can index for lookahead when preserving
+        # thinking blocks.
+        item_list = list(items)
+
         def flush_assistant_message() -> None:
             nonlocal current_assistant_msg
             if current_assistant_msg is not None:
@@ -392,7 +433,7 @@ class Converter:
 
             return current_assistant_msg
 
-        for item in items:
+        for idx, item in enumerate(item_list):
             # 1) Check easy input message
             if easy_msg := cls.maybe_easy_input_message(item):
                 role = easy_msg["role"]
@@ -478,10 +519,44 @@ class Converter:
 
                 if text_segments:
                     combined = "\n".join(text_segments)
-                    new_asst["content"] = combined
+                    # Preserve previous behavior: return a plain string unless
+                    # thinking blocks must be preserved (which requires a list
+                    # of content parts so thinking blocks can be prepended).
+                    if preserve_thinking_blocks:
+                        new_asst["content"] = [
+                            ChatCompletionContentPartTextParam(type="text", text=combined)
+                        ]
+                    else:
+                        new_asst["content"] = combined
 
                 new_asst["tool_calls"] = []
                 current_assistant_msg = new_asst
+
+                # If preserving thinking blocks, look ahead for a reasoning
+                # item that should precede the next tool call and use it as
+                # pending thinking blocks so interleaved thinking is preserved.
+                if preserve_thinking_blocks and pending_thinking_blocks is None:
+                    for future in item_list[idx + 1 :]:
+                        if reasoning_item := cls.maybe_reasoning_message(future):
+                            content_items = reasoning_item.get("content", [])
+                            encrypted_content = reasoning_item.get("encrypted_content")
+                            signatures = encrypted_content.split("\n") if encrypted_content else []
+                            reconstructed_thinking_blocks = []
+                            for content_item in content_items:
+                                if (
+                                    isinstance(content_item, dict)
+                                    and content_item.get("type") == "reasoning_text"
+                                ):
+                                    thinking_block = {
+                                        "type": "thinking",
+                                        "thinking": content_item.get("text", ""),
+                                    }
+                                    if signatures:
+                                        thinking_block["signature"] = signatures.pop(0)
+                                    reconstructed_thinking_blocks.append(thinking_block)
+                            if reconstructed_thinking_blocks:
+                                pending_thinking_blocks = reconstructed_thinking_blocks
+                            break
 
             # 4) function/file-search calls => attach to assistant
             elif file_search := cls.maybe_file_search_call(item):
@@ -508,6 +583,42 @@ class Converter:
 
                 # If we have pending thinking blocks, use them as the content
                 # This is required for Anthropic API tool calls with interleaved thinking
+                # If there are no explicit pending thinking blocks from the
+                # immediate sequence, try to consume any pre-scanned thinking
+                # blocks gathered from reasoning items earlier.
+                if not pending_thinking_blocks and pre_scanned_thinking:
+                    pending_thinking_blocks = pre_scanned_thinking.pop(0)
+
+                # If we still don't have pending thinking blocks, try a
+                # backward scan to find a reasoning item earlier in the
+                # sequence (more robust against ordering changes).
+                if not pending_thinking_blocks and preserve_thinking_blocks:
+                    for back_idx in range(idx - 1, -1, -1):
+                        maybe = cls.maybe_reasoning_message(item_list[back_idx])
+                        if maybe:
+                            content_items = maybe.get("content", [])
+                            encrypted_content = maybe.get("encrypted_content")
+                            sigs = encrypted_content.split("\n") if encrypted_content else []
+                            recon: list[dict[str, str]] = []
+                            for content_item in content_items:
+                                ctype = None
+                                ctext = None
+                                if isinstance(content_item, dict):
+                                    ctype = content_item.get("type")
+                                    ctext = content_item.get("text")
+                                else:
+                                    ctype = getattr(content_item, "type", None)
+                                    ctext = getattr(content_item, "text", None)
+
+                                if ctype == "reasoning_text":
+                                    tb = {"type": "thinking", "thinking": ctext or ""}
+                                    if sigs:
+                                        tb["signature"] = sigs.pop(0)
+                                    recon.append(tb)
+                            if recon:
+                                pending_thinking_blocks = recon
+                                break
+
                 if pending_thinking_blocks:
                     # If there is a text content, save it to append after thinking blocks
                     # content type is Union[str, Iterable[ContentArrayOfContentPart], None]

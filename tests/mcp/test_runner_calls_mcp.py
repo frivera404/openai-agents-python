@@ -1,9 +1,9 @@
 import json
 
 import pytest
+from pydantic import BaseModel
 
 from agents import Agent, ModelBehaviorError, Runner, UserError
-from pydantic import BaseModel
 
 from ..fake_model import FakeModel
 from ..test_responses import get_function_tool_call, get_text_message

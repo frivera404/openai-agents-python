@@ -4,23 +4,33 @@ import inspect
 import json
 from collections.abc import Awaitable
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Callable, Literal, Union, overload
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Any as CodeInterpreter,
+    Any as ImageGeneration,
+    Any as LocalShellCall,
+    Any as Mcp,
+    Any as McpApprovalRequest,
+    Any as PendingSafetyCheck,
+    Any as UserLocation,
+    Any as WebSearchToolFilters,
+    Callable,
+    Literal,
+    Union,
+    overload,
+)
 
-from typing_extensions import Concatenate, NotRequired, ParamSpec, TypedDict
-
-from openai.types.responses.file_search_tool_param import Filters, RankingOptions
-from typing import Any as PendingSafetyCheck
-from openai.types.responses import ResponseComputerToolCall
-from typing import Any as LocalShellCall, Any as McpApprovalRequest
-from typing import Any as CodeInterpreter, Any as ImageGeneration, Any as Mcp
-from typing import Any as WebSearchToolFilters
-from typing import Any as UserLocation
 from pydantic import (  # type: ignore[attr-defined]
     BaseModel,
     TypeAdapter,
     ValidationError,
     model_validator,
 )
+from typing_extensions import Concatenate, NotRequired, ParamSpec, TypedDict
+
+from openai.types.responses import ResponseComputerToolCall
+from openai.types.responses.file_search_tool_param import Filters, RankingOptions
 
 from . import _debug
 from .computer import AsyncComputer, Computer

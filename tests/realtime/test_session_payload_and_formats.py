@@ -4,6 +4,7 @@ from collections.abc import Mapping
 from typing import Any, cast
 
 import pydantic
+
 from agents.realtime.openai_realtime import OpenAIRealtimeWebSocketModel as Model
 from openai.types.realtime.realtime_audio_config import RealtimeAudioConfig
 from openai.types.realtime.realtime_audio_formats import (

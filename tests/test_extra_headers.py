@@ -40,7 +40,7 @@ async def test_extra_headers_passed_to_openai_responses_model():
         def __init__(self):
             self.responses = DummyResponses()
 
-    model = OpenAIResponsesModel(model="gpt-4", openai_client=DummyClient())  # type: ignore
+    model = OpenAIResponsesModel(model="gpt-4.1", openai_client=DummyClient())  # type: ignore
     extra_headers = {"X-Test-Header": "test-value"}
     await model.get_response(
         system_instructions=None,
@@ -84,7 +84,7 @@ async def test_extra_headers_passed_to_openai_client():
             self.chat = type("_Chat", (), {"completions": DummyCompletions()})()
             self.base_url = "https://api.openai.com"
 
-    model = OpenAIChatCompletionsModel(model="gpt-4", openai_client=DummyClient())  # type: ignore
+    model = OpenAIChatCompletionsModel(model="gpt-4.1", openai_client=DummyClient())  # type: ignore
     extra_headers = {"X-Test-Header": "test-value"}
     await model.get_response(
         system_instructions=None,

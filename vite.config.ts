@@ -1,6 +1,8 @@
 import path from 'path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
 
 export default defineConfig(() => {
     return {
@@ -8,7 +10,9 @@ export default defineConfig(() => {
         server: {
             proxy: {
                 '/api': {
-                    target: 'http://localhost:3002',
+                    // Proxy API calls to the backend. Use `VITE_API_BASE_URL` if set,
+                    // otherwise default to the local Express backend on port 3002.
+                    target: process.env.VITE_API_BASE_URL || 'http://127.0.0.1:3002',
                     changeOrigin: true,
                 },
             },

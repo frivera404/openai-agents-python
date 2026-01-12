@@ -2,6 +2,7 @@ import json
 from typing import Any
 
 import pytest
+from pydantic import BaseModel
 from typing_extensions import TypedDict
 
 from agents import (
@@ -14,7 +15,6 @@ from agents import (
 )
 from agents.tool import default_tool_error_function
 from agents.tool_context import ToolContext
-from pydantic import BaseModel
 
 
 def argless_function() -> str:

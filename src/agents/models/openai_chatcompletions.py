@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import time
 from collections.abc import AsyncIterator
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Literal, cast, overload
 
 from openai import AsyncOpenAI, AsyncStream, Omit, omit
@@ -10,12 +11,6 @@ from openai.types import ChatModel
 from openai.types.chat import ChatCompletion, ChatCompletionChunk, ChatCompletionMessage
 from openai.types.chat.chat_completion import Choice
 from openai.types.responses import Response
-
-# from openai.types.responses.response_prompt_param import ResponsePromptParam
-# from openai.types.responses.response_usage import InputTokensDetails, OutputTokensDetails
-ResponsePromptParam = Any
-InputTokensDetails = Any
-OutputTokensDetails = Any
 
 from .. import _debug
 from ..agent_output import AgentOutputSchemaBase
@@ -37,6 +32,21 @@ from .openai_responses import Converter as OpenAIResponsesConverter
 
 if TYPE_CHECKING:
     from ..model_settings import ModelSettings
+
+
+# from openai.types.responses.response_prompt_param import ResponsePromptParam
+# from openai.types.responses.response_usage import InputTokensDetails, OutputTokensDetails
+ResponsePromptParam = Any
+
+
+@dataclass
+class InputTokensDetails:
+    cached_tokens: int = 0
+
+
+@dataclass
+class OutputTokensDetails:
+    reasoning_tokens: int = 0
 
 
 class OpenAIChatCompletionsModel(Model):

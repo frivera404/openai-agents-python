@@ -17,10 +17,11 @@ Usage:
 Note: Requires `OPENAI_API_KEY` in environment for Assistant API calls and the
 local `orchestrator` service running on port 8081.
 """
+
 import json
 import os
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 import requests
 
@@ -32,7 +33,7 @@ def read_token() -> Optional[str]:
         # try several encodings to handle PowerShell/Windows BOM variants
         for enc in ("utf-8-sig", "utf-16", "utf-16-le", "utf-16-be", "latin-1"):
             try:
-                with open(".token.txt", "r", encoding=enc) as f:
+                with open(".token.txt", encoding=enc) as f:
                     return f.read().strip()
             except Exception:
                 continue
@@ -45,24 +46,31 @@ def read_token() -> Optional[str]:
     return None
 
 
-def start_orchestrator_run(token: Optional[str], session_id: str = "dev-session") -> Dict[str, Any]:
+def start_orchestrator_run(token: Optional[str], session_id: str = "dev-session") -> dict[str, Any]:
     url = "http://127.0.0.1:8081/orchestrate"
     headers = {"Content-Type": "application/json"}
     if token:
         headers["Authorization"] = f"Bearer {token}"
 
-    payload = {"session_id": session_id, "message": "Please classify and run a small test orchestration"}
+    payload = {
+        "session_id": session_id,
+        "message": "Please classify and run a small test orchestration",
+    }
     resp = requests.post(url, json=payload, headers=headers, timeout=30)
     resp.raise_for_status()
     return resp.json()
 
 
-def synthesize_output(call: Dict[str, Any]) -> str:
+def synthesize_output(call: dict[str, Any]) -> str:
     try:
         # support both dict-like and SDK object shapes
         if hasattr(call, "get"):
             func = call.get("function") or {}
-            args_text = func.get("arguments") if isinstance(func, dict) else getattr(func, "arguments", None)
+            args_text = (
+                func.get("arguments")
+                if isinstance(func, dict)
+                else getattr(func, "arguments", None)
+            )
         else:
             func = getattr(call, "function", None)
             args_text = getattr(func, "arguments", None)
@@ -74,13 +82,21 @@ def synthesize_output(call: Dict[str, Any]) -> str:
         else:
             payload = {}
 
-        path = payload.get("path") or payload.get("file") or payload.get("filename") or payload.get("uri") or "<unknown>"
+        path = (
+            payload.get("path")
+            or payload.get("file")
+            or payload.get("filename")
+            or payload.get("uri")
+            or "<unknown>"
+        )
         return f"Auto-classification for {path}: file classified; recommend Alex M."
     except Exception:
         return "Auto tool output: processed."
 
 
-def submit_for_run(agent: AssistantsAgent, thread_id: str, run_id: str, run_obj: Dict[str, Any]) -> Dict[str, Any]:
+def submit_for_run(
+    agent: AssistantsAgent, thread_id: str, run_id: str, run_obj: dict[str, Any]
+) -> dict[str, Any]:
     # run_obj may be a dict or an SDK object; handle both.
     if hasattr(run_obj, "get"):
         required = run_obj.get("required_action") or {}
@@ -100,7 +116,7 @@ def submit_for_run(agent: AssistantsAgent, thread_id: str, run_id: str, run_obj:
         print("No tool calls to submit.")
         return run_obj
 
-    outputs: List[Dict[str, Any]] = []
+    outputs: list[dict[str, Any]] = []
     for call in tool_calls:
         # support SDK objects and dicts
         cid = None
@@ -158,10 +174,12 @@ def main() -> None:
     run_obj = current if isinstance(current, dict) else getattr(current, "__dict__", current)
 
     if status == "requires_action":
-        submit_res = submit_for_run(agent, thread_id, run_id, run_obj)
+        submit_for_run(agent, thread_id, run_id, run_obj)
         # After submit, poll again to completion
         print("Submitted tool outputs, polling to completion...")
-        final = agent.wait_for_run_completion(thread_id=thread_id, run_id=run_id, poll_interval=1.0, max_wait_seconds=120)
+        final = agent.wait_for_run_completion(
+            thread_id=thread_id, run_id=run_id, poll_interval=1.0, max_wait_seconds=120
+        )
         # Save final run
         final_dict = final if isinstance(final, dict) else getattr(final, "__dict__", final)
         with open("run_final_auto.json", "w", encoding="utf-8") as f:

@@ -9,12 +9,13 @@ supervisor agents to Prime Goal mode for optimal task completion.
 
 import asyncio
 import logging
-import json
-from openai_assistant_agent import OpenAIAssistantAgent, AgentConfigurator
+
+from openai_assistant_agent import AgentConfigurator, OpenAIAssistantAgent
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 
 async def test_agent_private_i():
     """Test Agent Private I Prime Goal configuration"""
@@ -29,9 +30,11 @@ async def test_agent_private_i():
     logger.info("📊 Initial Prime Goal status:")
     initial_status = configurator.verify_prime_goal_status(agent)
     logger.info("   Prime Goal Active: %s", initial_status["prime_goal_active"])
-    logger.info("   Supervisor Agents Configured: %d/%d",
-                initial_status["supervisor_agents_configured"],
-                initial_status["total_supervisor_agents"])
+    logger.info(
+        "   Supervisor Agents Configured: %d/%d",
+        initial_status["supervisor_agents_configured"],
+        initial_status["total_supervisor_agents"],
+    )
 
     # Apply Prime Goal configuration
     logger.info("\n⚙️  Applying Prime Goal configuration...")
@@ -46,9 +49,11 @@ async def test_agent_private_i():
 
         logger.info("📊 Post-configuration status:")
         logger.info("   Prime Goal Active: %s", status["prime_goal_active"])
-        logger.info("   Supervisor Agents Configured: %d/%d",
-                    status["supervisor_agents_configured"],
-                    status["total_supervisor_agents"])
+        logger.info(
+            "   Supervisor Agents Configured: %d/%d",
+            status["supervisor_agents_configured"],
+            status["total_supervisor_agents"],
+        )
         logger.info("   System Optimizations Active: %s", status["system_optimizations_active"])
         logger.info("   Configuration Integrity: %s", status["configuration_integrity"])
 
@@ -58,9 +63,11 @@ async def test_agent_private_i():
         if prime_config:
             supervisor_agents = prime_config.get("supervisor_agents", {})
             for agent_name, settings in list(supervisor_agents.items())[:3]:  # Show first 3
-                logger.info("   %s: optimization_level=%s",
-                           agent_name.replace("_", " ").title(),
-                           settings.get("optimization_level", "unknown"))
+                logger.info(
+                    "   %s: optimization_level=%s",
+                    agent_name.replace("_", " ").title(),
+                    settings.get("optimization_level", "unknown"),
+                )
             if len(supervisor_agents) > 3:
                 logger.info("   ... and %d more agents", len(supervisor_agents) - 3)
 
@@ -68,11 +75,11 @@ async def test_agent_private_i():
         logger.info("\n🧠 Memory integration:")
         memory_stats = agent.get_memory_stats()
         logger.info("   Auto-save enabled: %s", memory_stats["auto_save_enabled"])
-        logger.info("   Prime Goal mode in memory: %s",
-                   agent.memory.get("prime_goal_mode", False))
+        logger.info("   Prime Goal mode in memory: %s", agent.memory.get("prime_goal_mode", False))
 
     else:
         logger.error("❌ Failed to apply Prime Goal configuration")
+
 
 async def test_configuration_reset():
     """Test configuration reset functionality"""
@@ -99,6 +106,7 @@ async def test_configuration_reset():
     else:
         logger.error("❌ Reset failed")
 
+
 async def demonstrate_supervisor_agents():
     """Demonstrate the configured supervisor agents"""
     logger.info("\n👥 Supervisor Agents in Prime Goal Mode")
@@ -117,6 +125,7 @@ async def demonstrate_supervisor_agents():
     for opt_name, level in global_opts.items():
         display_opt = opt_name.replace("_", " ").title()
         logger.info("   • %s: %s", display_opt, level)
+
 
 async def main():
     """Main test function"""
@@ -139,6 +148,7 @@ async def main():
     except Exception as e:
         logger.error("❌ Test failed: %s", e)
         raise
+
 
 if __name__ == "__main__":
     asyncio.run(main())

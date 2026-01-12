@@ -2,12 +2,16 @@ from __future__ import annotations
 
 import inspect
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Callable
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Any as ResponsePromptParam,
+    Callable,
+)
 
 from typing_extensions import NotRequired, TypedDict
 
 from agents.util._types import MaybeAwaitable
-from typing import Any as ResponsePromptParam, Dict as ResponsesPromptVariables
 
 from .exceptions import UserError
 from .run_context import RunContextWrapper
@@ -25,7 +29,7 @@ class Prompt(TypedDict):
     version: NotRequired[str]
     """Optional version of the prompt."""
 
-    variables: NotRequired[dict[str, ResponsesPromptVariables]]
+    variables: NotRequired[dict[str, dict]]
     """Optional variables to substitute into the prompt."""
 
 

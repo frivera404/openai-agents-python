@@ -4,6 +4,7 @@ Test MCP Integration with Docker Services
 """
 
 import asyncio
+
 from agents import Agent, Runner
 from agents.mcp import MCPServerStreamableHttp
 
@@ -25,7 +26,9 @@ async def main():
     )
 
     # Test task
-    result = await Runner.run(starting_agent=agent, input="List the contents of the root directory.")
+    result = await Runner.run(
+        starting_agent=agent, input="List the contents of the root directory."
+    )
     print("Agent response:", result.final_output)
 
 

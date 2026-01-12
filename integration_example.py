@@ -4,24 +4,29 @@ Integration example that connects an Agent to the Docker MCP filesystem server.
 """
 
 import asyncio
+import logging
 import os
 import sys
-import logging
 from pathlib import Path
 from typing import Final
 
 logger = logging.getLogger(__name__)
 
-# Ensure the repository's `src` directory is on the Python path so `agents` can be imported.
-for parent in Path(__file__).resolve().parents:
-    candidate = parent / "src"
-    if candidate.is_dir():
-        sys.path.insert(0, str(candidate))
-        break
-
-from agents import Agent, Runner, gen_trace_id, trace
-from agents.mcp import MCPServerStreamableHttp
-from agents.model_settings import ModelSettings
+# Attempt direct imports first; if running from a different working
+# directory, fall back to adding the repo `src` folder to `sys.path`.
+try:
+    from agents import Agent, Runner, gen_trace_id, trace
+    from agents.mcp import MCPServerStreamableHttp
+    from agents.model_settings import ModelSettings
+except Exception:
+    for parent in Path(__file__).resolve().parents:
+        candidate = parent / "src"
+        if candidate.is_dir():
+            sys.path.insert(0, str(candidate))
+            break
+    from agents import Agent, Runner, gen_trace_id, trace
+    from agents.mcp import MCPServerStreamableHttp
+    from agents.model_settings import ModelSettings
 
 DEFAULT_PROMPT: Final[str] = (
     "List the files you can read, then read any README.md you find and summarise it."

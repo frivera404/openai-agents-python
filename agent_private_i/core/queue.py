@@ -1,6 +1,7 @@
-import time
 import json
+import time
 from typing import Optional
+
 from agent_private_i.core.models import Task
 
 
@@ -25,8 +26,8 @@ class RedisQueue:
     def __init__(self, url: str = "redis://localhost:6379/0", key: str = "tasks:queue"):
         try:
             import redis
-        except Exception:
-            raise RuntimeError("redis package required for RedisQueue")
+        except Exception as err:
+            raise RuntimeError("redis package required for RedisQueue") from err
         self.r = redis.from_url(url, decode_responses=True)
         self.key = key
 

@@ -746,4 +746,3 @@ class TestSendEventAndConfig(TestOpenAIRealtimeWebSocketModel):
         # Test that last audio item is tracked
         last_item = model._audio_state_tracker.get_last_audio_item()
         assert last_item == ("test_item", 5)
-

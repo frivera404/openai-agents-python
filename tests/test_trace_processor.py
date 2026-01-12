@@ -2,9 +2,9 @@ import os
 import time
 from unittest.mock import MagicMock, patch
 
+import httpx
 import pytest
 
-import httpx
 from agents.tracing.processor_interface import TracingProcessor
 from agents.tracing.processors import BackendSpanExporter, BatchTraceProcessor
 from agents.tracing.span_data import AgentSpanData

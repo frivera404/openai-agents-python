@@ -11,7 +11,7 @@ from .chat_completion_content_part import (
     ChatCompletionContentPartParam,
     ChatCompletionContentPartTextParam,
 )
-from .chat_completion_message import ChatCompletionMessage, ChatCompletionMessageParam
+from .chat_completion_message import ChatCompletionMessage
 from .chat_completion_message_param import (
     ChatCompletionAssistantMessageParam,
     ChatCompletionDeveloperMessageParam,
