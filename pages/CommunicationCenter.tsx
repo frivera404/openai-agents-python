@@ -27,6 +27,20 @@ const CommunicationCenter: React.FC = () => {
                 setAgents(list);
             } catch (err) {
                 console.error('Failed to load deployed agents', err);
+                // Fallback: include a small set of known local demo assistants so the
+                // UI remains usable even when the backend /api/agents/deployed
+                // endpoint cannot be reached in local development.
+                const FALLBACK_AGENTS: { [k: string]: string } = {
+                    supervisor: 'asst_aoU291xGQgwlqgoQsxoWYfbQ',
+                    'layer-manager': 'asst_gWX3gVfbHwVn9y7wm0FZml22',
+                    'affiliate-manager': 'asst_XZqf46Wxz4XL9pI7VHraZQEi',
+                    coder: 'asst_Tswpu395P3VGnEuMwcOga1l6',
+                };
+                const list = Object.keys(FALLBACK_AGENTS).map((k) => ({
+                    agentId: k,
+                    assistantId: FALLBACK_AGENTS[k],
+                }));
+                setAgents(list);
             }
         };
         load();
