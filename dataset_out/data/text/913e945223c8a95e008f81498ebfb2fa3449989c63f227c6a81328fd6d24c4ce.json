@@ -1,0 +1,1 @@
+{"task_id": "ccebde22-de64-44d8-8cc4-dad309088204", "goal": "Check whether ctdatenight.com is serving a homepage and save summary", "inputs": {"url": "https://ctdatenight.com"}, "constraints": {}, "success_criteria": ["summary_present", "status_200"], "status": "queued", "attempts": 0, "steps": [], "history": [], "artifacts": {}, "created_at": 1766355896.3769267}

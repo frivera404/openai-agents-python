@@ -8,7 +8,8 @@
       "layer_manager": "asst_gWX3gVfbHwVn9y7wm0FZml22",
       "coder": "asst_Tswpu395P3VGnEuMwcOga1l6",
       "supervisor_agent": "asst_aoU291xGQgwlqgoQsxoWYfbQ",
-      "gemini_mahem_api_agent": "asst_IJgUbeTrvwAFVyRJxZoUErmy"
+      "gemini_mahem_api_agent": "asst_IJgUbeTrvwAFVyRJxZoUErmy",
+      "data_science_agent": "asst_Bh5Q7RAEzuD6pxvLQX6K0U3d"
     }
   },
   "mcp_servers": {

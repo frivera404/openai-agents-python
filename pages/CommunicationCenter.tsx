@@ -34,6 +34,7 @@ const CommunicationCenter: React.FC = () => {
                     supervisor: 'asst_aoU291xGQgwlqgoQsxoWYfbQ',
                     'layer-manager': 'asst_gWX3gVfbHwVn9y7wm0FZml22',
                     'affiliate-manager': 'asst_XZqf46Wxz4XL9pI7VHraZQEi',
+                    'data-science': 'asst_Bh5Q7RAEzuD6pxvLQX6K0U3d',
                     coder: 'asst_Tswpu395P3VGnEuMwcOga1l6',
                 };
                 const list = Object.keys(FALLBACK_AGENTS).map((k) => ({

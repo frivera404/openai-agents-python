@@ -1,0 +1,47 @@
+services:
+  mcp-filesystem:
+    build: ./docker/mcp-filesystem
+    ports:
+      - '3000:8000'
+    volumes:
+      - ./:/workspace:ro # Mount repository root (read-only)
+      - C:/Users/frive:/host/C/Users/frive:ro # Mount user home for Windows-path access
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'python',
+          '-c',
+          "import socket; s = socket.socket(); s.connect(('localhost', 8000))",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    environment:
+      - PYTHONUNBUFFERED=1
+      - FASTMCP_TRANSPORT_SECURITY__ENABLE_DNS_REBINDING_PROTECTION=false
+      - FASTMCP_TRANSPORT_SECURITY__ALLOWED_HOSTS=["mcp-filesystem:*"]
+    command:
+      [
+        'uvicorn',
+        'mcp_filesystem_server:mcp.streamable_http_app',
+        '--host',
+        '0.0.0.0',
+        '--port',
+        '8000',
+      ]
+
+  agents-integration:
+    build: .
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      mcp-filesystem:
+        condition: service_healthy
+    # Do not mount the host repository into the container. Mounting the
+    # Windows `.venv` into the Linux container caused I/O errors when the
+    # container attempted to modify `/app/.venv`. Use the image's copy of
+    # the repository (built from the Dockerfile) instead.
+    working_dir: /app
+    command: uv run python examples/integration_example.py

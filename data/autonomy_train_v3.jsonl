@@ -1,0 +1,6 @@
+{"prompt": "User asks for Fetch current weather for a city. Available tool: get_weather", "completion": "{\"type\": \"function_call\", \"name\": \"get_weather\", \"arguments\": {\"city\": \"<city>\"}}"}
+{"prompt": "User asks for Fetch current weather for a city. Available tool: get_weather", "completion": "{\"type\": \"function_call\", \"name\": \"get_weather\", \"arguments\": {\"city\": \"<city>\"}}"}
+{"prompt": "User asks for Fetch current weather for a city. Available tool: get_weather", "completion": "{\"type\": \"function_call\", \"name\": \"get_weather\", \"arguments\": {\"city\": \"<city>\"}}"}
+{"prompt": "User asks for Search the web for query and return top results. Available tool: search_web", "completion": "{\"type\": \"function_call\", \"name\": \"search_web\", \"arguments\": {\"query\": \"<query>\", \"limit\": \"<limit>\"}}"}
+{"prompt": "User asks for Search the web for query and return top results. Available tool: search_web", "completion": "{\"type\": \"function_call\", \"name\": \"search_web\", \"arguments\": {\"query\": \"<query>\", \"limit\": \"<limit>\"}}"}
+{"prompt": "User asks for Search the web for query and return top results. Available tool: search_web", "completion": "{\"type\": \"function_call\", \"name\": \"search_web\", \"arguments\": {\"query\": \"<query>\", \"limit\": \"<limit>\"}}"}

@@ -24,15 +24,20 @@ const pythonExecutable =
     (process.env.VIRTUAL_ENV
         ? `${process.env.VIRTUAL_ENV}${path.sep}Scripts${path.sep}python.exe`
         : 'python');
-const port = process.env.PORT || 3002;
+const port = process.env.PORT || 8083;
 
 // Middleware
 app.use(
     cors({
-        origin:
-            process.env.NODE_ENV === 'production'
-                ? ['https://your-domain.com']
-                : ['http://localhost:5173', 'http://localhost:3000'],
+        origin: (origin, callback) => {
+            if (process.env.NODE_ENV === 'production') {
+                const allowed = ['https://your-domain.com'];
+                if (origin && allowed.includes(origin)) return callback(null, true);
+                return callback(new Error('Not allowed by CORS'));
+            }
+            // In development, allow requests from any origin (includes 127.0.0.1 and localhost variants).
+            return callback(null, true);
+        },
         credentials: true,
     })
 );
@@ -184,7 +189,71 @@ You are a senior software engineer. Review requirements, consult documentation, 
   - Summarize findings in a clear and actionable format.
   - Tag relevant team members if additional review is needed.
 
-You are a data scientist. Pull from multiple sources, build predictive prototypes, visualize trends, and communicate insights clearly.
+You are a data scientist (assistant ID: asst_Bh5Q7RAEzuD6pxvLQX6K0U3d). Pull from multiple sources, build predictive prototypes, visualize trends, and communicate insights clearly.
+
+### Function code
+- Pull from multiple sources:
+    import pandas as pd
+
+    def pull_data(sources):
+        # sources: list of dicts with {"type": "csv/sql/api", "path": "..."}
+        dataframes = []
+        for src in sources:
+            if src["type"] == "csv":
+                df = pd.read_csv(src["path"])
+            elif src["type"] == "excel":
+                df = pd.read_excel(src["path"])
+            elif src["type"] == "sql":
+                import sqlalchemy
+                engine = sqlalchemy.create_engine(src["conn_str"])
+                df = pd.read_sql(src["query"], engine)
+            elif src["type"] == "api":
+                import requests
+                resp = requests.get(src["url"])
+                df = pd.DataFrame(resp.json())
+            dataframes.append(df)
+        return pd.concat(dataframes, axis=0)
+
+- Build predictive prototypes:
+    from sklearn.model_selection import train_test_split
+    from sklearn.ensemble import RandomForestRegressor
+
+    def build_predictive_model(df, target, features):
+        X = df[features].values
+        y = df[target].values
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=42
+        )
+        model = RandomForestRegressor()
+        model.fit(X_train, y_train)
+        score = model.score(X_test, y_test)
+        return model, score
+
+- Visualize trends:
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+
+    def visualize_trends(df, feature, target):
+        plt.figure(figsize=(10, 6))
+        sns.lineplot(data=df, x=feature, y=target)
+        plt.title(f"Trend of {target} vs. {feature}")
+        plt.show()
+
+- Communicate insights:
+    def communicate_insights(model_score, trends_summary):
+        print(f"Model accuracy (R^2): {model_score:.3f}")
+        print("Main trends observed:\n" + trends_summary)
+
+### Workflow
+1. Data ingestion: identify sources (CSV/SQL/API) and load with pandas.
+2. Data wrangling: merge datasets, clean missing values, engineer features, and state assumptions.
+3. Exploratory data analysis: visualize distributions, correlations, and temporal patterns.
+4. Predictive prototyping: pick target/features, split train/test, fit a baseline model, and score (R^2/accuracy).
+5. Trend visualization and summarization: chart key drivers and time effects; capture concise takeaways.
+6. Insight communication: report model quality, main drivers, risks, and next-step recommendations.
+
+### Workflow diagram
+[Start] -> [Ingest Data] -> [Clean/Merge Data] -> [EDA] -> [Build Prototype] -> [Visualize & Summarize] -> [Communicate Insights] -> [End]
 
 ## Teamwork Best Practices
 
@@ -697,6 +766,7 @@ const agentAssistantIds: Record<string, string> = {
     'affiliate-manager': 'asst_XZqf46Wxz4XL9pI7VHraZQEi',
     'alex-supervisor': 'asst_XZqf46Wxz4XL9pI7VHraZQEi',
     coder: 'asst_Tswpu395P3VGnEuMwcOga1l6',
+    'data-science': 'asst_Bh5Q7RAEzuD6pxvLQX6K0U3d',
     'supervisor-agent': 'asst_aoU291xGQgwlqgoQsxoWYfbQ',
     'gemini-mahem-api': 'asst_IJgUbeTrvwAFVyRJxZoUErmy',
 };

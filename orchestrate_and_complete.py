@@ -20,6 +20,7 @@ local `orchestrator` service running on port 8081.
 
 import json
 import os
+import sys
 import time
 from typing import Any, Optional
 
@@ -46,8 +47,52 @@ def read_token() -> Optional[str]:
     return None
 
 
+def get_base_url() -> str:
+    return (os.environ.get("ORCHESTRATOR_URL") or "http://127.0.0.1:8082").rstrip("/")
+
+
+# Orchestration schedule for a small production workflow (engraving & laser cutting)
+# This can be dumped to a file with the `--dump-orchestration` CLI flag.
+ORCHESTRATION_SCHEDULE = {
+    "Design Agent": {
+        "schedule": "Mon, Wed 09:00-11:00",
+        "task": "Gather client requirements, develop custom design drafts, and prepare vector files for laser cutting/engraving.",
+    },
+    "Material Preparation Agent": {
+        "schedule": "Mon, Wed 11:00-13:00",
+        "task": "Select and prepare wood sheets, clean surfaces, and ensure materials are ready for laser processing according to design specifications.",
+    },
+    "Laser Operator Agent": {
+        "schedule": "Tue, Thu 09:00-12:00",
+        "task": "Set up the laser machine, upload design files, perform test cuts/engravings, and execute final laser cutting and engraving jobs.",
+    },
+    "Quality Control Agent": {
+        "schedule": "Tue, Thu 12:00-13:00",
+        "task": "Inspect finished pieces for accuracy, quality, and adherence to client requirements; report issues for correction.",
+    },
+    "Finishing & Packaging Agent": {
+        "schedule": "Fri 09:00-12:00",
+        "task": "Sand and finish products as needed, apply protective coatings, and package completed pieces for delivery.",
+    },
+    "Project Coordinator Agent": {
+        "schedule": "Daily 08:30-09:00",
+        "task": "Oversee task schedules, communicate with all agents, update clients on progress, and adjust schedules as needed.",
+    },
+}
+
+
+def dump_orchestration_to_file(path: str = "orchestration_schedule.json") -> None:
+    """Write the `ORCHESTRATION_SCHEDULE` to a JSON file for inspection or importing."""
+    try:
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(ORCHESTRATION_SCHEDULE, f, indent=2, ensure_ascii=False)
+        print(f"Orchestration schedule written to {path}")
+    except Exception as exc:
+        print(f"Failed to write orchestration schedule: {exc}")
+
+
 def start_orchestrator_run(token: Optional[str], session_id: str = "dev-session") -> dict[str, Any]:
-    url = "http://127.0.0.1:8081/orchestrate"
+    url = f"{get_base_url()}/orchestrate"
     headers = {"Content-Type": "application/json"}
     if token:
         headers["Authorization"] = f"Bearer {token}"
@@ -59,6 +104,20 @@ def start_orchestrator_run(token: Optional[str], session_id: str = "dev-session"
     resp = requests.post(url, json=payload, headers=headers, timeout=30)
     resp.raise_for_status()
     return resp.json()
+
+
+def require_orchestrator_alive() -> None:
+    """Fail fast if orchestrator is not responding on /health."""
+    url = f"{get_base_url()}/health"
+    try:
+        resp = requests.get(url, timeout=3)
+        resp.raise_for_status()
+        data = resp.json()
+        if data.get("status") != "ok":
+            raise RuntimeError(f"health check returned {data}")
+    except Exception as exc:  # broad: we want to exit quickly with guidance
+        print(f"Orchestrator health check failed at {url}: {exc}")
+        sys.exit(1)
 
 
 def synthesize_output(call: dict[str, Any]) -> str:
@@ -135,6 +194,11 @@ def submit_for_run(
 
 def main() -> None:
     token = read_token()
+    # Support quick dump of the built-in orchestration schedule and exit.
+    if "--dump-orchestration" in sys.argv:
+        dump_orchestration_to_file()
+        return
+    require_orchestrator_alive()
     print("Starting orchestrator run...")
     resp = start_orchestrator_run(token)
     # Save response for inspection

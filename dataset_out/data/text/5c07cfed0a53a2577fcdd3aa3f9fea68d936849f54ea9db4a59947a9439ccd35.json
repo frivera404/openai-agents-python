@@ -1,0 +1,45 @@
+{
+    "servers": {
+        "local-filesystem-mcp": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-filesystem",
+                "examples/mcp/filesystem_example/sample_files"
+            ],
+            "env": {},
+            "type": "stdio"
+        },
+        "docker-filesystem-mcp": {
+            "url": "http://127.0.0.1:3000/mcp",
+            "type": "http",
+            "enabled": false
+        },
+        "wikipedia-mcp": {
+            "command": "npx",
+            "args": [
+                "mcp-remote",
+                "--header",
+                "Authorization:Bearer ${WIKIPEDIA_TOKEN}",
+                "https://wiki-1763000517527.server.mcp-cloud.ai/sse"
+            ],
+            "env": {
+                "WIKIPEDIA_TOKEN": "${WIKIPEDIA_TOKEN}"
+            },
+            "type": "stdio",
+            "enabled": false
+        },
+        "tavily-remote-mcp": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "mcp-remote",
+                "https://mcp.eu.tavily.com/mcp/?tavilyApiKey=${TAVILY_API_KEY}"
+            ],
+            "env": {
+                "TAVILY_API_KEY": "${TAVILY_API_KEY}"
+            },
+            "type": "stdio"
+        }
+    }
+}

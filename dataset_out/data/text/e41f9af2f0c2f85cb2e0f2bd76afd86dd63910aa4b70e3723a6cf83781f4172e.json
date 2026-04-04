@@ -1,0 +1,169 @@
+{
+  "openai_assistant": {
+    "assistant_id": "asst_XZqf46Wxz4XL9pI7VHraZQEi",
+    "vector_store_id": "vs_1BREGwaFlfMYaIIOlzW7xCuC",
+    "vector_store_name": "123vector store",
+    "assistant_map": {
+      "alex_supervisor": "asst_XZqf46Wxz4XL9pI7VHraZQEi",
+      "layer_manager": "asst_gWX3gVfbHwVn9y7wm0FZml22",
+      "coder": "asst_Tswpu395P3VGnEuMwcOga1l6",
+      "supervisor_agent": "asst_aoU291xGQgwlqgoQsxoWYfbQ",
+      "gemini_mahem_api_agent": "asst_IJgUbeTrvwAFVyRJxZoUErmy"
+    }
+  },
+  "mcp_servers": {
+    "local-filesystem-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "examples/mcp/filesystem_example/sample_files"
+      ],
+      "env": {},
+      "type": "stdio",
+      "enabled": true
+    },
+    "docker-filesystem-mcp": {
+      "url": "http://127.0.0.1:3000/mcp",
+      "type": "http",
+      "enabled": true,
+      "timeout": 30,
+      "sse_read_timeout": 60,
+      "headers": {}
+    },
+    "tavily-remote-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.eu.tavily.com/mcp/?tavilyApiKey=${TAVILY_API_KEY}"
+      ],
+      "env": {
+        "TAVILY_API_KEY": "${TAVILY_API_KEY}"
+      },
+      "type": "stdio",
+      "enabled": true
+    }
+  },
+  "agent_private_i": {
+    "version": "1.0",
+    "mode": "prime_goal",
+    "description": "Agent Private I - Optimal settings for all supervisor agents and sub-agents",
+    "supervisor_agents": {
+      "affiliate_marketing_manager": {
+        "optimization_level": "maximum",
+        "performance_mode": "prime_goal",
+        "campaign_delivery_priority": "critical",
+        "analytics_frequency": "real_time",
+        "channel_synchronization": "perfect",
+        "conversion_optimization": "aggressive"
+      },
+      "customer_service_agent": {
+        "response_time_target": "immediate",
+        "personalization_level": "maximum",
+        "transaction_security": "military_grade",
+        "handoff_efficiency": "instant",
+        "issue_resolution_rate": "100_percent",
+        "customer_satisfaction_target": "perfect"
+      },
+      "financial_research_agent": {
+        "data_accuracy": "absolute",
+        "analysis_depth": "comprehensive",
+        "source_verification": "triple_checked",
+        "report_quality": "executive_level",
+        "update_frequency": "continuous",
+        "risk_assessment": "ultra_conservative"
+      },
+      "research_bot": {
+        "search_coverage": "exhaustive",
+        "credibility_filtering": "maximum",
+        "synthesis_quality": "exceptional",
+        "citation_accuracy": "perfect",
+        "response_speed": "optimized",
+        "information_depth": "unlimited"
+      },
+      "senior_developer_agent": {
+        "code_quality": "flawless",
+        "architecture_design": "optimal",
+        "testing_coverage": "100_percent",
+        "performance_optimization": "maximum",
+        "security_level": "fort_knox",
+        "documentation_quality": "comprehensive"
+      },
+      "data_science_agent": {
+        "model_accuracy": "maximum",
+        "processing_speed": "optimized",
+        "visualization_quality": "publication_ready",
+        "statistical_rigor": "academic_level",
+        "insight_depth": "profound",
+        "automation_level": "full"
+      },
+      "alex_supervisor": {
+        "coordination_efficiency": "perfect",
+        "conflict_prevention": "absolute",
+        "task_delegation_accuracy": "flawless",
+        "execution_order": "optimal",
+        "performance_monitoring": "real_time",
+        "resource_allocation": "perfect"
+      },
+      "layer_manager": {
+        "system_stability": "unbreakable",
+        "resource_optimization": "maximum",
+        "performance_monitoring": "continuous",
+        "concurrency_control": "perfect",
+        "workload_balancing": "optimal",
+        "error_handling": "zero_tolerance"
+      },
+      "coder": {
+        "code_generation_quality": "exceptional",
+        "best_practices_compliance": "100_percent",
+        "security_implementation": "bulletproof",
+        "performance_efficiency": "maximum",
+        "documentation_completeness": "comprehensive",
+        "error_handling": "robust"
+      },
+      "gemini_mahem_api_agent": {
+        "api_reliability": "100_percent",
+        "response_validation": "comprehensive",
+        "authentication_security": "military_grade",
+        "request_optimization": "maximum",
+        "error_handling": "zero_tolerance",
+        "interoperability": "perfect"
+      }
+    },
+    "system_settings": {
+      "supervisor_agent": {
+        "strategy_level": "executive_prime",
+        "performance_monitoring": "continuous",
+        "compliance_enforcement": "strict",
+        "issue_escalation": "immediate",
+        "orchestration_efficiency": "maximum",
+        "resource_optimization": "perfect"
+      },
+      "global_optimizations": {
+        "task_completion_priority": "critical",
+        "performance_target": "optimal",
+        "error_tolerance": "zero",
+        "efficiency_mode": "maximum",
+        "collaboration_mode": "perfect",
+        "learning_adaptation": "continuous"
+      },
+      "mcp_integration": {
+        "server_reliability": "maximum",
+        "tool_availability": "guaranteed",
+        "connection_stability": "unbreakable",
+        "performance_optimization": "maximum",
+        "error_recovery": "instant"
+      }
+    },
+    "memory_management": {
+      "auto_save": true,
+      "conversation_retention": "optimized",
+      "performance_tracking": "continuous",
+      "learning_adaptation": "active",
+      "configuration_persistence": "permanent"
+    }
+  },
+  "prime_goal_mode": true,
+  "optimization_level": "maximum"
+}

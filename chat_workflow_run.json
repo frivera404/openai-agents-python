@@ -1,0 +1,59 @@
+[
+  {
+    "input": "Create a design for a rectangular nameplate with 'Hello' text",
+    "output": {
+      "action": "create_design",
+      "result": {
+        "design_file": "./dataset_out\\design_1769790309.svg",
+        "notes": "Style=standard; length=61"
+      }
+    }
+  },
+  {
+    "input": "Prepare materials: 2 sheets of birch",
+    "output": {
+      "action": "prepare_materials",
+      "result": {
+        "batch_id": "batch_birch_1769790309",
+        "material": "birch",
+        "sheets": 2
+      }
+    }
+  },
+  {
+    "input": "Run the laser job",
+    "output": {
+      "action": "run_laser_job",
+      "result": {
+        "job_id": "job_1769790309",
+        "status": "completed",
+        "design_file": "./dataset_out\\design_1769790309.svg",
+        "batch_id": "batch_birch_1769790309"
+      }
+    }
+  },
+  {
+    "input": "Perform QC check",
+    "output": {
+      "action": "qc_check",
+      "result": {
+        "job_id": "job_1769790309",
+        "passed": false,
+        "notes": "Minor burn; adjust power/settings",
+        "sample": null
+      }
+    }
+  },
+  {
+    "input": "Finish and package",
+    "output": {
+      "action": "finish_and_package",
+      "result": {
+        "pkg_id": "pkg_1769790309",
+        "job_id": "job_1769790309",
+        "finish": "oil",
+        "box": "medium"
+      }
+    }
+  }
+]
