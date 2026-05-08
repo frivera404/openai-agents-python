@@ -1,0 +1,22 @@
+{
+  "include": [
+    "OneDrive/Desktop/AGENTS/Email/**/*.js"
+  ],
+  "exclude": [
+    "C:\\Users\\frive\\results.js",
+    "node_modules",
+    "dist"
+  ],
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "commonjs",
+    "allowJs": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "outDir": "C:\\Users\\frive\\OneDrive\\Desktop\\AGENTS",
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
+  }
+}
