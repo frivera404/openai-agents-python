@@ -1,0 +1,28 @@
+services:
+  mcp-filesystem:
+    build: ./docker/mcp-filesystem
+    ports:
+      - "3000:8000"
+    volumes:
+      - ./workspace:/workspace  # Mount host workspace directory
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket; s = socket.socket(); s.connect(('localhost', 8000))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: ["uvicorn", "mcp_filesystem_server:mcp.streamable_http_app", "--host", "0.0.0.0", "--port", "8000"]
+
+  agents-integration:
+    build: .
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      mcp-filesystem:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: uv run python examples/integration_example.py

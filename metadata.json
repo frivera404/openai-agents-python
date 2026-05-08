@@ -1,0 +1,5 @@
+{
+  "name": "Vertex AI Agent Builder UI",
+  "description": "A developer UI for configuring and launching AI agents, inspired by Google's Vertex AI. It provides a clean, card-based interface to manage various agents like Data Science, Financial Advisor, and more, with detailed configuration options for models, tools, and knowledge bases.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,31 @@
+{
+  "servers": {
+    "local-filesystem-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "examples/mcp/filesystem_example/sample_files"
+      ],
+      "env": {},
+      "type": "stdio"
+    },
+    "docker-filesystem-mcp": {
+      "url": "http://localhost:3000/mcp",
+      "type": "http"
+    },
+    "wikipedia-mcp": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "--header",
+        "Authorization:Bearer ${WIKIPEDIA_TOKEN}",
+        "https://wiki-1763000517527.server.mcp-cloud.ai/sse"
+      ],
+      "env": {
+        "WIKIPEDIA_TOKEN": "${WIKIPEDIA_TOKEN}"
+      },
+      "type": "stdio"
+    }
+  }
+}
