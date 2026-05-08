@@ -6,10 +6,11 @@ search:
 
 ガードレールはエージェントと _並行して_ 実行され、ユーザー入力のチェックと検証を行います。たとえば、顧客からのリクエスト対応に非常に賢い（そのぶん遅く/高価な）モデルを使うエージェントがあるとします。悪意のあるユーザーがそのモデルに数学の宿題を手伝わせるような指示を出すのは避けたいはずです。そこで、速く/安価なモデルでガードレールを実行できます。ガードレールが悪用を検出した場合、即座にエラーを発生させ、高価なモデルの実行を止め、時間とコストを節約します。
 
-ガードレールには 2 つの種類があります。
+ガードレールには 3 つの種類があります。
 
 1. 入力ガードレールは最初のユーザー入力に対して実行されます
 2. 出力ガードレールは最終的なエージェント出力に対して実行されます
+3. ツールガードレールは個々の関数ツール呼び出しの前後に実行されます
 
 ## 入力ガードレール
 
@@ -156,3 +157,96 @@ async def main():
 2. これはガードレールの出力型です。
 3. これはエージェントの出力を受け取り、結果を返すガードレール関数です。
 4. これはワークフローを定義する実際のエージェントです。
+
+## ツールガードレール
+
+ツールガードレールは個々の関数ツール呼び出しの前後に実行され、エージェントレベルではなくツールレベルでのきめ細かい制御を可能にします。入力・出力ガードレールとは異なり、ツールガードレールは呼び出しを続行させる、モデルへのメッセージとともにコンテンツを拒否する、または実行を停止するために例外を発生させることができます。
+
+ツールガードレールには 2 つの種類があります。
+
+- [`ToolInputGuardrail`][agents.tool_guardrails.ToolInputGuardrail]: ツール関数が呼び出される前に実行されます
+- [`ToolOutputGuardrail`][agents.tool_guardrails.ToolOutputGuardrail]: ツール関数が出力を生成した後に実行されます
+
+ツールガードレールは `tool_input_guardrails` および `tool_output_guardrails` フィールドを通じて [`FunctionTool`][agents.tool.FunctionTool] にアタッチされます。
+
+### ツールガードレールの出力
+
+ガードレール関数は [`ToolGuardrailFunctionOutput`][agents.tool_guardrails.ToolGuardrailFunctionOutput] を返す必要があります。希望する動作を表現するために、以下のファクトリーメソッドを使用します。
+
+- `ToolGuardrailFunctionOutput.allow()`: ツール呼び出し・出力を通常通り続行させます（デフォルト）。
+- `ToolGuardrailFunctionOutput.reject_content(message)`: コンテンツを拒否しつつエージェントの実行を続行し、ツール結果の代わりに `message` をモデルに送信します。
+- `ToolGuardrailFunctionOutput.raise_exception()`: [`ToolInputGuardrailTripwireTriggered`][agents.exceptions.ToolInputGuardrailTripwireTriggered] または [`ToolOutputGuardrailTripwireTriggered`][agents.exceptions.ToolOutputGuardrailTripwireTriggered] 例外を発生させて実行を停止します。
+
+### ツール入力ガードレールの実装
+
+`@tool_input_guardrail` デコレータを使用します（または `ToolInputGuardrail` を直接構築します）。ガードレール関数は、ツールコンテキストとエージェントを含む [`ToolInputGuardrailData`][agents.tool_guardrails.ToolInputGuardrailData] オブジェクトを受け取ります。
+
+```python
+from agents import Agent, function_tool
+from agents.tool_guardrails import (
+    ToolInputGuardrailData,
+    ToolGuardrailFunctionOutput,
+    tool_input_guardrail,
+)
+
+@tool_input_guardrail
+def block_sensitive_paths(data: ToolInputGuardrailData) -> ToolGuardrailFunctionOutput:
+    """許可されたディレクトリ外のファイルへのアクセスを拒否します。"""
+    args = data.context.tool_call_params
+    path = args.get("path", "")
+    if ".." in path or path.startswith("/etc"):
+        return ToolGuardrailFunctionOutput.reject_content(
+            message="そのパスへのアクセスは許可されていません。"
+        )
+    return ToolGuardrailFunctionOutput.allow()
+
+
+@function_tool(tool_input_guardrails=[block_sensitive_paths])
+def read_file(path: str) -> str:
+    """ファイルの内容を読み取ります。"""
+    with open(path) as f:
+        return f.read()
+
+
+agent = Agent(
+    name="File Assistant",
+    instructions="ユーザーがファイルを読むのを助けます。",
+    tools=[read_file],
+)
+```
+
+### ツール出力ガードレールの実装
+
+`@tool_output_guardrail` デコレータを使用します（または `ToolOutputGuardrail` を直接構築します）。ガードレール関数は、ツールコンテキスト、エージェント、ツールの出力を含む [`ToolOutputGuardrailData`][agents.tool_guardrails.ToolOutputGuardrailData] オブジェクトを受け取ります。
+
+```python
+from agents import Agent, function_tool
+from agents.tool_guardrails import (
+    ToolOutputGuardrailData,
+    ToolGuardrailFunctionOutput,
+    tool_output_guardrail,
+)
+
+@tool_output_guardrail
+def redact_secrets(data: ToolOutputGuardrailData) -> ToolGuardrailFunctionOutput:
+    """秘密鍵のような出力をモデルに渡す前にマスクします。"""
+    output = str(data.output)
+    if "SECRET" in output or "password" in output.lower():
+        return ToolGuardrailFunctionOutput.reject_content(
+            message="ツール出力に機密情報が含まれていたため、マスクされました。"
+        )
+    return ToolGuardrailFunctionOutput.allow()
+
+
+@function_tool(tool_output_guardrails=[redact_secrets])
+def fetch_config(key: str) -> str:
+    """設定値を取得します。"""
+    return f"{key} の値"
+
+
+agent = Agent(
+    name="Config Assistant",
+    instructions="ユーザーが設定値を取得するのを助けます。",
+    tools=[fetch_config],
+)
+```

@@ -1,140 +1,73 @@
-<div align="center">
-    <a href="https://www.php.net">
-        <img
-            alt="PHP"
-            src="https://www.php.net/images/logos/new-php-logo.svg"
-            width="150">
-    </a>
-</div>
+# OpenAI Agents SDK
 
-# The PHP Interpreter
+The [OpenAI Agents SDK](https://github.com/openai/openai-agents-python) enables you to build agentic AI apps in a lightweight, easy-to-use package with very few abstractions. It's a production-ready upgrade of our previous experimentation for agents, [Swarm](https://github.com/openai/swarm/tree/main).
 
-PHP is a popular general-purpose scripting language that is especially suited to
-web development. Fast, flexible and pragmatic, PHP powers everything from your
-blog to the most popular websites in the world. PHP is distributed under the
-[PHP License v3.01](LICENSE).
+The Agents SDK has a small set of primitives:
 
-[![Push](https://github.com/php/php-src/actions/workflows/push.yml/badge.svg)](https://github.com/php/php-src/actions/workflows/push.yml)
-[![Fuzzing Status](https://oss-fuzz-build-logs.storage.googleapis.com/badges/php.svg)](https://bugs.chromium.org/p/oss-fuzz/issues/list?sort=-opened&can=1&q=proj:php)
+- **Agents**, which are LLMs equipped with instructions and tools
+- **Handoffs**, which allow agents to delegate to other agents for specific tasks
+- **Guardrails**, which enable validation of agent inputs and outputs
+- **Sessions**, which automatically maintain conversation history across agent runs
 
-## Documentation
+In combination with Python, these primitives are powerful enough to express complex relationships between tools and agents, and allow you to build real-world applications without a steep learning curve. In addition, the SDK comes with built-in **tracing** that lets you visualize and debug your agentic flows, as well as evaluate them and even fine-tune models for your application.
 
-The PHP manual is available at [php.net/docs](https://www.php.net/docs).
+## Why use the Agents SDK
+
+1. Enough features to be worth using, but few enough primitives to make it quick to learn.
+2. Works great out of the box, but you can customize exactly what happens.
+
+Main features:
+
+- **Agent loop**: Built-in agent loop that handles calling tools, sending results to the LLM, and looping until the LLM is done.
+- **Python-first**: Use built-in language features to orchestrate and chain agents, rather than needing to learn new abstractions.
+- **Handoffs**: A powerful feature to coordinate and delegate between multiple agents.
+- **Guardrails**: Run input and output validations in parallel to your agents, with tool-level guardrails for fine-grained control.
+- **Sessions**: Automatic conversation history management across agent runs, eliminating manual state handling.
+- **Function tools**: Turn any Python function into a tool, with automatic schema generation and Pydantic-powered validation.
+- **Tracing**: Built-in tracing that lets you visualize, debug and monitor your workflows, as well as use the OpenAI suite of evaluation, fine-tuning and distillation tools.
 
 ## Installation
 
-### Prebuilt packages and binaries
+```bash
+pip install openai-agents
+```
 
-Prebuilt packages and binaries can be used to get up and running fast with PHP.
+## Hello world example
 
-For Windows, the PHP binaries can be obtained from
-[windows.php.net](https://windows.php.net). After extracting the archive the
-`*.exe` files are ready to use.
+```python
+from agents import Agent, Runner
 
-For other systems, see the [installation chapter](https://www.php.net/install).
+agent = Agent(name="Assistant", instructions="You are a helpful assistant")
 
-### Building PHP source code
+result = Runner.run_sync(agent, "Write a haiku about recursion in programming.")
+print(result.final_output)
 
-*For Windows, see [Build your own PHP on Windows](https://wiki.php.net/internals/windows/stepbystepbuild_sdk_2).*
+# Code within the code,
+# Functions calling themselves,
+# Infinite loop's dance.
+```
 
-For a minimal PHP build from Git, you will need autoconf, bison, and re2c. For
-a default build, you will additionally need libxml2 and libsqlite3.
+(_If running this, ensure you set the `OPENAI_API_KEY` environment variable_)
 
-On Ubuntu, you can install these using:
+```bash
+export OPENAI_API_KEY=sk-...
+```
 
-    sudo apt install -y pkg-config build-essential autoconf bison re2c \
-                        libxml2-dev libsqlite3-dev
+## Documentation
 
-On Fedora, you can install these using:
+Visit the [documentation site](https://openai.github.io/openai-agents-python/) for full docs, including:
 
-    sudo dnf install re2c bison autoconf make libtool ccache libxml2-devel sqlite-devel
-
-Generate configure:
-
-    ./buildconf
-
-Configure your build. `--enable-debug` is recommended for development, see
-`./configure --help` for a full list of options.
-
-    # For development
-    ./configure --enable-debug
-    # For production
-    ./configure
-
-Build PHP. To speed up the build, specify the maximum number of jobs using `-j`:
-
-    make -j4
-
-The number of jobs should usually match the number of available cores, which
-can be determined using `nproc`.
-
-## Testing PHP source code
-
-PHP ships with an extensive test suite, the command `make test` is used after
-successful compilation of the sources to run this test suite.
-
-It is possible to run tests using multiple cores by setting `-jN` in
-`TEST_PHP_ARGS`:
-
-    make TEST_PHP_ARGS=-j4 test
-
-Shall run `make test` with a maximum of 4 concurrent jobs: Generally the maximum
-number of jobs should not exceed the number of cores available.
-
-The [qa.php.net](https://qa.php.net) site provides more detailed info about
-testing and quality assurance.
-
-## Installing PHP built from source
-
-After a successful build (and test), PHP may be installed with:
-
-    make install
-
-Depending on your permissions and prefix, `make install` may need super user
-permissions.
-
-## PHP extensions
-
-Extensions provide additional functionality on top of PHP. PHP consists of many
-essential bundled extensions. Additional extensions can be found in the PHP
-Extension Community Library - [PECL](https://pecl.php.net).
+- [Quickstart](https://openai.github.io/openai-agents-python/quickstart/)
+- [Agents](https://openai.github.io/openai-agents-python/agents/)
+- [Running agents](https://openai.github.io/openai-agents-python/running_agents/)
+- [Tools](https://openai.github.io/openai-agents-python/tools/)
+- [Guardrails](https://openai.github.io/openai-agents-python/guardrails/)
+- [Handoffs](https://openai.github.io/openai-agents-python/handoffs/)
+- [Sessions](https://openai.github.io/openai-agents-python/sessions/)
+- [Tracing](https://openai.github.io/openai-agents-python/tracing/)
+- [MCP](https://openai.github.io/openai-agents-python/mcp/)
+- [Models](https://openai.github.io/openai-agents-python/models/)
 
 ## Contributing
 
-The PHP source code is located in the Git repository at
-[github.com/php/php-src](https://github.com/php/php-src). Contributions are most
-welcome by forking the repository and sending a pull request.
-
-Discussions are done on GitHub, but depending on the topic can also be relayed
-to the official PHP developer mailing list internals@lists.php.net.
-
-New features require an RFC and must be accepted by the developers. See
-[Request for comments - RFC](https://wiki.php.net/rfc) and
-[Voting on PHP features](https://wiki.php.net/rfc/voting) for more information
-on the process.
-
-Bug fixes don't require an RFC. If the bug has a GitHub issue, reference it in
-the commit message using `GH-NNNNNN`. Use `#NNNNNN` for tickets in the old
-[bugs.php.net](https://bugs.php.net) bug tracker.
-
-    Fix GH-7815: php_uname doesn't recognise latest Windows versions
-    Fix #55371: get_magic_quotes_gpc() throws deprecation warning
-
-See [Git workflow](https://wiki.php.net/vcs/gitworkflow) for details on how pull
-requests are merged.
-
-### Guidelines for contributors
-
-See further documents in the repository for more information on how to
-contribute:
-
-- [Contributing to PHP](/CONTRIBUTING.md)
-- [PHP coding standards](/CODING_STANDARDS.md)
-- [Internal documentation](https://php.github.io/php-src/)
-- [Mailing list rules](/docs/mailinglist-rules.md)
-- [PHP release process](/docs/release-process.md)
-
-## Credits
-
-For the list of people who've put work into PHP, please see the
-[PHP credits page](https://www.php.net/credits.php).
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on contributing to this project.

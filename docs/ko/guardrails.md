@@ -6,10 +6,11 @@ search:
 
 가드레일은 에이전트와 _병렬로_ 실행되며, 사용자 입력에 대한 점검과 검증을 수행할 수 있게 합니다. 예를 들어, 고객 요청을 돕기 위해 매우 똑똑한(따라서 느리고 비싼) 모델을 사용하는 에이전트를 상상해 보세요. 악의적인 사용자가 수학 숙제를 도와달라고 모델에 요청하는 것은 원치 않을 것입니다. 이때 빠르고 저렴한 모델로 가드레일을 실행할 수 있습니다. 가드레일이 악의적 사용을 감지하면 즉시 오류를 발생시켜, 비용이 많이 드는 모델 실행을 중단하고 시간과 비용을 절약할 수 있습니다.
 
-가드레일에는 두 가지 종류가 있습니다:
+가드레일에는 세 가지 종류가 있습니다:
 
 1. 입력 가드레일은 초기 사용자 입력에서 실행됨
 2. 출력 가드레일은 최종 에이전트 출력에서 실행됨
+3. 툴 가드레일은 개별 함수 툴 호출 전후에 실행됨
 
 ## 입력 가드레일
 
@@ -156,3 +157,96 @@ async def main():
 2. 가드레일의 출력 타입입니다
 3. 에이전트의 출력을 받아 결과를 반환하는 가드레일 함수입니다
 4. 워크플로를 정의하는 실제 에이전트입니다
+
+## 툴 가드레일
+
+툴 가드레일은 개별 함수 툴 호출 전후에 실행되어, 에이전트 수준이 아닌 툴 수준에서 세밀한 제어를 가능하게 합니다. 입력/출력 가드레일과 달리, 툴 가드레일은 호출을 계속 진행시키거나, 모델에 메시지를 전달하며 콘텐츠를 거부하거나, 실행을 완전히 중단하기 위해 예외를 발생시킬 수 있습니다.
+
+툴 가드레일에는 두 가지 종류가 있습니다:
+
+- [`ToolInputGuardrail`][agents.tool_guardrails.ToolInputGuardrail]: 툴 함수가 호출되기 전에 실행됨
+- [`ToolOutputGuardrail`][agents.tool_guardrails.ToolOutputGuardrail]: 툴 함수가 출력을 생성한 후에 실행됨
+
+툴 가드레일은 `tool_input_guardrails` 및 `tool_output_guardrails` 필드를 통해 [`FunctionTool`][agents.tool.FunctionTool]에 연결됩니다.
+
+### 툴 가드레일 출력
+
+가드레일 함수는 [`ToolGuardrailFunctionOutput`][agents.tool_guardrails.ToolGuardrailFunctionOutput]을 반환해야 합니다. 원하는 동작을 표현하기 위해 팩토리 메서드를 사용하세요:
+
+- `ToolGuardrailFunctionOutput.allow()`: 툴 호출/출력을 정상적으로 계속 진행시킵니다 (기본값).
+- `ToolGuardrailFunctionOutput.reject_content(message)`: 콘텐츠를 거부하되 에이전트 실행은 계속하며, 툴 결과 대신 `message`를 모델에 전달합니다.
+- `ToolGuardrailFunctionOutput.raise_exception()`: [`ToolInputGuardrailTripwireTriggered`][agents.exceptions.ToolInputGuardrailTripwireTriggered] 또는 [`ToolOutputGuardrailTripwireTriggered`][agents.exceptions.ToolOutputGuardrailTripwireTriggered] 예외를 발생시켜 실행을 중단합니다.
+
+### 툴 입력 가드레일 구현
+
+`@tool_input_guardrail` 데코레이터를 사용합니다 (또는 `ToolInputGuardrail`을 직접 구성). 가드레일 함수는 툴 컨텍스트와 에이전트를 포함하는 [`ToolInputGuardrailData`][agents.tool_guardrails.ToolInputGuardrailData] 객체를 받습니다.
+
+```python
+from agents import Agent, function_tool
+from agents.tool_guardrails import (
+    ToolInputGuardrailData,
+    ToolGuardrailFunctionOutput,
+    tool_input_guardrail,
+)
+
+@tool_input_guardrail
+def block_sensitive_paths(data: ToolInputGuardrailData) -> ToolGuardrailFunctionOutput:
+    """허용된 디렉토리 외부의 파일 접근을 차단합니다."""
+    args = data.context.tool_call_params
+    path = args.get("path", "")
+    if ".." in path or path.startswith("/etc"):
+        return ToolGuardrailFunctionOutput.reject_content(
+            message="해당 경로에 대한 접근은 허용되지 않습니다."
+        )
+    return ToolGuardrailFunctionOutput.allow()
+
+
+@function_tool(tool_input_guardrails=[block_sensitive_paths])
+def read_file(path: str) -> str:
+    """파일의 내용을 읽습니다."""
+    with open(path) as f:
+        return f.read()
+
+
+agent = Agent(
+    name="File Assistant",
+    instructions="사용자가 파일을 읽도록 도와줍니다.",
+    tools=[read_file],
+)
+```
+
+### 툴 출력 가드레일 구현
+
+`@tool_output_guardrail` 데코레이터를 사용합니다 (또는 `ToolOutputGuardrail`을 직접 구성). 가드레일 함수는 툴 컨텍스트, 에이전트, 툴의 출력을 포함하는 [`ToolOutputGuardrailData`][agents.tool_guardrails.ToolOutputGuardrailData] 객체를 받습니다.
+
+```python
+from agents import Agent, function_tool
+from agents.tool_guardrails import (
+    ToolOutputGuardrailData,
+    ToolGuardrailFunctionOutput,
+    tool_output_guardrail,
+)
+
+@tool_output_guardrail
+def redact_secrets(data: ToolOutputGuardrailData) -> ToolGuardrailFunctionOutput:
+    """모델에 전달되기 전에 비밀 키처럼 보이는 출력을 마스킹합니다."""
+    output = str(data.output)
+    if "SECRET" in output or "password" in output.lower():
+        return ToolGuardrailFunctionOutput.reject_content(
+            message="툴 출력에 민감한 정보가 포함되어 마스킹되었습니다."
+        )
+    return ToolGuardrailFunctionOutput.allow()
+
+
+@function_tool(tool_output_guardrails=[redact_secrets])
+def fetch_config(key: str) -> str:
+    """설정 값을 가져옵니다."""
+    return f"{key}의 값"
+
+
+agent = Agent(
+    name="Config Assistant",
+    instructions="사용자가 설정 값을 가져오도록 도와줍니다.",
+    tools=[fetch_config],
+)
+```

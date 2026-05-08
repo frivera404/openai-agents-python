@@ -6,10 +6,11 @@ search:
 
 安全防护措施与您的智能体并行运行，使您能够对用户输入进行检查和验证。举例来说，假设您有一个使用非常智能（因此也较慢/昂贵）的模型来处理客户请求的智能体。您不希望恶意用户让该模型帮助他们完成数学作业。因此，您可以使用一个快速/低成本的模型运行安全防护措施。如果安全防护措施检测到恶意使用，它可以立即抛出错误，从而阻止昂贵模型的运行，为您节省时间/金钱。
 
-安全防护措施有两种类型：
+安全防护措施有三种类型：
 
 1. 输入安全防护措施运行在初始用户输入上
 2. 输出安全防护措施运行在最终智能体输出上
+3. 工具安全防护措施运行在单个函数工具调用的前后
 
 ## 输入安全防护措施
 
@@ -156,3 +157,96 @@ async def main():
 2. 这是安全防护措施的输出类型。
 3. 这是接收智能体输出并返回结果的安全防护措施函数。
 4. 这是定义工作流的实际智能体。
+
+## 工具安全防护措施
+
+工具安全防护措施在单个函数工具调用前后运行，允许在工具级别而非智能体级别进行精细控制。与输入/输出安全防护措施不同，工具安全防护措施可以允许调用继续、拒绝内容并向模型发送消息，或引发异常以完全停止执行。
+
+工具安全防护措施有两种类型：
+
+- [`ToolInputGuardrail`][agents.tool_guardrails.ToolInputGuardrail]：在工具函数被调用之前运行
+- [`ToolOutputGuardrail`][agents.tool_guardrails.ToolOutputGuardrail]：在工具函数生成输出之后运行
+
+工具安全防护措施通过 `tool_input_guardrails` 和 `tool_output_guardrails` 字段附加到 [`FunctionTool`][agents.tool.FunctionTool]。
+
+### 工具安全防护措施的输出
+
+您的安全防护措施函数必须返回 [`ToolGuardrailFunctionOutput`][agents.tool_guardrails.ToolGuardrailFunctionOutput]。使用工厂方法表达所需行为：
+
+- `ToolGuardrailFunctionOutput.allow()`：允许工具调用/输出正常继续（默认值）。
+- `ToolGuardrailFunctionOutput.reject_content(message)`：拒绝内容但继续智能体执行，将 `message` 发送给模型而不是工具结果。
+- `ToolGuardrailFunctionOutput.raise_exception()`：引发 [`ToolInputGuardrailTripwireTriggered`][agents.exceptions.ToolInputGuardrailTripwireTriggered] 或 [`ToolOutputGuardrailTripwireTriggered`][agents.exceptions.ToolOutputGuardrailTripwireTriggered] 异常以停止执行。
+
+### 实现工具输入安全防护措施
+
+使用 `@tool_input_guardrail` 装饰器（或直接构造 `ToolInputGuardrail`）。安全防护措施函数接收包含工具上下文和智能体的 [`ToolInputGuardrailData`][agents.tool_guardrails.ToolInputGuardrailData] 对象。
+
+```python
+from agents import Agent, function_tool
+from agents.tool_guardrails import (
+    ToolInputGuardrailData,
+    ToolGuardrailFunctionOutput,
+    tool_input_guardrail,
+)
+
+@tool_input_guardrail
+def block_sensitive_paths(data: ToolInputGuardrailData) -> ToolGuardrailFunctionOutput:
+    """拒绝任何访问允许目录之外文件的尝试。"""
+    args = data.context.tool_call_params
+    path = args.get("path", "")
+    if ".." in path or path.startswith("/etc"):
+        return ToolGuardrailFunctionOutput.reject_content(
+            message="不允许访问该路径。"
+        )
+    return ToolGuardrailFunctionOutput.allow()
+
+
+@function_tool(tool_input_guardrails=[block_sensitive_paths])
+def read_file(path: str) -> str:
+    """读取文件内容。"""
+    with open(path) as f:
+        return f.read()
+
+
+agent = Agent(
+    name="File Assistant",
+    instructions="帮助用户读取文件。",
+    tools=[read_file],
+)
+```
+
+### 实现工具输出安全防护措施
+
+使用 `@tool_output_guardrail` 装饰器（或直接构造 `ToolOutputGuardrail`）。安全防护措施函数接收包含工具上下文、智能体和工具输出的 [`ToolOutputGuardrailData`][agents.tool_guardrails.ToolOutputGuardrailData] 对象。
+
+```python
+from agents import Agent, function_tool
+from agents.tool_guardrails import (
+    ToolOutputGuardrailData,
+    ToolGuardrailFunctionOutput,
+    tool_output_guardrail,
+)
+
+@tool_output_guardrail
+def redact_secrets(data: ToolOutputGuardrailData) -> ToolGuardrailFunctionOutput:
+    """在传递给模型之前，遮蔽看起来像密钥的输出。"""
+    output = str(data.output)
+    if "SECRET" in output or "password" in output.lower():
+        return ToolGuardrailFunctionOutput.reject_content(
+            message="工具输出包含敏感信息，已被遮蔽。"
+        )
+    return ToolGuardrailFunctionOutput.allow()
+
+
+@function_tool(tool_output_guardrails=[redact_secrets])
+def fetch_config(key: str) -> str:
+    """获取配置值。"""
+    return f"{key} 的值"
+
+
+agent = Agent(
+    name="Config Assistant",
+    instructions="帮助用户获取配置值。",
+    tools=[fetch_config],
+)
+```
