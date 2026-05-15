@@ -9,7 +9,10 @@ const ALLOWED_ORIGINS = [
   "https://bristoltalks.com",
   "https://www.bristoltalks.com",
   "https://app.bristoltalks.com",
-  "https://bristoltalks-site.riveraf30.workers.dev"
+  "https://bristoltalks-site.riveraf30.workers.dev",
+  "https://protectnow.wed2c.com",
+  "https://freedom.wed2c.com",
+  "https://confidence.scacto.com"
 ];
 
 function cors(origin) {
@@ -96,10 +99,16 @@ async function handleChat(req, env, origin) {
 async function handleLeads(req, env, origin) {
   let body;
   try { body = await req.json(); } catch { return new Response(JSON.stringify({ error: "Bad JSON" }), { status: 400, headers: { ...cors(origin), "Content-Type": "application/json" } }); }
-  const { name, email, phone, service, message } = body;
-  if (!name || !email) return new Response(JSON.stringify({ error: "name and email are required" }), { status: 400, headers: { ...cors(origin), "Content-Type": "application/json" } });
+  const { name, email, phone, service, message, source, utm_source, utm_campaign, utm_medium, product } = body;
+  if (!email) return new Response(JSON.stringify({ error: "email is required" }), { status: 400, headers: { ...cors(origin), "Content-Type": "application/json" } });
   try {
-    await env.DB.prepare("INSERT INTO leads (name, email, phone, service, message) VALUES (?, ?, ?, ?, ?)").bind(name, email, phone || null, service || null, message || null).run();
+    await env.DB.prepare(
+      "INSERT INTO leads (name, email, phone, service, message, source, utm_source, utm_campaign, utm_medium, product) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    ).bind(
+      name || null, email,
+      phone || null, service || null, message || null,
+      source || origin || null, utm_source || null, utm_campaign || null, utm_medium || null, product || null
+    ).run();
     return new Response(JSON.stringify({ ok: true }), { headers: { ...cors(origin), "Content-Type": "application/json" } });
   } catch (e) {
     return new Response(JSON.stringify({ error: "Database error" }), { status: 500, headers: { ...cors(origin), "Content-Type": "application/json" } });
@@ -156,6 +165,10 @@ export default {
     if (url.pathname === "/api/posts"    && req.method === "GET")  return handlePosts(req, env, origin);
     if (url.pathname === "/api/checkout" && req.method === "POST") return handleCheckout(req, env, origin);
     if (url.pathname === "/api/health") return new Response(JSON.stringify({ ok: true, ts: Date.now(), version: "5.0" }), { headers: { "Content-Type": "application/json" } });
+    // Funnel entry points — redirect to section + preserve UTM params
+    if (url.pathname === "/funnel/protect")    return Response.redirect(new URL("/services?"    + url.searchParams.toString(), url.origin), 302);
+    if (url.pathname === "/funnel/freedom")    return Response.redirect(new URL("/business?"    + url.searchParams.toString(), url.origin), 302);
+    if (url.pathname === "/funnel/confidence") return Response.redirect(new URL("/ai?"          + url.searchParams.toString(), url.origin), 302);
     return new Response(HTML, {
       headers: { "Content-Type": "text/html;charset=UTF-8", "Cache-Control": "public, max-age=60", "X-Content-Type-Options": "nosniff" }
     });
