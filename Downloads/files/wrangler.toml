@@ -1,0 +1,31 @@
+# ============================================================
+# BristolTalks.com — Wrangler Configuration
+# Account: Riveraf30@gmail.com
+# Account ID: 8cdcf88f537f86831975b2dc03cc617a
+# ============================================================
+
+name                 = "bristoltalks-site"
+main                 = "worker.js"
+compatibility_date   = "2024-09-23"
+account_id           = "8cdcf88f537f86831975b2dc03cc617a"
+
+[vars]
+ENVIRONMENT = "production"
+SITE_NAME   = "BristolTalks"
+
+# ASSETS BINDING REMOVED — HTML served directly from fetch handler
+# Do NOT add [assets] or [site] blocks
+
+[[d1_databases]]
+binding      = "DB"
+database_name = "bristoltalks-leads"
+database_id  = "1c626ec4-cbd1-4027-9719-e919367af859"
+
+[[kv_namespaces]]
+binding = "CACHE"
+id      = "21709a4dfce74ccd80c57dd41126592d"
+
+# Secrets — set via CLI:
+# wrangler secret put ANTHROPIC_KEY
+# wrangler secret put STRIPE_SECRET_KEY
+# See deploy.ps1 for the Windows \r carriage-return fix
