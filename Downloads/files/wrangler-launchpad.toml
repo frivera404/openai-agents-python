@@ -24,11 +24,11 @@ PRODUCT_NAME = "Bristol LaunchPad"
 [[d1_databases]]
 binding       = "DB"
 database_name = "bristoltalks-launchpad"
-database_id   = "REPLACE_WITH_LAUNCHPAD_DB_ID"
+database_id   = "c3dbb953-cee1-457f-9f57-fb847df2f5d4"
 
 [[kv_namespaces]]
 binding = "CACHE"
-id      = "REPLACE_WITH_LAUNCHPAD_KV_ID"
+id      = "c0de5a2f2fdc43b1bc719afc642d4082"
 
 # Secret — set via CLI:
 # wrangler secret put ANTHROPIC_KEY --config wrangler-launchpad.toml

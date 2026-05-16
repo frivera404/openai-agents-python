@@ -23,7 +23,7 @@ PRODUCT_NAME = "BusinessShield AI"
 [[d1_databases]]
 binding       = "DB"
 database_name = "bristoltalks-shield"
-database_id   = "REPLACE_WITH_SHIELD_DB_ID"
+database_id   = "7d2e2771-f594-4dfc-8245-6e976ade3aae"
 
 # Secrets — set via CLI after deploy:
 # wrangler secret put ANTHROPIC_KEY --config wrangler-shield.toml

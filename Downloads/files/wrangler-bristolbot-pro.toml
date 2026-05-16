@@ -22,7 +22,7 @@ PRODUCT_NAME = "BristolBot Pro"
 [[d1_databases]]
 binding       = "DB"
 database_name = "bristoltalks-pro-chat"
-database_id   = "REPLACE_WITH_PRO_DB_ID"
+database_id   = "ed547c27-e77b-4169-acd6-724a79b5945f"
 
 # Secret — set via CLI:
 # wrangler secret put ANTHROPIC_KEY --config wrangler-bristolbot-pro.toml
