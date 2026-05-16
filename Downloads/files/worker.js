@@ -606,7 +606,7 @@ footer{background:var(--bg3);border-top:1px solid var(--border-sub);padding:52px
 <script>
 var chatHistory=[];
 function go(page){
-  var pages={home:pageHome,news:pageNews,engage:pageEngage,ai:pageAI,projects:pageProjects,history:pageHistory,neighborhoods:pageNeighborhoods,events:pageEvents,directory:pageDirectory,government:pageGovernment,business:pageBusiness,services:pageServices,about:pageAbout,connect:pageConnect,funnelprotect:pageFunnelProtect,funnelfreedom:pageFunnelFreedom,funnelconfidence:pageFunnelConfidence};
+  var pages={home:pageHome,news:pageNews,engage:pageEngage,ai:pageAI,projects:pageProjects,history:pageHistory,neighborhoods:pageNeighborhoods,events:pageEvents,directory:pageDirectory,government:pageGovernment,business:pageBusiness,services:pageServices,about:pageAbout,connect:pageConnect,funnelprotect:pageFunnelProtect,funnelfreedom:pageFunnelFreedom,funnelconfidence:pageFunnelConfidence,productprotect:pageProductProtect,productfreedom:pageProductFreedom,productconfidence:pageProductConfidence};
   document.getElementById('app').innerHTML='<div style="animation:fadein .3s ease">'+(pages[page]||pageHome)()+'</div>';
   document.querySelectorAll('.desk-nav a,.mnav a').forEach(function(a){
     a.classList.remove('active');
@@ -801,7 +801,7 @@ function pageFunnelProtect(){
   +'<div class="card"><div class="card-tag tag-yang">Save Time</div><h3 style="color:var(--white);margin:12px 0 8px">AI handles the busywork</h3><p style="color:var(--text-muted);font-size:14px">Automate content, emails, and customer replies so you focus on what matters.</p></div>'
   +'<div class="card" style="border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.04)"><div class="card-tag tag-gold">Stay Competitive</div><h3 style="color:var(--white);margin:12px 0 8px">Don&#39;t get left behind</h3><p style="color:var(--text-muted);font-size:14px">Local competitors are already using AI. We make it simple for Bristol businesses to catch up and pull ahead.</p></div>'
   +'<div class="card"><div class="card-tag tag-yang">No Tech Skills</div><h3 style="color:var(--white);margin:12px 0 8px">We set it all up</h3><p style="color:var(--text-muted);font-size:14px">Full onboarding included. You run your business &mdash; we handle the AI integration.</p></div>'
-  +'</div><div style="text-align:center"><button class="btn-gold" style="font-size:16px;padding:16px 36px" onclick="go(&#39;services&#39;)">See Our Services &rarr;</button><p style="color:var(--text-muted);font-size:13px;margin-top:12px">Setup from $150 &middot; Monthly plans from $49/mo</p></div></div></section>';
+  +'</div><div style="text-align:center"><button class="btn-gold" style="font-size:16px;padding:16px 36px" onclick="go(&#39;productprotect&#39;)">See BusinessShield AI &rarr;</button><p style="color:var(--text-muted);font-size:13px;margin-top:12px">From $97/mo &middot; Powered by Cloudflare + Claude AI</p></div></div></section>';
 }
 
 function pageFunnelFreedom(){
@@ -810,7 +810,7 @@ function pageFunnelFreedom(){
   +'<div class="card"><div class="card-tag tag-yang">Community</div><h3 style="color:var(--white);margin:12px 0 8px">Bristol Business Network</h3><p style="color:var(--text-muted);font-size:14px">Connect with 400+ local businesses, nonprofits, and community organizations.</p></div>'
   +'<div class="card" style="border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.04)"><div class="card-tag tag-gold">AI Tools</div><h3 style="color:var(--white);margin:12px 0 8px">Your AI business partner</h3><p style="color:var(--text-muted);font-size:14px">BristolBot knows Bristol CT inside and out &mdash; use it to research, plan, and grow your business.</p></div>'
   +'<div class="card"><div class="card-tag tag-yang">Visibility</div><h3 style="color:var(--white);margin:12px 0 8px">Get found in Bristol</h3><p style="color:var(--text-muted);font-size:14px">List your business in the Bristol directory and reach the community where they are already searching.</p></div>'
-  +'</div><div style="text-align:center"><button class="btn-gold" style="font-size:16px;padding:16px 36px" onclick="go(&#39;business&#39;)">Explore Bristol Business &rarr;</button><p style="color:var(--text-muted);font-size:13px;margin-top:12px">Free to explore &middot; Packages from $49/mo</p></div></div></section>';
+  +'</div><div style="text-align:center"><button class="btn-gold" style="font-size:16px;padding:16px 36px" onclick="go(&#39;productfreedom&#39;)">See Bristol LaunchPad &rarr;</button><p style="color:var(--text-muted);font-size:13px;margin-top:12px">$149 setup &middot; $49/mo &middot; Go live in 24 hours</p></div></div></section>';
 }
 
 function pageFunnelConfidence(){
@@ -819,7 +819,102 @@ function pageFunnelConfidence(){
   +'<div class="card"><div class="card-tag tag-yang">Instant Answers</div><h3 style="color:var(--white);margin:12px 0 8px">Ask anything about Bristol</h3><p style="color:var(--text-muted);font-size:14px">History, events, businesses, city services &mdash; BristolBot knows it all and answers in seconds.</p></div>'
   +'<div class="card" style="border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.04)"><div class="card-tag tag-gold">Always On</div><h3 style="color:var(--white);margin:12px 0 8px">Available 24/7</h3><p style="color:var(--text-muted);font-size:14px">No waiting for office hours. BristolBot answers at midnight just as well as at noon.</p></div>'
   +'<div class="card"><div class="card-tag tag-yang">Local Expert</div><h3 style="color:var(--white);margin:12px 0 8px">Deep Bristol knowledge</h3><p style="color:var(--text-muted);font-size:14px">Trained on Bristol CT data &mdash; not generic AI answers. Real local intelligence for real Bristol questions.</p></div>'
-  +'</div><div style="text-align:center"><button class="btn-gold" style="font-size:16px;padding:16px 36px" onclick="go(&#39;ai&#39;)">Try BristolBot AI &rarr;</button><p style="color:var(--text-muted);font-size:13px;margin-top:12px">Free to use &middot; No account required</p></div></div></section>';
+  +'</div><div style="text-align:center"><button class="btn-gold" style="font-size:16px;padding:16px 36px" onclick="go(&#39;productconfidence&#39;)">See BristolBot Pro &rarr;</button><p style="color:var(--text-muted);font-size:13px;margin-top:12px">$29/mo &middot; Chat history &middot; Priority AI access</p></div></div></section>';
+}
+
+function pageProductProtect(){
+  return '<div class="hero"><div class="kicker kicker-gold">BusinessShield AI &middot; Powered by Cloudflare + Claude</div><h1 class="display">AI Protection for<br><span class="grad-text">Your Business</span></h1><p class="hero-sub">BusinessShield scans your online presence for risks, monitors competitors, and delivers weekly AI threat reports &mdash; all running on Cloudflare&#39;s global network. Zero server management.</p></div>'
+  +'<section class="section"><div class="shell">'
+  +'<div class="grid3" style="margin-bottom:32px">'
+  +'<div class="card"><div class="card-tag tag-yang">AI Risk Scanner</div><h3 style="color:var(--white);margin:12px 0 8px">Weekly threat analysis</h3><p style="color:var(--text-mid);font-size:14px;margin-bottom:12px">Claude AI scans your business name, reviews, and online footprint every week. Get a plain-English report of risks and what to do about them.</p><div style="font-size:12px;color:var(--text-dim)">Powered by: Workers + D1 + Claude Haiku</div></div>'
+  +'<div class="card" style="border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.04)"><div class="card-tag tag-gold">Cloudflare Shield</div><h3 style="color:var(--white);margin:12px 0 8px">Bot &amp; spam protection</h3><p style="color:var(--text-mid);font-size:14px;margin-bottom:12px">Cloudflare Turnstile blocks bots from your contact forms and booking pages. No annoying CAPTCHAs &mdash; invisible protection that just works.</p><div style="font-size:12px;color:var(--text-dim)">Powered by: Cloudflare Turnstile + Workers</div></div>'
+  +'<div class="card"><div class="card-tag tag-yang">Instant Alerts</div><h3 style="color:var(--white);margin:12px 0 8px">Know before it hurts</h3><p style="color:var(--text-mid);font-size:14px;margin-bottom:12px">New negative review? Competitor undercutting your price? Get notified instantly via email so you can respond fast &mdash; not days later.</p><div style="font-size:12px;color:var(--text-dim)">Powered by: Workers + D1 + Email Routing</div></div>'
+  +'</div>'
+  +'<div class="card" style="border-color:rgba(245,158,11,0.5);background:rgba(245,158,11,0.06);max-width:560px;margin:0 auto 24px;text-align:center">'
+  +'<div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--gradient);color:#000;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:4px 14px;border-radius:999px;white-space:nowrap">Most Popular</div>'
+  +'<div class="card-tag tag-gold" style="margin-top:8px">Monthly Plan</div>'
+  +'<h3 style="font-size:48px;font-weight:900;font-family:&quot;Space Grotesk&quot;,sans-serif;color:var(--white);margin:12px 0 4px">$97<span style="font-size:18px;font-weight:400;color:var(--text-mid)">/mo</span></h3>'
+  +'<p style="color:var(--text-mid);font-size:14px;margin-bottom:20px">Everything included. Cancel anytime.</p>'
+  +'<ul style="list-style:none;margin-bottom:24px;font-size:14px;color:var(--text-mid);text-align:left;display:inline-block">'
+  +'<li style="padding:5px 0">&#10003; Weekly AI threat report</li>'
+  +'<li style="padding:5px 0">&#10003; Cloudflare bot protection</li>'
+  +'<li style="padding:5px 0">&#10003; Competitor price monitoring</li>'
+  +'<li style="padding:5px 0">&#10003; Review alert notifications</li>'
+  +'<li style="padding:5px 0">&#10003; Monthly strategy call with Fernando</li>'
+  +'</ul>'
+  +'<button class="btn-gold" style="width:100%;font-size:16px;padding:14px" onclick="(function(){var s=document.getElementById(&#39;lead-service&#39;);if(s){for(var i=0;i&lt;s.options.length;i++){if(s.options[i].value===&#39;setup&#39;){s.options[i].selected=true;break;}}}go(&#39;connect&#39;);})()">Get BusinessShield &rarr;</button>'
+  +'<p style="font-size:12px;color:var(--text-dim);margin-top:10px">Setup &mdash; free with first month &middot; No contracts</p>'
+  +'</div>'
+  +'<div class="card" style="text-align:center;max-width:560px;margin:0 auto"><h3>Want to see it in action?</h3><p style="margin:10px 0 16px;color:var(--text-mid)">Run a free business risk scan right now &mdash; no account needed. Takes 60 seconds.</p><a href="https://shield.bristoltalks.com" style="display:inline-block" onclick="event.preventDefault();go(&#39;connect&#39;)"><button class="btn-gold">Run Free Scan &rarr;</button></a></div>'
+  +'</div></section>';
+}
+
+function pageProductFreedom(){
+  return '<div class="hero"><div class="kicker kicker-gold">Bristol LaunchPad &middot; Powered by Cloudflare</div><h1 class="display">Your Business Online<br><span class="grad-text">in 24 Hours</span></h1><p class="hero-sub">Bristol LaunchPad builds your business presence on Cloudflare&#39;s global network &mdash; fast, reliable, and optimized for Bristol CT searches. No tech skills needed.</p></div>'
+  +'<section class="section"><div class="shell">'
+  +'<div class="grid3" style="margin-bottom:32px">'
+  +'<div class="card"><div class="card-tag tag-yang">Instant Listing</div><h3 style="color:var(--white);margin:12px 0 8px">Bristol directory profile</h3><p style="color:var(--text-mid);font-size:14px;margin-bottom:12px">Your business listed in the BristolTalks directory &mdash; the community goes there first when they need local services. Get found where it counts.</p><div style="font-size:12px;color:var(--text-dim)">Powered by: Workers + D1 + KV Cache</div></div>'
+  +'<div class="card" style="border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.04)"><div class="card-tag tag-gold">AI Content</div><h3 style="color:var(--white);margin:12px 0 8px">We write it for you</h3><p style="color:var(--text-mid);font-size:14px;margin-bottom:12px">Claude AI generates your business description, service list, and FAQ based on a 10-minute intake call. Professional copy, zero writing on your part.</p><div style="font-size:12px;color:var(--text-dim)">Powered by: Claude Haiku + Workers</div></div>'
+  +'<div class="card"><div class="card-tag tag-yang">Lightning Fast</div><h3 style="color:var(--white);margin:12px 0 8px">Cloudflare global network</h3><p style="color:var(--text-mid);font-size:14px;margin-bottom:12px">Your page loads in under 100ms anywhere in the world. Cloudflare KV caches your content at 300+ edge locations &mdash; no slow hosting bills.</p><div style="font-size:12px;color:var(--text-dim)">Powered by: Cloudflare Workers + KV</div></div>'
+  +'</div>'
+  +'<div class="grid2" style="max-width:820px;margin:0 auto 24px;gap:16px">'
+  +'<div class="card" style="text-align:center">'
+  +'<div class="card-tag tag-yang">One-Time Setup</div>'
+  +'<h3 style="font-size:42px;font-weight:900;font-family:&quot;Space Grotesk&quot;,sans-serif;color:var(--white);margin:12px 0 4px">$149</h3>'
+  +'<p style="color:var(--text-mid);font-size:13px;margin-bottom:16px">Full setup, done for you</p>'
+  +'<ul style="list-style:none;margin-bottom:20px;font-size:13px;color:var(--text-mid);text-align:left">'
+  +'<li style="padding:4px 0">&#10003; Intake call with Fernando</li>'
+  +'<li style="padding:4px 0">&#10003; AI-written business copy</li>'
+  +'<li style="padding:4px 0">&#10003; Bristol directory listing</li>'
+  +'<li style="padding:4px 0">&#10003; Live in 24 hours</li>'
+  +'</ul>'
+  +'<button class="btn-gold" style="width:100%" onclick="go(&#39;connect&#39;)">Get Setup &rarr;</button>'
+  +'</div>'
+  +'<div class="card" style="border-color:rgba(245,158,11,0.5);background:rgba(245,158,11,0.06);text-align:center;position:relative">'
+  +'<div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--gradient);color:#000;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:4px 14px;border-radius:999px;white-space:nowrap">Best Value</div>'
+  +'<div class="card-tag tag-gold" style="margin-top:8px">Monthly</div>'
+  +'<h3 style="font-size:42px;font-weight:900;font-family:&quot;Space Grotesk&quot;,sans-serif;color:var(--white);margin:12px 0 4px">$49<span style="font-size:16px;font-weight:400;color:var(--text-mid)">/mo</span></h3>'
+  +'<p style="color:var(--text-mid);font-size:13px;margin-bottom:16px">After setup &middot; Cancel anytime</p>'
+  +'<ul style="list-style:none;margin-bottom:20px;font-size:13px;color:var(--text-mid);text-align:left">'
+  +'<li style="padding:4px 0">&#10003; Monthly content refresh</li>'
+  +'<li style="padding:4px 0">&#10003; Listing stays current</li>'
+  +'<li style="padding:4px 0">&#10003; Performance reports</li>'
+  +'<li style="padding:4px 0">&#10003; Priority support</li>'
+  +'</ul>'
+  +'<button class="btn-gold" style="width:100%" onclick="go(&#39;connect&#39;)">Start LaunchPad &rarr;</button>'
+  +'</div>'
+  +'</div>'
+  +'</div></section>';
+}
+
+function pageProductConfidence(){
+  return '<div class="hero"><div class="kicker kicker-gold">BristolBot Pro &middot; Claude AI &middot; Always On</div><h1 class="display">Your Personal<br><span class="grad-text">Bristol AI Assistant</span></h1><p class="hero-sub">BristolBot Pro saves your conversations, gives priority AI access, and unlocks Bristol business research mode &mdash; for residents and business owners who rely on AI every day.</p></div>'
+  +'<section class="section"><div class="shell">'
+  +'<div class="grid3" style="margin-bottom:32px">'
+  +'<div class="card"><div class="card-tag tag-yang">Chat History</div><h3 style="color:var(--white);margin:12px 0 8px">Conversations that remember</h3><p style="color:var(--text-mid);font-size:14px;margin-bottom:12px">Every chat saved to your D1 database. Pick up exactly where you left off &mdash; research threads, business plans, city questions &mdash; all preserved across sessions.</p><div style="font-size:12px;color:var(--text-dim)">Powered by: Cloudflare D1 + Workers</div></div>'
+  +'<div class="card" style="border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.04)"><div class="card-tag tag-gold">Priority AI</div><h3 style="color:var(--white);margin:12px 0 8px">Faster, deeper answers</h3><p style="color:var(--text-mid);font-size:14px;margin-bottom:12px">Pro users get Claude Sonnet instead of Haiku &mdash; more nuanced, more detailed, better reasoning. Ask it to draft a business plan or analyze a city ordinance.</p><div style="font-size:12px;color:var(--text-dim)">Powered by: Claude Sonnet + Workers</div></div>'
+  +'<div class="card"><div class="card-tag tag-yang">Business Mode</div><h3 style="color:var(--white);margin:12px 0 8px">Bristol business intelligence</h3><p style="color:var(--text-mid);font-size:14px;margin-bottom:12px">Switch to Business Mode for competitive research, local market data, permit guidance, and city contract lookups &mdash; all sourced from Bristol CT public records.</p><div style="font-size:12px;color:var(--text-dim)">Powered by: Workers + KV + D1</div></div>'
+  +'</div>'
+  +'<div class="card" style="border-color:rgba(245,158,11,0.5);background:rgba(245,158,11,0.06);max-width:480px;margin:0 auto 24px;text-align:center;position:relative">'
+  +'<div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--gradient);color:#000;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:4px 14px;border-radius:999px;white-space:nowrap">Limited Beta</div>'
+  +'<div class="card-tag tag-gold" style="margin-top:8px">Pro Plan</div>'
+  +'<h3 style="font-size:48px;font-weight:900;font-family:&quot;Space Grotesk&quot;,sans-serif;color:var(--white);margin:12px 0 4px">$29<span style="font-size:18px;font-weight:400;color:var(--text-mid)">/mo</span></h3>'
+  +'<p style="color:var(--text-mid);font-size:14px;margin-bottom:20px">First 30 days free &middot; Cancel anytime</p>'
+  +'<ul style="list-style:none;margin-bottom:24px;font-size:14px;color:var(--text-mid);text-align:left;display:inline-block">'
+  +'<li style="padding:5px 0">&#10003; Unlimited chat history (D1 storage)</li>'
+  +'<li style="padding:5px 0">&#10003; Claude Sonnet (vs free Haiku)</li>'
+  +'<li style="padding:5px 0">&#10003; Bristol Business Mode</li>'
+  +'<li style="padding:5px 0">&#10003; Priority response queue</li>'
+  +'<li style="padding:5px 0">&#10003; Monthly Bristol briefing digest</li>'
+  +'</ul>'
+  +'<button class="btn-gold" style="width:100%;font-size:16px;padding:14px" onclick="go(&#39;connect&#39;)">Start Free Trial &rarr;</button>'
+  +'<p style="font-size:12px;color:var(--text-dim);margin-top:10px">No credit card for trial &middot; Bristol residents only (beta)</p>'
+  +'</div>'
+  +'<div class="card" style="text-align:center;max-width:480px;margin:0 auto">'
+  +'<h3>Try the free version first</h3><p style="margin:10px 0 16px;color:var(--text-mid)">BristolBot is free and available right now. No account, no signup &mdash; just ask.</p>'
+  +'<button class="btn-gold" onclick="document.getElementById(&#39;chat-panel&#39;).classList.add(&#39;open&#39;)">Open BristolBot &rarr;</button>'
+  +'</div>'
+  +'</div></section>';
 }
 
 function pageServices(){
