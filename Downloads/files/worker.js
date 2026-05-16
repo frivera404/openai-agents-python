@@ -165,10 +165,7 @@ export default {
     if (url.pathname === "/api/posts"    && req.method === "GET")  return handlePosts(req, env, origin);
     if (url.pathname === "/api/checkout" && req.method === "POST") return handleCheckout(req, env, origin);
     if (url.pathname === "/api/health") return new Response(JSON.stringify({ ok: true, ts: Date.now(), version: "5.0" }), { headers: { "Content-Type": "application/json" } });
-    // Funnel entry points — redirect to section + preserve UTM params
-    if (url.pathname === "/funnel/protect")    return Response.redirect(new URL("/services?"    + url.searchParams.toString(), url.origin), 302);
-    if (url.pathname === "/funnel/freedom")    return Response.redirect(new URL("/business?"    + url.searchParams.toString(), url.origin), 302);
-    if (url.pathname === "/funnel/confidence") return Response.redirect(new URL("/ai?"          + url.searchParams.toString(), url.origin), 302);
+    // Funnel entry points — serve main HTML directly (initPage reads pathname)
     return new Response(HTML, {
       headers: { "Content-Type": "text/html;charset=UTF-8", "Cache-Control": "public, max-age=60", "X-Content-Type-Options": "nosniff" }
     });
@@ -609,7 +606,7 @@ footer{background:var(--bg3);border-top:1px solid var(--border-sub);padding:52px
 <script>
 var chatHistory=[];
 function go(page){
-  var pages={home:pageHome,news:pageNews,engage:pageEngage,ai:pageAI,projects:pageProjects,history:pageHistory,neighborhoods:pageNeighborhoods,events:pageEvents,directory:pageDirectory,government:pageGovernment,business:pageBusiness,services:pageServices,about:pageAbout,connect:pageConnect};
+  var pages={home:pageHome,news:pageNews,engage:pageEngage,ai:pageAI,projects:pageProjects,history:pageHistory,neighborhoods:pageNeighborhoods,events:pageEvents,directory:pageDirectory,government:pageGovernment,business:pageBusiness,services:pageServices,about:pageAbout,connect:pageConnect,funnelprotect:pageFunnelProtect,funnelfreedom:pageFunnelFreedom,funnelconfidence:pageFunnelConfidence};
   document.getElementById('app').innerHTML='<div style="animation:fadein .3s ease">'+(pages[page]||pageHome)()+'</div>';
   document.querySelectorAll('.desk-nav a,.mnav a').forEach(function(a){
     a.classList.remove('active');
@@ -798,6 +795,33 @@ function pageConnect(){
   +'<section class="section"><div class="shell"><div class="grid2"><div class="card"><div class="card-tag tag-green">Contact</div><h3>Reach the BristolTalks Team</h3><p style="margin-bottom:14px">For story tips, corrections, partnerships, or feedback:</p><div class="dir-row"><div class="dir-name">Email</div><div class="dir-phone">riveraf30@gmail.com</div></div><div class="dir-row"><div class="dir-name">Platform</div><div class="dir-phone">bristoltalks.com</div></div><div class="dir-row"><div class="dir-name">Operated by</div><div style="font-size:12px;color:var(--text-mid);font-weight:600">R Unlimited LLC · Bristol CT</div></div></div><div class="card"><div class="card-tag tag-yin">BristolBot AI</div><h3>Ask BristolBot Any Time</h3><p style="margin-bottom:14px">The fastest way to get Bristol CT answers — BristolBot is available 24/7 and expert on everything Bristol.</p><button class="btn-gold" onclick="document.getElementById(&#39;chat-panel&#39;).classList.add(&#39;open&#39;)">Open BristolBot ↗</button></div>'+C('Story Tips','tag-yang','','Share What You Know','Know about a Bristol project, business opening, community event, or civic issue? Email riveraf30@gmail.com with subject "Story Tip."')+C('Partnerships','tag-yin','','Work With BristolTalks','Bristol businesses, nonprofits, and civic organizations interested in reaching the Bristol CT community — we offer community sponsorships and custom AI integrations.')+'</div></div></section>';
 }
 
+function pageFunnelProtect(){
+  return '<div class="hero"><div class="kicker kicker-gold">R Unlimited LLC &middot; Bristol CT</div><h1 class="display">Protect Your Business<br><span class="grad-text">With AI</span></h1><p class="hero-sub">Bristol CT businesses are moving to AI-powered tools. Get ahead &mdash; protect your revenue, your time, and your competitive edge.</p></div>'
+  +'<section class="section"><div class="shell"><div class="grid3" style="margin-bottom:40px">'
+  +'<div class="card"><div class="card-tag tag-yang">Save Time</div><h3 style="color:var(--white);margin:12px 0 8px">AI handles the busywork</h3><p style="color:var(--text-muted);font-size:14px">Automate content, emails, and customer replies so you focus on what matters.</p></div>'
+  +'<div class="card" style="border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.04)"><div class="card-tag tag-gold">Stay Competitive</div><h3 style="color:var(--white);margin:12px 0 8px">Don&#39;t get left behind</h3><p style="color:var(--text-muted);font-size:14px">Local competitors are already using AI. We make it simple for Bristol businesses to catch up and pull ahead.</p></div>'
+  +'<div class="card"><div class="card-tag tag-yang">No Tech Skills</div><h3 style="color:var(--white);margin:12px 0 8px">We set it all up</h3><p style="color:var(--text-muted);font-size:14px">Full onboarding included. You run your business &mdash; we handle the AI integration.</p></div>'
+  +'</div><div style="text-align:center"><button class="btn-gold" style="font-size:16px;padding:16px 36px" onclick="go(&#39;services&#39;)">See Our Services &rarr;</button><p style="color:var(--text-muted);font-size:13px;margin-top:12px">Setup from $150 &middot; Monthly plans from $49/mo</p></div></div></section>';
+}
+
+function pageFunnelFreedom(){
+  return '<div class="hero"><div class="kicker kicker-gold">R Unlimited LLC &middot; Bristol CT</div><h1 class="display">Build the Business<br><span class="grad-text">You Imagined</span></h1><p class="hero-sub">Freedom means building on your own terms. BristolTalks gives local entrepreneurs the AI tools and community network to grow independently.</p></div>'
+  +'<section class="section"><div class="shell"><div class="grid3" style="margin-bottom:40px">'
+  +'<div class="card"><div class="card-tag tag-yang">Community</div><h3 style="color:var(--white);margin:12px 0 8px">Bristol Business Network</h3><p style="color:var(--text-muted);font-size:14px">Connect with 400+ local businesses, nonprofits, and community organizations.</p></div>'
+  +'<div class="card" style="border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.04)"><div class="card-tag tag-gold">AI Tools</div><h3 style="color:var(--white);margin:12px 0 8px">Your AI business partner</h3><p style="color:var(--text-muted);font-size:14px">BristolBot knows Bristol CT inside and out &mdash; use it to research, plan, and grow your business.</p></div>'
+  +'<div class="card"><div class="card-tag tag-yang">Visibility</div><h3 style="color:var(--white);margin:12px 0 8px">Get found in Bristol</h3><p style="color:var(--text-muted);font-size:14px">List your business in the Bristol directory and reach the community where they are already searching.</p></div>'
+  +'</div><div style="text-align:center"><button class="btn-gold" style="font-size:16px;padding:16px 36px" onclick="go(&#39;business&#39;)">Explore Bristol Business &rarr;</button><p style="color:var(--text-muted);font-size:13px;margin-top:12px">Free to explore &middot; Packages from $49/mo</p></div></div></section>';
+}
+
+function pageFunnelConfidence(){
+  return '<div class="hero"><div class="kicker kicker-gold">Powered by Claude AI &middot; Available 24/7</div><h1 class="display">AI That Gives You<br><span class="grad-text">Confidence</span></h1><p class="hero-sub">Get instant, accurate answers about Bristol CT &mdash; local news, government, events, businesses, and more. Powered by Claude AI with deep local knowledge.</p></div>'
+  +'<section class="section"><div class="shell"><div class="grid3" style="margin-bottom:40px">'
+  +'<div class="card"><div class="card-tag tag-yang">Instant Answers</div><h3 style="color:var(--white);margin:12px 0 8px">Ask anything about Bristol</h3><p style="color:var(--text-muted);font-size:14px">History, events, businesses, city services &mdash; BristolBot knows it all and answers in seconds.</p></div>'
+  +'<div class="card" style="border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.04)"><div class="card-tag tag-gold">Always On</div><h3 style="color:var(--white);margin:12px 0 8px">Available 24/7</h3><p style="color:var(--text-muted);font-size:14px">No waiting for office hours. BristolBot answers at midnight just as well as at noon.</p></div>'
+  +'<div class="card"><div class="card-tag tag-yang">Local Expert</div><h3 style="color:var(--white);margin:12px 0 8px">Deep Bristol knowledge</h3><p style="color:var(--text-muted);font-size:14px">Trained on Bristol CT data &mdash; not generic AI answers. Real local intelligence for real Bristol questions.</p></div>'
+  +'</div><div style="text-align:center"><button class="btn-gold" style="font-size:16px;padding:16px 36px" onclick="go(&#39;ai&#39;)">Try BristolBot AI &rarr;</button><p style="color:var(--text-muted);font-size:13px;margin-top:12px">Free to use &middot; No account required</p></div></div></section>';
+}
+
 function pageServices(){
   return '<div class="hero"><div class="kicker kicker-gold">R Unlimited LLC · Bristol CT</div><h1 class="display">AI Services for<br><span class="grad-text">Local Business</span></h1><p class="hero-sub">Simple, affordable AI integrations for Bristol CT businesses, nonprofits, and community organizations. No tech background required.</p></div>'
   +'<section class="section"><div class="shell">'
@@ -913,7 +937,7 @@ function runCounters(){
     var tmr=setInterval(function(){c=Math.min(c+s,t);el.textContent=Math.round(c).toLocaleString();if(c>=t)clearInterval(tmr);},16);
   });
 }
-var _utmParams=(function(){var p=new URLSearchParams(location.search);return{source:p.get('utm_source')||document.referrer||null,utm_source:p.get('utm_source'),utm_campaign:p.get('utm_campaign'),utm_medium:p.get('utm_medium'),product:p.get('product'),ref:p.get('ref')};})();
+var _utmParams=(function(){var p=new URLSearchParams(location.search);return{source:p.get('utm_source')||'bristoltalks.com',utm_source:p.get('utm_source')||'bristoltalks.com',utm_campaign:p.get('utm_campaign')||'organic',utm_medium:p.get('utm_medium')||'direct',product:p.get('product'),ref:p.get('ref')};})();
 var initPage=location.pathname.replace('/','').split('/').join('')||'home';
 go(initPage);
 window.onpopstate=function(e){if(e.state&&e.state.p)go(e.state.p);};
