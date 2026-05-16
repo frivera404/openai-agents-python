@@ -1,0 +1,31 @@
+# ============================================================
+# BusinessShield AI — Wrangler Configuration
+# Account: Riveraf30@gmail.com
+# Deploy: wrangler deploy --config wrangler-shield.toml
+# Secrets:
+#   wrangler secret put ANTHROPIC_KEY --config wrangler-shield.toml
+#   wrangler secret put TURNSTILE_SECRET --config wrangler-shield.toml
+# Create D1:
+#   wrangler d1 create bristoltalks-shield --config wrangler-shield.toml
+# Migrate:
+#   wrangler d1 execute bristoltalks-shield --remote --file=migrations/0003_shield.sql --config wrangler-shield.toml
+# ============================================================
+
+name               = "bristoltalks-shield"
+main               = "src/shield-worker.js"
+compatibility_date = "2024-09-23"
+account_id         = "8cdcf88f537f86831975b2dc03cc617a"
+
+[vars]
+ENVIRONMENT  = "production"
+PRODUCT_NAME = "BusinessShield AI"
+
+[[d1_databases]]
+binding       = "DB"
+database_name = "bristoltalks-shield"
+database_id   = "REPLACE_WITH_SHIELD_DB_ID"
+
+# Secrets — set via CLI after deploy:
+# wrangler secret put ANTHROPIC_KEY --config wrangler-shield.toml
+# wrangler secret put TURNSTILE_SECRET --config wrangler-shield.toml
+# Get Turnstile site/secret keys: dash.cloudflare.com → Turnstile

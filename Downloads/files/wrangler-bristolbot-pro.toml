@@ -1,0 +1,28 @@
+# ============================================================
+# BristolBot Pro — Wrangler Configuration
+# Account: Riveraf30@gmail.com
+# Deploy: wrangler deploy --config wrangler-bristolbot-pro.toml
+# Secrets:
+#   wrangler secret put ANTHROPIC_KEY --config wrangler-bristolbot-pro.toml
+# Create D1:
+#   wrangler d1 create bristoltalks-pro-chat --config wrangler-bristolbot-pro.toml
+# Migrate:
+#   wrangler d1 execute bristoltalks-pro-chat --remote --file=migrations/0005_pro_chat.sql --config wrangler-bristolbot-pro.toml
+# ============================================================
+
+name               = "bristoltalks-bristolbot-pro"
+main               = "src/bristolbot-pro-worker.js"
+compatibility_date = "2024-09-23"
+account_id         = "8cdcf88f537f86831975b2dc03cc617a"
+
+[vars]
+ENVIRONMENT  = "production"
+PRODUCT_NAME = "BristolBot Pro"
+
+[[d1_databases]]
+binding       = "DB"
+database_name = "bristoltalks-pro-chat"
+database_id   = "REPLACE_WITH_PRO_DB_ID"
+
+# Secret — set via CLI:
+# wrangler secret put ANTHROPIC_KEY --config wrangler-bristolbot-pro.toml
