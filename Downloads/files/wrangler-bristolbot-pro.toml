@@ -24,5 +24,12 @@ binding       = "DB"
 database_name = "bristoltalks-pro-chat"
 database_id   = "ed547c27-e77b-4169-acd6-724a79b5945f"
 
+# Custom subdomain — activate after bristoltalks.com NS points to Cloudflare:
+# Uncomment and run: wrangler deploy --config wrangler-bristolbot-pro.toml
+
+# [[routes]]
+# pattern = "pro.bristoltalks.com/*"
+# zone_name = "bristoltalks.com"
+
 # Secret — set via CLI:
 # wrangler secret put ANTHROPIC_KEY --config wrangler-bristolbot-pro.toml

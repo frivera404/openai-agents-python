@@ -25,6 +25,18 @@ database_id  = "1c626ec4-cbd1-4027-9719-e919367af859"
 binding = "CACHE"
 id      = "21709a4dfce74ccd80c57dd41126592d"
 
+# Custom domain — activate after DNS is pointed to Cloudflare:
+# Step 1: Add bristoltalks.com zone to Cloudflare (change NS at WordPress.com)
+# Step 2: Uncomment the routes block below and run: wrangler deploy
+
+# [[routes]]
+# pattern = "bristoltalks.com/*"
+# zone_name = "bristoltalks.com"
+
+# [[routes]]
+# pattern = "www.bristoltalks.com/*"
+# zone_name = "bristoltalks.com"
+
 # Secrets — set via CLI:
 # wrangler secret put ANTHROPIC_KEY
 # wrangler secret put STRIPE_SECRET_KEY

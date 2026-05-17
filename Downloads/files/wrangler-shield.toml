@@ -25,6 +25,13 @@ binding       = "DB"
 database_name = "bristoltalks-shield"
 database_id   = "7d2e2771-f594-4dfc-8245-6e976ade3aae"
 
+# Custom subdomain — activate after bristoltalks.com NS points to Cloudflare:
+# Uncomment and run: wrangler deploy --config wrangler-shield.toml
+
+# [[routes]]
+# pattern = "shield.bristoltalks.com/*"
+# zone_name = "bristoltalks.com"
+
 # Secrets — set via CLI after deploy:
 # wrangler secret put ANTHROPIC_KEY --config wrangler-shield.toml
 # wrangler secret put TURNSTILE_SECRET --config wrangler-shield.toml

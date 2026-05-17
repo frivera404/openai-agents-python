@@ -30,5 +30,12 @@ database_id   = "c3dbb953-cee1-457f-9f57-fb847df2f5d4"
 binding = "CACHE"
 id      = "c0de5a2f2fdc43b1bc719afc642d4082"
 
+# Custom subdomain — activate after bristoltalks.com NS points to Cloudflare:
+# Uncomment and run: wrangler deploy --config wrangler-launchpad.toml
+
+# [[routes]]
+# pattern = "launchpad.bristoltalks.com/*"
+# zone_name = "bristoltalks.com"
+
 # Secret — set via CLI:
 # wrangler secret put ANTHROPIC_KEY --config wrangler-launchpad.toml
