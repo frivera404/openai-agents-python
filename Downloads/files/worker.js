@@ -606,7 +606,7 @@ footer{background:var(--bg3);border-top:1px solid var(--border-sub);padding:52px
 <script>
 var chatHistory=[];
 function go(page){
-  var pages={home:pageHome,news:pageNews,engage:pageEngage,ai:pageAI,projects:pageProjects,history:pageHistory,neighborhoods:pageNeighborhoods,events:pageEvents,directory:pageDirectory,government:pageGovernment,business:pageBusiness,services:pageServices,about:pageAbout,connect:pageConnect,funnelprotect:pageFunnelProtect,funnelfreedom:pageFunnelFreedom,funnelconfidence:pageFunnelConfidence,productprotect:pageProductProtect,productfreedom:pageProductFreedom,productconfidence:pageProductConfidence};
+  var pages={home:pageHome,news:pageNews,engage:pageEngage,ai:pageAI,projects:pageProjects,history:pageHistory,neighborhoods:pageNeighborhoods,events:pageEvents,directory:pageDirectory,government:pageGovernment,business:pageBusiness,services:pageServices,about:pageAbout,connect:pageConnect,funnelprotect:pageFunnelProtect,funnelfreedom:pageFunnelFreedom,funnelconfidence:pageFunnelConfidence,productprotect:pageProductProtect,'businessshield-ai':pageProductProtect,productfreedom:pageProductFreedom,productconfidence:pageProductConfidence};
   document.getElementById('app').innerHTML='<div style="animation:fadein .3s ease">'+(pages[page]||pageHome)()+'</div>';
   document.querySelectorAll('.desk-nav a,.mnav a').forEach(function(a){
     a.classList.remove('active');
