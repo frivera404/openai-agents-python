@@ -901,7 +901,7 @@ function pageProductConfidence(){
   +'<h3 style="font-size:48px;font-weight:900;font-family:&quot;Space Grotesk&quot;,sans-serif;color:var(--white);margin:12px 0 4px">$29<span style="font-size:18px;font-weight:400;color:var(--text-mid)">/mo</span></h3>'
   +'<p style="color:var(--text-mid);font-size:14px;margin-bottom:20px">First 30 days free &middot; Cancel anytime</p>'
   +'<ul style="list-style:none;margin-bottom:24px;font-size:14px;color:var(--text-mid);text-align:left;display:inline-block">'
-  +'<li style="padding:5px 0">&#10003; Unlimited chat history (D1 storage)</li>'
+  +'<li style="padding:5px 0">&#10003; Complete chat history saved (D1 storage)</li>'
   +'<li style="padding:5px 0">&#10003; Claude Sonnet (vs free Haiku)</li>'
   +'<li style="padding:5px 0">&#10003; Bristol Business Mode</li>'
   +'<li style="padding:5px 0">&#10003; Priority response queue</li>'
