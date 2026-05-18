@@ -842,7 +842,7 @@ function pageProductProtect(){
   +'<li style="padding:5px 0">&#10003; Review alert notifications</li>'
   +'<li style="padding:5px 0">&#10003; Monthly strategy call with Fernando</li>'
   +'</ul>'
-  +'<button class="btn-gold" style="width:100%;font-size:16px;padding:14px" onclick="(function(){var s=document.getElementById(&#39;lead-service&#39;);if(s){for(var i=0;i&lt;s.options.length;i++){if(s.options[i].value===&#39;businessshield&#39;){s.options[i].selected=true;break;}}}go(&#39;connect&#39;);})()">Get BusinessShield &rarr;</button>'
+  +'<button class="btn-gold" style="width:100%;font-size:16px;padding:14px" onclick="(function(){go(&#39;connect&#39;);var s=document.getElementById(&#39;lead-service&#39;);if(s){for(var i=0;i&lt;s.options.length;i++){if(s.options[i].value===&#39;businessshield&#39;){s.options[i].selected=true;break;}}}})()">Get BusinessShield &rarr;</button>'
   +'<p style="font-size:12px;color:var(--text-dim);margin-top:10px">Setup &mdash; free with first month &middot; No contracts</p>'
   +'</div>'
   +'<div class="card" style="text-align:center;max-width:560px;margin:0 auto"><h3>Want to see it in action?</h3><p style="margin:10px 0 16px;color:var(--text-mid)">Run a free business risk scan right now &mdash; no account needed. Takes 60 seconds.</p><a href="javascript:void(0)" style="display:inline-block" onclick="go(&#39;connect&#39;)"><button class="btn-gold">Run Free Scan &rarr;</button></a></div>'
